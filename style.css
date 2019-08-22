@@ -1,0 +1,18 @@
+*
+{
+    border: 1px solid red;
+}
+
+label{
+  display: inline-block;
+  width: 500px;
+  height: 500px;
+  background-color: orange;
+  transition: .5s;
+}
+#switch:checked ~ label{
+  width: 800px;
+}
+img{
+		width: 10px;
+}
