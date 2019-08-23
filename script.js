@@ -98,3 +98,21 @@
 // };
 // fn();
 // console.log(a, b);
+
+
+
+// var a = 10;
+// if (true)
+// {
+//     console.log(a);
+//     let a = 10;
+// }
+
+// console.log(typeof a);
+// let a = 10;
+// //换下一行试试~~
+// //var a = 10;
+
+
+
+
