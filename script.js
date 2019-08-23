@@ -65,3 +65,36 @@
 // console.log(fn);
 
 
+
+// fn();
+// function fn () { console.log(1); }
+// fn();
+// function fn () { console.log(2); }
+// fn();
+// var fn = 100;
+// fn();
+// function fn () { console.log(3); }
+// fn();
+// function fn () { console.log(4); }
+// fn();
+
+
+// b = 12;
+// console.log(b);
+// a = 12;
+// console.log(a);
+// let a = 13;
+// console.log(a);
+
+
+// let a = 10,
+//     b = 10;
+
+// let fn = function () 
+// {
+//     console.log(a, b);
+//     let a = b = 20;
+//     console.log(a, b);
+// };
+// fn();
+// console.log(a, b);
