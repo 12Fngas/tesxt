@@ -549,20 +549,20 @@
 // a = b(1, 2, 3);
 // console.log(a); // b()函数执行没有返回值，所以a == undefined
 
-function fn (x, y) {
-    var arg = arguments;
-    arg[0] = 100;
-    console.log(x);
-    y = 200;
-    console.log(arg[1]);
-    arg[1] = 300;
-    console.log(y);
-    /*
-    arguments和形参的映射机制建立在函数执行偶形参赋值的一瞬间，此时能建立映射机制的则建立，不能的
-    不管怎么操作都无法再建立了
-    */
-}
-fn(10);
+// function fn (x, y) {
+//     var arg = arguments;
+//     arg[0] = 100;
+//     console.log(x);
+//     y = 200;
+//     console.log(arg[1]);
+//     arg[1] = 300;
+//     console.log(y);
+//     /*
+//     arguments和形参的映射机制建立在函数执行偶形参赋值的一瞬间，此时能建立映射机制的则建立，不能的
+//     不管怎么操作都无法再建立了
+//     */
+// }
+// fn(10);
 
 /*严格模式
   在当前作用于的“第一行”添加“use strict”即可，这样在当前作用于中就开启了JS的严格模式
@@ -580,3 +580,241 @@ fn(10);
   3.严格模式下对象不允许属性重名
   4.严格模式下，函数执行，若没有明确指定执行的主题（函数前面没有点），不像非严格模式下，统一交给window，
   而是让this指向undefined
+*/
+
+
+
+
+// var foo = 'hello';
+// (function (foo) {
+//     console.log(foo);
+//     var foo = foo || "world";
+//     console.log(foo);
+// })(foo);
+// console.log(foo);
+
+// function fn (x) {
+//     // if (typeof x === 'undefined') {
+//     //     x = 0;
+//     // }
+//     x = x || 0;
+//     /*
+//     这种赋值方式没有上面if严谨（if这种是没传值才会赋值默认值，|| 这种是不传值
+//     或者传递的值是假，都让它等于0）
+//     */
+// }
+// fn(false);
+
+// function fn (callback) {
+//     // if (typeof callback === 'function') {
+//     //     callback();
+//     // }
+//     callback && callback();
+//     /*
+//     上面if判断的简写版（不严谨）：默认callback要不然就传函数，要不然就不传
+//     */
+// }
+
+
+
+
+// var a = 9;
+// function fn () {
+//     a = 0;
+//     return function (b) {
+//         return b + a++;
+//     }
+// }
+// var f = fn(); // a = 0
+// console.log(f(5)); // 5
+// console.log(fn()(5)); // 5
+// console.log(f(5)); // 6
+// console.log(a); // 2
+
+
+// var arr = [1, 2, 3, 4];
+// function fn (arr) {
+//     arr[0] = 0;
+//     arr = [0];
+//     arr[0] = 100;
+//     return arr;
+// }
+// var res = fn(arr); // res = [100]
+// console.log(arr); // arr[0, 2, 3, 4]
+// console.log(res);
+
+
+// function fn (i) {
+//     return function (n) {
+//         console.log(n + (i++));
+//     }
+// }
+// var f = fn(10); // i = 10
+// f(20); // 30
+// fn(20)(40); // 60
+// fn(30)(50); // 80
+// f(30); //41
+
+
+// var num = 10;
+// var obj = {num : 20};
+// obj.fn = (function (num) {
+//     this.num = num * 3; // window.num = 60
+//     num ++;             // num 21
+//     return function (n) {
+//         this.num += n;
+//         num ++;
+//         console.log(num);
+//     }
+// })(obj.num);
+// var fn = obj.fn;
+// fn(5); // window.num = 60 + 5 = 65,  num = 22
+// obj.fn(10); // obj.num = 30, num = 11, 
+// console.log(num, obj.num);
+
+
+
+// function Fn () {
+//     this.x = 100;
+//     this.y = 200;
+//     this.getX = function () {
+//         console.log(this.x);
+//     }
+// }
+// Fn.prototype.getX = function () {
+//     console.log(this.x);
+// }
+// Fn.prototype.getY = function () {
+//     console.log(this.y);
+// }
+// var f1 = new Fn;
+// var f2 = new Fn;
+// console.log(f1.getX === f2.getX); // false
+// console.log(f1.getY === f2.getY); // true
+// console.log(f1.__proto__.getY === Fn.prototype.getY); // true
+// console.log(f1.__proto__.getX === f2.getX); // false
+// console.log(f1.getX === Fn.prototype.getX); // false
+// console.log(f1.constructor); // Fn
+// console.log(Fn.prototype.__proto__.constructor); // Object
+// f1.getX(); // 100
+// f1.__proto__.getX(); // undefined
+// f2.getY(); // 200
+// Fn.prototype.getY(); // undefined
+
+
+
+// var fullName = 'language';
+// var obj = {
+//     fullName : 'javascript',
+//     prop : {
+//         getFullName : function () {
+//             return this.fullName;
+//         }
+//     }
+// };
+// console.log(obj.prop.getFullName()); // undefined
+// var test = obj.prop.getFullName;
+// console.log(test()); // language
+
+
+// var name = 'window';
+// var Tom = {
+//     name : 'Tom',
+//     show : function () {
+//         console.log(this.name);
+//     },
+//     wait : function () {
+//         var fun = this.show;
+//         fun();
+//     }
+// };
+// Tom.wait(); 
+
+
+
+
+// function fun () {
+//     this.a = 0;
+//     this.b = function () {
+//         alert(this.a);
+//     }
+// }
+// fun.prototype = {
+//     b : function () {
+//         this.a = 20;
+//         alert(this.a);
+//     },
+//     c : function () {
+//         this.a = 30;
+//         alert(this.a);
+//     }
+// };
+// fun.prototype = {
+//     d : function () {
+//         this.a = 100;
+//         alert(this.a);
+//     }
+// };
+// var my_fun = new fun();
+// my_fun.b(); // 0
+// my_fun.c(); // 30
+/**
+ * 在实际开发中，根据需要，会重定向类的原型（让类的原型指向增加开辟的堆内存）
+ * 【存在的问题】
+ * 1.增加开辟的堆内存中没有constructor属性，导致类的原型构造函数缺失（解决：
+ * 增加手动在堆内存中增加constructor属性）
+ * 2.当原型重定向后，浏览器默认开辟的那个原型会被释放掉，如果之前存储了一些方法
+ * 和属性，则会丢失（所以：内置类的原型不允许重定向）
+ */
+
+
+
+
+//  function Fn () {
+//      var n = 10;
+//      this.m = 20;
+//      this.aa = function () {
+//          console.log(this.m)
+//     }
+//  }
+//  Fn.prototype.bb = function () {
+//      console.log(this.n)
+// };
+//  var f1 = new Fn;
+//  Fn.prototype = {
+//     aa : function () {
+//         console.log(this.m + 10);
+//     }
+//  }
+//  var f2 = new Fn;
+//  console.log(f1.constructor); // Fn
+//  console.log(f2.constructor); // Object
+//  f1.bb();  // undefined
+//  f1.aa(); // 20
+//  f2.bb(); // not a function
+//  f2.aa(); // 30
+//  f2.__proto__.aa(); // 30
+
+
+
+
+// var arr = [1, 1, 2, 2, 2, 3];
+// Array.prototype.dupRemove = function () {
+//     var obj = {};
+//     for (var i = 0; i < this.length; i++) {
+//         var item = this[i];
+//         if (obj.hasOwnProperty(item)) {
+//             this[i] = this[this.length - 1];
+//             this.length --;
+//             i --;
+//         }
+//         else {
+//             obj[item] = item;
+//         }
+//     }
+//     obj = null;
+//     return this;
+// }
+
+// arr.dupRemove();
+// console.log(arr);
