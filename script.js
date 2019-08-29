@@ -352,21 +352,231 @@
 
 
 
-模块化开发
-  1.团队协作开发的时候，会把产品按照功能板块进行划分，每一个功能
-  板块有专人负责开发
-  2.把各个板块之间公用的部门进行提取封装，后期在想实现这些功能，
-  直接调用引用即可（模块封装）
+// 模块化开发
+//   1.团队协作开发的时候，会把产品按照功能板块进行划分，每一个功能
+//   板块有专人负责开发
+//   2.把各个板块之间公用的部门进行提取封装，后期在想实现这些功能，
+//   直接调用引用即可（模块封装）
 
-var weatherRender = (function ()
-{
-    var fn = function () {};
-    // ...
-    return {
-        init : function () 
-        {
-            fn();
-        }
-    };
-})();
-weatherRender.init();
+// var weatherRender = (function ()
+// {
+//     var fn = function () {};
+//     // ...
+//     return {
+//         init : function () 
+//         {
+//             fn();
+//         }
+//     };
+// })();
+// weatherRender.init();
+
+
+
+// 工厂模式（Factory Pattern）
+//   1.把实现相同功能的代码进行”封装“，以此来实现”批量生产“（后期想要实现这个功能，我们只需要
+//   执行函数即可）
+//   2.”低耦合，高内聚“：减少页面中的冗余代码，提高代码的重复使用率
+
+// function createPerson (name, age)
+// {
+//     var obj = {};
+//     obj.name = name;
+//     obj.age = age;
+//     return obj;
+// }
+
+
+
+// 基于构造函数穿件自定义类（constructor）
+//   1.在普通函数执行的基础上”new xxx”，这样就不是普通函数执行了，而是构造函数执行，当前的函数
+// 名称为“类名”，接受的返回结果是当前类的一个实例
+  
+//   2.自己创建的类名，最好第一个单词首字母大写
+
+//   3.这种构造函数设计模式执行，主要用于组件、类库、插件、框架等的封装，平时编写业务逻辑一般
+// 不这样处理
+
+// function Fn ()
+// {
+
+// }
+// var f1 = new Fn();
+// var f2 = new Fn();
+// //f1与f2都是Fn类的实例，但各独自分开，互不影响
+// console.log(f);
+
+// var obj1 = {}; // obj1是Object的一个实例
+// var obj2 = {}; // obj2也是Object的一个实例
+
+// JS中创建值有两种方式：
+//   1.字面量表达式
+//   2.构造函数模式
+
+// var obj = {};
+// var obj2 = new Object();
+
+// 不管是哪一种方式创造出来的都是Object类的实例，而实例之间是独立分开的，所以 var xxx = {} 这种
+// 模式就是JS中的单例模式
+
+// 基本数据类型基于两种不同的模式创建出来的值不一样！
+// 基于字面量方式创建出来的值是基本类型值
+// 基于构造函数创建出来的值是引用类型
+
+// var num1 = 12;
+// var num2 = new Number(12);
+// console.log(typeof num1); // ==> "number"
+// console.log(typeof num2); // ==> "object"
+
+
+
+
+// 【构造函数执行独有】：在JS代码自上而下执行之前，首先在当前形成的私有栈中创建一个对象
+// （创建一个堆内存：暂时不存储任何东西），并且让函数中的执行主体（this）指向一个新的堆内存
+// （this === 创建的对象）； 代码执行完成，把之前创建的堆内存地址返回（浏览器默认返回）
+
+// function Fn (name, age)
+// {
+//     var n = 10;
+//     this.name = name;
+//     this.age = age;
+// }
+
+// var f1 = new Fn('xxx', 20);
+// var f2 = new Fn('aaa', 30);
+
+// console.log(f1 === f2);
+// console.log(f1.age);
+// console.log(f2.name);
+// console.log('name' in f1);
+// console.log(f1.n);
+
+
+
+
+// function Fn ()
+// {
+//     var n = 10;
+//     this.m = n;
+//     // return 'xxx';
+//     // return;  // 只写return是结束代码执行，不会覆盖实例
+//     return {xxx : 123}; 
+// }
+// var f = new Fn(); // new Fn; 在构造函数执行的时候，如果Fn不需要传递实参，我们可以省略小括号，还是创建实例
+// console.log(f);
+
+//   1.构造函数执行，不写return，浏览器会默认返回创建的实例，没有受到影响
+//   2.如果返回的是引用值，则会把默认返回的实例覆盖，此时接收到的结果就不再是当前类的实例了
+//   3.构造函数执行的时候，尽量减少return的使用，防止覆盖实例
+
+// //instanof : 检测某一个实例是否隶属于这个类
+// console.log(f instanceof Fn); // true
+// console.log(f instanceof Array); // false
+// console.log(f instanceof Object); // true (万物皆对象)
+
+// // in : 检测当前对象是否存在某个属性（不管当前这个属性是对象的私有属性还是公有属性，只要有结果就是true）
+// console.log('m' in f); // true
+// console.log('n' in f); // false
+// console.log('toString' in f); // true  toString是它的共有属性
+
+// // hasOwnProperty : 检测当前属性是否为对象的私有属性（不仅要有这个属性，并且必须还是私有的才可以）
+// console.log(f.hasOwnProperty('m')); // true
+// console.log(f.hasOwnProperty('n')); // false
+// console.log(f.hasOwnProperty('toString')); // false 
+
+// 思考题：编写一个方法hasPubProperty，检测当前属性是否为对象的公有属性，和hasOwnProperty对应
+
+// function hasPubProperty (obj, attr)
+// {
+//     if (attr in obj)
+//     {
+//         if (obj.hasOwnProperty(attr) === false)
+//         {
+//             return true;
+//         }
+//         else
+//         {
+//             return false;
+//         }
+//     }
+//     return false;
+// }
+
+
+
+
+//   1.所有的函数数据类型天生自带一个属性：prototype（原型），这个属性的值是一个对象，
+// 浏览器会默认给它开辟一个堆内存
+//   2.在浏览器给prototype开辟的堆内存中有一个天生自带的属性：constructor，这个属性
+// 存储的值是当前函数本身
+//   3.每个对象都有一个—— __proto__ 的属性，这个属性指向当前实例所属类的prototype
+// （如果不能确定它是谁的实例，都是Object的实例）
+
+//   原型链：
+//   他是一种基于__proto__向上查找的机制。当我们操作实例的某个属性或者方法的时候，首先
+// 找自己空间中私有的属性或方法：
+//   1.找到了，则结束查找，使用自己私有的即可
+//   2.没有找到，则基于__proto__找所属类的prototype，如果找到就用这个公有的，如果
+// 没有找到，基于原型上的__proto__继续向上查找，直到找到Object
+
+
+
+
+// var a = 4;
+// function b (x, y, a)
+// {
+//     console.log(a);
+//     arguments[2] = 10;
+//     // arguments : 函数内置的实参几何，不管是否设置形参，传递的实参值在这个集合中都存在
+//     /*
+    
+//     arguments
+//     {
+//         0 : 1,
+//         1 : 2,
+//         2 : 3
+//         length : 3
+//         callee : 函数本身
+//     }
+
+//     在JS非严格模式下，函数中的形参变量和arguments存在映射机制
+//     第一个形参变量值修改为100，那么arg[0]的值也跟着修改为100
+//     arg[1]的值修改为200，那么第二个形参变量y的值也会跟着变为200
+
+//     */ 
+//     console.log(a);
+// }
+// a = b(1, 2, 3);
+// console.log(a); // b()函数执行没有返回值，所以a == undefined
+
+function fn (x, y) {
+    var arg = arguments;
+    arg[0] = 100;
+    console.log(x);
+    y = 200;
+    console.log(arg[1]);
+    arg[1] = 300;
+    console.log(y);
+    /*
+    arguments和形参的映射机制建立在函数执行偶形参赋值的一瞬间，此时能建立映射机制的则建立，不能的
+    不管怎么操作都无法再建立了
+    */
+}
+fn(10);
+
+/*严格模式
+  在当前作用于的“第一行”添加“use strict”即可，这样在当前作用于中就开启了JS的严格模式
+
+  JS文件第一行：
+  "use strict" // 这个JS文件全局都开启了严格模式（只对当前这个JS文件的代码生效，下一个
+  JS文件需要开启严格模式，第一行还需要再次编写）
+
+  function fn () {
+      "use strict" // 只在当前作用于使用严格模式
+  }
+
+  1.严格模式下不能使用arguments.callee
+  2.严格模式下arguments和形参没有映射机制
+  3.严格模式下对象不允许属性重名
+  4.严格模式下，函数执行，若没有明确指定执行的主题（函数前面没有点），不像非严格模式下，统一交给window，
+  而是让this指向undefined
