@@ -913,14 +913,14 @@
 // Function.prototype.call.call(fn1);
 
 
-let fn = function (a, b) {
-  console.log(this,a, b);
-}
-let obj = {name : "OBJ"};
-fn.call(10,20);
-fn.call();
-fn.call(null);
-fn.call(undefined);
+// let fn = function (a, b) {
+//   console.log(this,a, b);
+// }
+// let obj = {name : "OBJ"};
+// fn.call(10,20);
+// fn.call();
+// fn.call(null);
+// fn.call(undefined);
 
 /**
  * call中的细节
@@ -948,3 +948,212 @@ fn.call(undefined);
 
 
 
+
+
+
+// 需求一：获取数组中的最大（最小）值
+//   方法一：先排序，第0项就是目标值
+
+// let arr = [1,5,3,2,6,1,2,3,5];
+// let max = arr.sort(function (a, b) {
+//   return a - b;
+// })[0];
+
+//   方法二：假设法
+
+// let max = arr[0];
+// for (var i = 0; i < arr.length; i++) {
+//   if (arr[i] > max) {
+//     max = arr[i];
+//   }
+// }
+
+// [12,13,14].toString(); // => "12,13,14"
+// eval("12,13,14"); // => 14
+
+// // 1.eval : 把字符串转换为JS表达式
+// eval("1+2"); // => 3
+
+// 2.括号表达式（小括号的应用）
+/**
+ *   用小括号抱起来，里面有很多项（每一项用逗号分隔），最好只获取最后一项的内容（但是
+ * 会把其他的项也都过一遍
+ */
+
+//  (function () {
+//    console.log(1);
+//  },function () {
+//    console.log(2);
+//  }
+//  )();
+
+//  let a = 1 === 1 ? (12,23,34) : null;
+//  console.log(a);
+
+ //不建议过多使用括号表达式，因为会改变this
+// let fn = function () {console.log(this);};
+// let obj = {fn : fn};
+// (fn, obj.fn)(); // 执行的是obj.fn，但方法中的this是window而不是obj
+
+// 方法3：
+// eval("Math.max("+arr.toString()+")");
+
+// 方法4：
+// Math.max.apply(null, arr);
+// 利用了apply的特征：虽放的是一个数组，但执行方法的时候，也是将数组中每一项
+// 依次传给数组
+
+// 方法5：ES6 展开运算符
+// Math.max(...arr);
+
+
+
+// let arr = [12, 23, 34];
+// /**
+//  * let a = arr[0];
+//  * let b = arr[1];
+//  * let c = arr[2];
+//  */
+// let [a, b, c] = arr;
+// /**
+//  * 让等号左边出现和右边相同的数据结构，左边可以创建一些变量，快速获取到右侧对应位置的值（解构赋值）
+//  */
+// let [a] = arr; // a = 12;
+// let [a, , c];  // a = 12, c = 34
+
+// 需求：获取第一项，把剩下的项作为一个数组返回
+// let arr = [12, 23, 34];
+// let [a, ...b] = arr; // a = 12, b = [23, 34]
+/**
+ * ...在此称为剩余运算符：除了前面意外的项，都放在一个数组中
+ * 剩余运算符处于解构中的最后的位置
+ */
+
+//  let arr = [12];
+//  let [a, b = 0] = arr;
+ /**
+  * 如果当前变量对应结构中的这一项没有值，变量用默认值
+  */
+
+  // 现实中一般针对数组或者对象进行结构赋值
+  // let obj = {
+  //   name : 'xxx', 
+  //   age : 25, 
+  //   gender : 0
+  // };
+  // let {name, age} = obj;
+  // // 对象结构赋值默认情况下要求： 左侧变量名和对象中的属性名一致才可以
+
+  // console.log(name, age);
+
+
+  // let {age : ageAA} = obj;
+  // console.log(age); // undefined
+  // console.log(ageAA); // 25 给结构的属性名起别名，作为变量
+
+  // let {friend = 0} = obj;
+  // console.log(friend); // 0 给不存在的属性设置默认值
+
+  // let fn = function ({
+  //   name = 'xxx', age = 0
+  // } = {}) {
+  //   /**
+  //    * 把传递的对象解构了（不传递值，默认为空对象；现在传递对象或者不传递，
+  //    * 形参接收到的都是对象），解构的时候，可以把传递进来对象中，如果某个
+  //    * 属性不存在，我们赋值默认值
+  //    */
+  //   console.log(name, age);
+  // };
+  // fn({name : 'aaa', age : 25});
+
+  // let value = {
+  //   name : 'xxx',
+  //   age : 25,
+  //   score : [12, 23, 34, 45]
+  // };
+  // /**
+  //  * a = 'xxx'
+  //  * b = 12
+  //  * c = [23, 34, 45]
+  //  */
+  // let {name : a, age : [b, ...c]} = value;
+
+
+
+
+  /**
+   *  "..."在ES6语法中，有三种含义
+   *   1.剩余运算符
+   *   2.拓展运算符
+   *   3.展开运算符
+   */
+
+// let arr = [12, 23, 34];
+// let [...arg] = arr; // arr.slice(0)  克隆数组
+
+// function fn (context, ...arg) {
+//   // 获取传递值中的第一个和剩下的
+//   console.log(context, arg);
+//   // arg是一个数组 / arguments是类数组
+// }
+// fn(obj, 10, 20);
+
+// function sum (...arg) {
+//   /**
+//    * 传递几个实参，arg就存储多少个，此时的arg和arguments一样，区别是前者是数组
+//    * 后者是类数组。
+//    */
+// }
+
+// let arr = [12, 23, 34];
+// let fn = function (a, b, c) {
+//   console.log(a, b, c);
+// }
+// Math.max(...arr);
+// fn(...arr); // 把数组中每一项分别传给函数，用展开运算符展开即可。
+
+// let obj = {name : 'xxx', age : 20};
+// let newObj = {...obj, gender : 0}; // 把原有对象展开（克隆）放到新对象中
+
+// let arr = [12, 23];
+// let newArr = [...arr, 100];
+
+// 去掉最大数以及最小数，后求平均数
+// 方法1：
+// let arr = [123,512,333,1,0];
+// arr.sort(function (a, b) {
+//   return a - b;
+// });
+// arr.pop();
+// arr.shift();
+// function getAverage (arr) {
+//   let sum = 0;
+//   for (let i = 0; i < arr.length; i++) {
+//     sum += arr[i];
+//   }
+//   return (sum / arr.length).toFixed(2);
+  
+// }
+// console.log(getAverage(arr));
+
+// 方法2：
+// let fn = function () {
+//   /**
+//    * 把arg类数组转换为数组arr（克隆一份类数组，存储到数组中）
+//    * 借用Array.prototype.slice方法
+//    */
+//   let arr = [].slice.call(arguments, 0);
+//   /**
+//    * 类数组借用数组原型上的方法执行，实现相关操作（借用slice实现把类数组转换为数组）
+//    * 前提：类数组和数组类似，都用length和下标（字符串符合此前提，可以这样搞）
+//    */
+
+//   arr.sort(function (a, b) {
+//     return a -b;
+//   }).pop();
+//   arr.shift();
+  
+//   return (eval(arr.join('+')) / arr.length).toFixed(2);
+// }
+
+// fn(1,2,3,4);
