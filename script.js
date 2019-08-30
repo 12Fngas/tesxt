@@ -818,3 +818,133 @@
 
 // arr.dupRemove();
 // console.log(arr);
+
+
+// 函数的3种角色： 普通函数、普通对象、类
+// function Fn () {
+//   var n = 10;
+//   this.m = 100;
+// }
+// Fn.prototype.aa = function () {
+//   console.log('aa');
+// }
+// Fn.bb = function () {
+//   console.log('bb');
+// }
+// Fn();
+// var f = new Fn;
+// console.log(f.n);
+// console.log(f.m);
+// f.aa();
+// console.log(f.bb);
+
+
+
+
+// function Foo () {
+//   getName = function () {
+//     console.log(1);
+//   }
+//   return this;
+// }
+// Foo.getName = function () {
+//   console.log(2);
+// }
+// Foo.prototype.getName = function () {
+//   console.log(3);
+// }
+// var getName = function () {
+//   console.log(4);
+// }
+// function getName () {
+//   console.log(5);
+// }
+// Foo.getName(); 
+// getName();  
+// Foo().getName();  
+// getName();  
+
+// new Foo.getName(); 
+// new Foo().getName(); 
+// new new Foo().getName(); 
+ 
+
+
+
+// let fn = function () {
+//   console.log(this.name);
+// }
+// let obj = {
+//   name : 'OBJ',
+//   fn : fn
+// };
+// let oo = {name : 'oo'};
+// fn.call(oo);
+// obj.fn();
+
+/**
+ * call
+ * fn.call: 当前实例（函数fn）通过原型链找到Function.prototype上的call
+ * 方法
+ * fn.call()：把找到的call方法执行
+ * 
+ * 当call方法执行的时候
+ * => 先把要操作函数中的this关键字变为call方法第一个传递的实参值
+ * => 把call方法第二以及第二个以后的实参获取到
+ * => 把要操作的函数执行，并且把第二个以后传进来的实参传给函数
+ * 
+ */
+
+//  Function.prototype.myCall = function () {
+//   let param1 = arguments[0],
+//        paramOther = []; // 把arg中第二以及第二以后的实参获取到
+//   // this : fn 当前要操作的函数（函数类的一个实例）
+//   // 把fn中的this关键字修改为param1
+//   // 把fn执行，把paramOther分别传递给fn
+//   // this（paramOther）
+//  }
+//  fn.call(obj);
+
+// function fn1 () {console.log(1);}
+// function fn2 () {console.log(2);}
+// fn1.call(fn2);
+// fn1.call.call(fn2);
+// Function.prototype.call(fn1);
+// Function.prototype.call.call(fn1);
+
+
+let fn = function (a, b) {
+  console.log(this,a, b);
+}
+let obj = {name : "OBJ"};
+fn.call(10,20);
+fn.call();
+fn.call(null);
+fn.call(undefined);
+
+/**
+ * call中的细节
+ *   1.非严格模式下，如果参数不传，或者第一个传递的是null、undefined，this都指向window
+ *   2.在严格模式下，第一个参数是谁，this就指向谁（包括 null / undefined），不传this就是undefined
+ * 
+ * apply： 和call基本一样，区别在于传参方式
+ *   fn.call(obj, 10, 20);
+ *   fn.apply(obj, [10, 20]) apply把需要传递给fn的参数放到一个数组（或者类数组）中传递进去，
+ * 虽然写的是一个数组，但相当于给fn一个个传递
+ * 
+ * bind： 语法和call一样，区别在于是立即执行还是等待执行
+ *   fn.call(obj, 10, 20) 改变fn中的this，并且把fn立即执行
+ *   fn.bind(obj, 10, 20) 改变fn中的this，此时fn没有执行（不兼容IE6-8）
+ * 
+ * 需求：点击的时候执行fn，让fn中的this是obj
+ * 
+ *   document.onclick = fn; // this : document
+ *   document.onclick = fn.call(obj); // 虽然this确实改为obj了，但是绑定的时候
+ * 就把fn执行了（call是立即执行函数），点击的时候执行的是fn的返回值undefined
+ * 
+ *   document.onclick = fn.bind(obj); // bind把fn中的this预处理为obj，此时
+ * 并没有执行，当点击的时候才会把fn执行
+ */
+
+
+
