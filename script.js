@@ -1157,3 +1157,169 @@
 // }
 
 // fn(1,2,3,4);
+
+// 三种类数组克隆为数组的方法：
+// let arr = [].slice.call(arguments, 0);
+//     arr = [...arguments];
+//     arr = Array.from(arguments);
+
+
+
+
+// let fn = (x, y) => {
+
+// };
+// fn(10, 20);
+
+// fn = x => {
+//   // 只有一个形参，小括号可省略
+// };
+// fn(10);
+
+// fn = (x = 0, y = 0) => x + y; // 函数体内只有一句，并且是return，大括号可省略（形参设置默认值）
+// console.log(fn(10, 20));
+
+// fn = x => y => x + y; // 等价于：
+// fn = function (x) {
+//   return function (y)
+//   {
+//     return x + y;
+//   }
+// } 
+
+// // 箭头函数中没有arguments
+// fn = (...arg) => {
+//   console.log(arguments); // arguments is not defined
+//   console.log(arg); // 可用剩余运算符代替，而且arg是数组
+// }
+// fn(10, 20, 30, 40);
+
+// // 箭头函数中没有自己的执行主体（this），它的this都是集成上下文中的this
+// let obj = {
+//   fn : (function () {
+//     // this : window
+//     return  () => {
+//       console.log(this);
+//     }
+//   })()
+// };
+// obj.fn();
+/**
+ * this是window，不是obj。箭头函数执行和是否有点，点前面是谁都没关系，因为它没有自己的执行主体，而是找
+ * 上下文中的this来使用
+ */
+
+
+// let navBox = document.getElementsByTagName('nav'),
+//     clickLi = document.getElementsByClassName('clickLi'),
+//     mainBox = document.getElementById('main'),
+//     productLi = document.getElementsByClassName('proLi');
+
+
+// (function () {
+//   let productData = null;
+//   let xhr = new XMLHttpRequest;
+//   xhr.open('get', 'data.json', false);
+//   xhr.onreadystatechange = () => {
+//     if (xhr.readyState === 4 && xhr.status === 200) {
+//       productData = xhr.responseText;
+//     }
+//   };
+//   xhr.send(null);
+//   productData = JSON.parse(productData);
+
+
+//   let str = ``;
+//   for (let i = 0; i < productData.length; i++) {
+//     let {
+//       title,
+//       img = 'img.jpg',
+//       price,
+//       time,
+//       hot
+//     } = productData[i];
+
+//     str += `<li class="proLi"
+//               data-price="${price}"
+//               data-time="${time}"
+//               data-hot="${hot}"  >
+//               <img src="${img}" alt="">
+//               <p>${title}</p>
+//               <p>￥${price}</p>
+//           </li>`;
+//   }
+//   mainBox.innerHTML += str;
+// })();
+
+// (function () {
+  
+//   let sortList = function () {
+    
+//     let productArr = [].slice.call(productLi);
+//     let attrArr = ['data-time','data-price','data-hot'];
+
+//     productArr.sort((a, b) => {
+
+//       let aP = a.getAttribute(attrArr[this.idx]),
+//           bP = b.getAttribute(attrArr[this.idx]);
+//       if (this.idx === 0) {
+//         aP = aP.replace(/-/g, '');
+//         bP = bP.replace(/-/g, '');
+//       }
+//       return (bP - aP) * this.flag;
+//     });
+    
+//     for (let i = 0; i < productArr.length; i++) {
+//       let curLi = productArr[i];
+//       mainBox.appendChild(curLi);
+//     }
+//   };
+
+//   for (let i = 0; i < productLi.length; i++) {
+//     let curLink = productLi[i];
+//     curLink.idx = i;
+//     curLink.flag = -1;
+    
+//     curLink.onclick = function () {
+//       this.flag *= -1;
+//       sortList.call(this);
+//     }
+//   }
+// })();
+
+
+/**
+ * 正则：是一个用来处理字符串的规则
+ *   1.正则只能用来处理字符串
+ *   2.处理一般包括两方面：
+ *     A：验证当前字符串是否符合某个规则（正则匹配）
+ *     B：把一个字符串中符合规则的字符获取到（正则捕获）
+ * 
+ * 学习正则就是学习如何编写规则，每个正则由两部分组成：
+ *   1.元字符
+ *   2.修饰符
+ */
+
+ // 1.创建正则的两种方式
+ let reg1 = /^\d+$/g; // 字面量方式
+ let reg2 = new RegExp("^\\d+$", "g");
+
+ //2.正则两个斜杠之间抱起来的都是‘元字符’，斜杠后面出现的都是‘修饰符’ 
+ /**
+  * 常用修饰符：
+  *       i  ignoreCase  忽略大小写匹配
+  *       m  multiline  多行匹配
+  *       g  global  全局匹配
+  * 
+  * 常用元字符：
+  *    [特殊元字符]
+  *    [量词元字符：让其左边的元字符出现多少次]
+  *       * 出现零到多次
+  *       ？ 出现零到一次
+  *       + 出现一到多次
+  *       {n} 出现n次
+  *       {n,} 出现n到多次
+  *       {n,m} 出现n到m次
+  *    [普通元字符]
+  *           
+  */

@@ -1,8 +1,40 @@
-li {
-  width: 100%;
-  height: 50px;
-  background-color: red;
+body {
+  padding: 0;
+  margin: 0;
+}
+
+.clearfix{
+	overflow:auto;
+	height:1%
+}
+
+.main {
+  width : 30%;
+}
+
+img {
+  width : 50%;
+}
+
+.proLi {
+  float : left;
+  list-style: none;
+  width: 25%;
   list-style: none;
   margin-bottom: 10px;
 }
+
+nav {
+  background-color: antiquewhite;
+  text-align: center;
+}
+
+nav li {
+  display : inline-block;
+  float : left;
+  margin-left: 40px;
+  margin-right: 40px;
+  line-height: 40px;
+}
+
 
