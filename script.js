@@ -1301,8 +1301,8 @@
  */
 
  // 1.创建正则的两种方式
- let reg1 = /^\d+$/g; // 字面量方式
- let reg2 = new RegExp("^\\d+$", "g");
+//  let reg1 = /^\d+$/g; // 字面量方式
+//  let reg2 = new RegExp("^\\d+$", "g");
 
  //2.正则两个斜杠之间抱起来的都是‘元字符’，斜杠后面出现的都是‘修饰符’ 
  /**
@@ -1501,3 +1501,231 @@
      */
 
     //  reg = /^\w+((-\w)|(\.\w+))*@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*(\.[A-Za-z0-9]+)$/;
+
+
+
+
+  /**
+   * 正则捕获：把一个字符串中和正则匹配的部分获取到
+   * [正则]
+   *  exec
+   *  test
+   * [字符串]
+   *  replace
+   *  split
+   *  match
+   *  .... 
+   */
+
+
+  /**
+   * 基于exec可以实现正则的捕获
+   *  1.如果当前正则和字符串不匹配，捕获的结果是null
+   *  2.如果匹配，捕获的结果是一个数组
+   *    0：大正则捕获的内容
+   *    index：正则捕获的起始
+   *    ......
+   *  3.执行一次exec只能捕获到第一个和正则匹配的内容，其余匹配的内容还没有捕获到，
+   * 执行多次，也没用 => “正则的捕获有懒惰性：只能捕获到第一个匹配的内容，剩余内容
+   * 捕获不到”
+   */
+
+  // str = 'zhufeng2018peixun2019';
+  // reg = /\d+/;
+  // console.log(reg.exec('zhufengpeixun')); // => null
+
+  // /**
+  //  * 解决正则捕获的懒惰性，我们需要加全局修饰符g（这是唯一方案，如果不加g，就不能把全部匹配的捕获到）
+  //  */
+
+  // str = 'zhufeng2018peixun2019';
+  // reg = /\d+/g;
+  // console.log(reg.lastIndex); // => 0
+  // console.log(reg.exec(str)); // => ['2018']
+  // console.log(reg.lastIndex); // => 11
+  // console.log(reg.exec(str)); // => ['2019']
+  // console.log(reg.lastIndex); // => 21
+  // console.log(reg.exec(str)); // => null
+  // console.log(reg.lastIndex); // => 0
+  // console.log(reg.exec(str)); // => ['2018]
+
+  // let str = 'abc2018def2019ghi2020jkl2021';
+  // let reg = /\d+/g;
+  // RegExp.prototype.myExecAll = function ( str ) {
+  //   // this: reg当前操作的正则
+  //   // str: 我们要捕获的字符串
+  //   // 执行exec开始捕获，具体捕获多少次不定，当时一直到捕获不到内容（null）为止，期间把捕获到的内容存到数组中
+  //   // 为了防止死循环，先验证正则是否加g，没有加只把第一次捕获的结果返回即可
+  //   if (!this.global) {
+  //     return this.exec( str );
+  //   }
+  //   let arr = [];
+  //   let execItem = this.exec( str );
+  //   while (execItem) {
+  //     arr.push( execItem[0] );
+  //     execItem = this.exec( str );
+  //   }
+  //   return arr;
+  // };
+  // console.log(reg.myExecAll(str));
+
+
+
+
+// let str = 'abc{2018}def{2019}ghi{2020}jkl{2021}';
+// let reg = /\{(?:\d+)\}/g; // 大括号特殊含义：{n}出现的次数
+
+// console.log(reg.exec(str)); // ['{2018}','2018']
+// /**
+//  * 正则捕获的时候，如果存在分组，捕获时不仅把大正则匹配到的字符捕获到（数组第一项），
+//  * 而且把小分组匹配的内容也单独抽取出来（数组的第二项开始就是小分组捕获的内容）：“分组捕获”
+//  * 而/\{(?:\d+)\}/g 中的?: 是用来阻止分组捕获内容的（只匹配不捕获）
+//  */
+
+// console.log(str.match(reg)); // ["{2018}", "{2019}", "{2020}", "{2021}"]
+// /**
+//  * match方法也由局限性：若正则设置了g，基于match捕获的内容只有大正则匹配，小分组的内容
+//  * 没有单独抽离出来（不设置g的情况和执行exec一样）
+//  */
+
+/**
+ * 正则捕获的贪婪性：每次捕获时，总是捕获匹配到的最长内容
+ * 例如： '2' 符合 \d+ ‘2018’ 也符合 \d+, 但捕获的是最长的'2018'
+ *  */
+// let str = 'abc2018def2019';
+// let reg = /\d+?/g;
+// /**
+//  * 把问号放到量词元字符后，代表的就不是出现0次或1次了，而是取消捕获的贪婪性
+//  */
+// console.log(reg.exec(str)); // ['2']
+
+/**
+ * ?在正则中的作用
+ *  1.量词元字符：出现0次或1次
+ *   /-?/ 让减号出现1次或者不出现
+ *  2.取消贪婪性
+ *   /\d+?/ 捕获时只捕获最短匹配的内容
+ *  3.?: 只匹配不捕获
+ *  4.?= 正向预查
+ *  5.?! 负向预查
+ */
+
+
+
+
+// let str = 'abc2018def2019';
+// let reg = /\d+/g;
+// console.log(reg.test(str)); // true
+// console.log(reg.lastIndex); // 7
+// //基于test进行匹配，若设置了g，test匹配也相当于捕获，修改了lastIndex的值
+// console.log(reg.exec(str)); // ['2019']
+
+// let str = 'abc2018def2019';
+// let reg = /\d+/g;
+// console.log(reg.exec(str)); // ['2018']
+// console.log(reg.exec('abc2018def2019')); // ['2019']
+// /**
+//  * 虽然捕获的不是同一个字符串，但正则是同一个，上一次正则处理的时候修改了它的lastIndex,
+//  * 也会对下一次匹配的新字符串产生影响
+//  */
+
+// let str = 'abc2018def2019';
+// let reg = /\d+/g;
+// console.log(reg.test(str)); // true
+// console.log(RegExp.$1); // '2018'
+// /**
+//  * $1: 把上一次匹配（test/exec）到的结果获取到，获取的是第一个小分组匹配的内容，大正则匹配的内容
+//  * 无法获取。它是一个全局的值，浏览器中$1只有一个，其他的正则操作也会覆盖整个值，所以没啥用
+//  */
+// console.log(reg.test(str)); // true
+// console.log(RegExp.$1); // '2019'
+// console.log(reg.test(str)); // false
+// console.log(RegExp.$1); // '2019'
+// console.log(reg.test(str)); // true
+// console.log(RegExp.$1); // '2018'
+
+/**
+ * replace: 实现正则捕获的方法（本身是字符串替换）
+ */
+
+//  let str = 'abc2018abc2019';
+//  str = str.replace('abc', 'abcabc');
+//  console.log(str); // 'abcabc2018abc2019'
+//  str = str.replace('abc', 'abcabc');
+//  console.log(str); // 'abcabcabc2018abc2019'
+//  // 真实项目中很多需求不用正则，无法替换
+
+//  str = str.replace(/abc/g, 'abcabc');
+//  console.log(str); // 'abcabc018abcabc2019'
+
+//  //     replace 原理
+//  let str = 'abc{val:2018}abc{val:2019}',
+//      reg = /\{val:(\d+)\}/g;
+//   str = str.replace(reg, '@');
+/**
+ * 用reg正则和str字符串进行匹配，匹配几次就替换几次。每次都是把当前”大正则“匹配的结果
+ * 用第二个传递的字符串替换掉了
+ */
+//   console.log(str);
+
+// str = str.replace(reg, '$1');
+// /**
+//  * $1不是拿这个字符串替换掉大正则匹配的内容，此处的$1代表第一个分组匹配的内容，
+//  * 等价于RegExp.$1
+//  */
+// console.log(str); // 'abc2018abc2019'
+
+/**
+ *  1.reg 和 str 匹配多少次，函数就被出发执行多少次，而且传递了一些参数信息值
+ *  2.每次arg中存储的信息，和执行exec捕获的信息相似（内置原理：每一次正则匹配到的结果，
+ * 都把函数执行，然后基于exec把本次匹配的信息捕获到，然后把捕获的信息传递给这个函数。）
+ *  3.每一次函数中返回的是啥，就把当前大正则匹配的内容替换成啥
+ */
+
+//  str = str.replace(reg, function (...arg) {
+//   console.log(arg);
+//   return 'AA'
+//  });
+//  console.log(str);
+
+/**
+ * 时间字符串格式化
+ * "2018/4/30 17:50:23"  =>  "04-30 17:50"
+ */
+
+//  // 简单处理
+//  let str = "2018/4/30 17:50:23",
+//      ary = str.split(/(?:\/| |:)/g);
+//  let [, month, day, hours, minutes] = ary,
+//      result = `${month}-${day} ${hours}:${minutes}`;
+//   console.log(result);
+
+// let str = "2018/4/30 17:50:23";
+// // 1.获取时间字符串中的所有数字
+// let ary = str.match(/\d+/g).map(function (item) {
+//   return item < 10 ? '0' + item : item;
+// });
+// /**
+//  * map相对于forEach多了返回值，函数中return是啥，就把当前数组中迭代的这一项替换成啥
+//  */
+// console.log(ary);
+// // 2.指定最后想要的时间格式，基于数组中的内容，拼接好
+// let template = '{0}年{1}月{2}日 {3}时{4}分{5}秒';
+// template = template.replace(/\{(\d)\}/g, function (...arg) {
+//   let [, index] = arg;
+//   return ary[index];
+// });
+// console.log(template);
+
+// 时间字符串格式化
+String.prototype.myFormaTime = function (template = '{0}年{1}月{2}日 {3}时{4}分{5}秒') {
+  let ary = this.match(/\d+/g).map(function (item) {
+    return item < 10 ? '0' + item : item;
+  });
+  return template.replace(/\{(\d)\}/g, function (...[, index]) {
+    return ary[index] || '00';
+  });
+
+};
+let str = "2018/4/30 17:50:23";
+console.log(str.myFormaTime('{1}月{2}日 {3}时{4}分{5}秒'));
