@@ -1718,14 +1718,276 @@
 // console.log(template);
 
 // 时间字符串格式化
-String.prototype.myFormaTime = function (template = '{0}年{1}月{2}日 {3}时{4}分{5}秒') {
-  let ary = this.match(/\d+/g).map(function (item) {
-    return item < 10 ? '0' + item : item;
-  });
-  return template.replace(/\{(\d)\}/g, function (...[, index]) {
-    return ary[index] || '00';
-  });
+// String.prototype.myFormaTime = function (template = '{0}年{1}月{2}日 {3}时{4}分{5}秒') {
+//   let ary = this.match(/\d+/g).map(function (item) {
+//     return item < 10 ? '0' + item : item;
+//   });
+//   return template.replace(/\{(\d)\}/g, function (...[, index]) {
+//     return ary[index] || '00';
+//   });
 
-};
-let str = "2018/4/30 17:50:23";
-console.log(str.myFormaTime('{1}月{2}日 {3}时{4}分{5}秒'));
+// };
+// let str = "2018/4/30 17:50:23";
+// console.log(str.myFormaTime('{1}月{2}日 {3}时{4}分{5}秒'));
+
+
+
+
+
+// if('m' in window) {
+//   var m = m && 12;
+// }
+// console.log(m);
+
+// let n = 20;
+// if (!('n' in window)) {
+//   let n = n + 30;
+// }
+// console.log(n);
+
+// let n = 10,
+//     m = 20;
+// (function (n, m) {
+//   let arg = arguments;
+//   arg[0] = n || 100;
+//   arg[1] = m || 200;
+//   console.log(n, m);
+// })(m);
+// console.log(n, m);
+
+// let ary = [12, 23, 34, 45];
+// (function (ary) {
+//   ary.pop();
+//   ary = ary.slice(0);
+//   ary.shift();
+//   console.log(ary);
+// })(ary);
+// console.log(ary);
+
+
+
+
+// let i = 0;
+// let fn = function (n) {
+//   i += 2;
+//   return function (m) {
+//     i += (++n) + (m--);
+//     console.log(i);
+//   }
+// };
+// let f = fn(2);
+// f(3);
+// fn(2)(3);
+// f(4);
+// console.log(i);
+
+
+
+
+/**
+ * 操作DOM的属性和方法
+ *  [获取元素或元素集合]
+ *    getElementById
+ *      -> 上下文只能是document（只有document这个实例的原型链上才能找到这个方法）
+ *      -> ID重复了获取第一个
+ *      -> IE 6-7 会把表单元素的name当做id使用
+ *    getElementsByTagName
+ *      -> 获取当前上下文中，所有子孙中标签名叫做xxx的元素
+ *    getElementsByClassName
+ *      -> IE6-8不兼容
+ *    getElementsByName
+ *       -> IE浏览器中只对表单元素的name起作用
+ *       -> 上下文也只能是document
+ *    querySelector
+ *    querySelectorAll
+ *       -> 不兼容IE 6-8
+ *       -> 没有DOM映射
+ *    document.documentElement
+ *    document.body
+ *    document.head
+ *    ......
+ * 
+ *    [描述节点和节点之间关系的属性]
+ *      元素节点  1  大写标签名  null
+ *      文本节点  3  #text     文本内容
+ *      注释节点  8  #comment  注释内容
+ *      文档节点  9  #document null
+ * 
+ *    childNodes: 所有子节点
+ *    children: 所有元素子节点（IE 6-8中会把注释当做元素节点）
+ *    parentNode
+ *    previousSibling / previousElementSibling
+ *    firstChild
+ *    lastChild
+ * 
+ *    [动态操作DOM]
+ *      createElement
+ *      createDocumentFragment
+ *      appendChild
+ *      insertBefore
+ *      cloneNode(true / false)
+ *      removeChild
+ *      set / get / removeAttribute
+ * 
+ *    [散]
+ *      xxx.style.xxx = xxx 设置行内样式
+ *      xxx.style.xxx 获取行内样式
+ * 
+ *      xxx.className = 'xxx'
+ * 
+ *      xxx.onclick = function ....
+ * 
+ *      ......
+ * 
+ * 
+ * 
+ *  JS盒子模型属性
+ *    在JS中通过相关的属性可以获取（设置）元素的样式信息，
+ * 这些属性就是盒子模型属性（基本上都是有关于样式的）
+ * 
+ *    client
+ *      top
+ *      left
+ *      width
+ *      height
+ * 
+ *    offset
+ *      top
+ *      left
+ *      width
+ *      height
+ *      parent
+ * 
+ *    scroll
+ *      top
+ *      left
+ *      width
+ *      height
+ */
+
+
+
+
+
+ /**
+  * client Top / Left / Width / Height
+  *   1.clientWidth & clientHeight : 获取当前元素可视区域的
+  * 宽高(内容的宽高 + 左右/上下的padding)。 和内容是否溢出无关
+  * （和是否设置了overflow : hidden也无关），就是我们自己设定的
+  * 内容宽高 + padding
+  *
+  *   获取当前页面一屏幕（可视区域）的宽、高
+  *   document.documentElement.clientWidth || document.body.clientWidth
+  *   document.documentElement.clientHeight || document.body.clientHeight
+  * 
+  *   2.clientTop & clientLeft : 获取（上 / 左）边框的宽度
+  *   
+  *   3.offsetWidth & offsetHeight : 在client的基础上加上border （内容是否溢出无关）
+  * 
+  *   4.scrollWidth & scrollHeight : 真实内容的宽高（不一定是自己设定的值，因为可能会内容溢出，
+  * 有内容溢出的情况下，需要把溢出的内容也算上） + 左/上 padding，而且是一个约等值 (没有内容溢出和client
+  * 一样) ========> 不同浏览器下，或者是否设置overflow : hidden，都会对最后结果产生影响，所以这个值
+  * 仅供参考，属于约等值
+  * 
+  *   获取当前页面一屏幕（真实区域）的宽、高
+  *   document.documentElement.scrollWidth || document.body.scrollWidth
+  *   document.documentElement.scrollHeight || document.body.scrollHeight
+  */
+
+
+
+
+
+  /**
+   * 通过JS盒模型属性获取值的特点
+   *  1.获取的都是数字，不带单位
+   *  2.获取的都是整数，没有小数（一般会四舍五入，尤其是获取的偏移量）
+   *  3.获取的结果都是复合样式值（好几个元素的样式组合在一起的值），如果只想获取单一样式值（只想获取padding），
+   * 我们的盒子模型属性就操作不了了（真实中，有时我们就是是需要获取组合的值来完成一些操作）
+   *  
+   */
+
+   /**
+    * [获取元素具体的某个样式值]
+    *   1.[元素].style.xxx 操作获取 （只能获取所有写在元素行内的样式）
+    *   2.获取当前元素所有经过浏览器计算的样式
+    *     经过计算的样式：是要当前元素可以在页面中呈现（或浏览器渲染它了），那么它的样式是被计算过的
+    *     不管当前样式写在哪，不管你是否写了（浏览器会给元素设置一些默认样式）
+    * 
+    *   标准浏览器（IE9+）
+    *     window.getComputedStyle([元素],[伪类，一般写null]);
+    *  获取到当前元素所有被浏览器计算过的样式（对象）
+    *   
+    *   IE 6-8
+    *     [元素].currentStyle 获取经过计算的样式
+    */
+
+    /**
+     * getCss : 获取当前元素某一个样式属性值
+     * @param
+     *  ele[object] : 当前要操作的元素
+     *  attr[string] : 要获取的样式属性名
+     */
+
+    //  let getCss = function (ele, attr) {
+    //    if ('getComputedStyle' in window) {
+    //      let val = window.getComputedStyle(ele, null)[attr];
+    //      let reg = /^-?\d+(.\d+)?(px|rem|em|pt)$/i;
+    //      reg.test(val) ? val = parseFloat(val) : null;
+
+    //      return val;
+
+    //    }
+    //    throw new SyntaxError('浏览器版本过低，请更新！');
+        
+    //  };
+
+
+
+// /**
+//  * 
+//  * 设置当前元素的某一个具体样式的属性值
+//  * JS中给元素设置样式只有两种
+//  *  1.设置元素的样式类名（前提：样式类以及对应的样式已经处理完成）
+//  *  2.通过行内样式设置 xxx.style.xxx = xxx
+//  */
+// let setCss = function (ele, attr, val) {
+//   /**
+//    * 细节处理：
+//    *  1.如果需要考虑IE 6-8兼容，透明度这个样式在低版本浏览器中不是opacity，而是filter（两套都设置）
+//    *  2.如果val值没有带单位，我们就根据情况设置px单位
+//    * （加单位的样式属性：width，height，padding/margin的上下左右，font-size，top，left，right，left...）
+//    *  用户传递的val值是没有单位的
+//    */
+//   if (attr == 'opacity') { 
+//     ele.style.opacity = val;
+//     ele.style.filter = `alpha(opacity=${value * 100})`;
+//     return;
+//   }
+
+//   if (!isNaN(val)) {
+//     // 如果结果是false，说明val是纯数字，没单位
+//     let reg = /^(width|height|fontSize|((margin|padding)?(top|left|right|bottom)?))$/i;
+//     reg.test(attr) ? val += 'px' : null;
+//   }
+
+//   ele['style'][attr] = val;
+// };
+
+// let setGroupCss = function (ele, options = {}) {
+//   //便利传递的options，有多少键值对，就循环多少次，每一次都调取setCss方法注意设置即可
+//   for (let attr in options) {
+//     if (!options.hasOwnProperty(attr)) { break; }
+//     /**
+//      * options : 传递进来的需要修改的样式对象（集合）
+//      * attr : 每一次便利到的集合中的某一项（要操作的样式属性名）
+//      * options[attr] : 传递的要操作的样式属性值
+//      */
+//     setCss(ele, attr, options[attr]);
+//   }
+// };
+// setGroupCss(outer, {
+//   width : 400,
+//   height : 400,
+//   padding : 30
+// });
