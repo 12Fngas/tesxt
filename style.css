@@ -19,3 +19,8 @@
   height : 180px;
   border : 10px solid blue;
 }
+
+
+#main {
+  position: relative;
+}

@@ -1929,18 +1929,18 @@
      *  attr[string] : 要获取的样式属性名
      */
 
-    //  let getCss = function (ele, attr) {
-    //    if ('getComputedStyle' in window) {
-    //      let val = window.getComputedStyle(ele, null)[attr];
-    //      let reg = /^-?\d+(.\d+)?(px|rem|em|pt)$/i;
-    //      reg.test(val) ? val = parseFloat(val) : null;
+//      let getCss = function (ele, attr) {
+//        if ('getComputedStyle' in window) {
+//          let val = window.getComputedStyle(ele, null)[attr];
+//          let reg = /^-?\d+(.\d+)?(px|rem|em|pt)$/i;
+//          reg.test(val) ? val = parseFloat(val) : null;
 
-    //      return val;
+//          return val;
 
-    //    }
-    //    throw new SyntaxError('浏览器版本过低，请更新！');
+//        }
+//        throw new SyntaxError('浏览器版本过低，请更新！');
         
-    //  };
+//      };
 
 
 
@@ -1991,3 +1991,166 @@
 //   height : 400,
 //   padding : 30
 // });
+
+
+
+
+// let css = function (...arg) {
+//   // arg : 传递的实参集合
+//   let len = arg.length;
+//   if (len >= 3) {
+//     // 单一设置： setCss
+//     setCss(...arg); // 另一种方法： setCss.apply(null, arg);
+//     return;
+//   }
+//   if (len == 2 && typeof arg[1] === 'object' && arg[1] !== null) {
+//     // 传递两个参数，第二个参数是一个对象（不是null），说明要批量设置
+//     setGroupCss(...arg);
+//     return;
+//   }
+//   return getCss(...arg);
+// };
+
+// //第二种css写法：
+// let css = function (...arg) {
+//   let len = arg.length,
+//       second = arg[1],
+//       fn = getCss;
+//   len >= 3 ? fn = setCss : null;
+//   len == 2 && (second instanceof Object) ? fn = setGroupCss : null;
+//   return fn(...arg);
+// };
+
+// 公共方法库： 项目常用方法，都可封装到这里
+let utils = (function () {
+  let getCss = function (ele, attr) {
+    if ('getComputedStyle' in window) {
+      let val = window.getComputedStyle(ele, null)[attr];
+      let reg = /^-?\d+(.\d+)?(px|rem|em|pt)$/i;
+      reg.test(val) ? val = parseFloat(val) : null;
+
+      return val;
+
+    }
+    throw new SyntaxError('浏览器版本过低，请更新！');
+     
+  }; // 获取元素样式
+  let setCss = function (ele, attr, val) {
+    /**
+     * 细节处理：
+     *  1.如果需要考虑IE 6-8兼容，透明度这个样式在低版本浏览器中不是opacity，而是filter（两套都设置）
+     *  2.如果val值没有带单位，我们就根据情况设置px单位
+     * （加单位的样式属性：width，height，padding/margin的上下左右，font-size，top，left，right，left...）
+     *  用户传递的val值是没有单位的
+     */
+    if (attr == 'opacity') { 
+      ele.style.opacity = val;
+      ele.style.filter = `alpha(opacity=${value * 100})`;
+      return;
+    }
+  
+    if (!isNaN(val)) {
+      // 如果结果是false，说明val是纯数字，没单位
+      let reg = /^(width|height|fontSize|((margin|padding)?(top|left|right|bottom)?))$/i;
+      reg.test(attr) ? val += 'px' : null;
+    }
+  
+    ele['style'][attr] = val;
+  }; // 设置元素样式
+  let setGroupCss = function (ele, options = {}) {
+    //便利传递的options，有多少键值对，就循环多少次，每一次都调取setCss方法注意设置即可
+    for (let attr in options) {
+      if (!options.hasOwnProperty(attr)) { break; }
+      /**
+       * options : 传递进来的需要修改的样式对象（集合）
+       * attr : 每一次便利到的集合中的某一项（要操作的样式属性名）
+       * options[attr] : 传递的要操作的样式属性值
+       */
+      setCss(ele, attr, options[attr]);
+    }
+  };
+  let css = function (...arg) {
+    let len = arg.length,
+        second = arg[1],
+        fn = getCss;
+    len >= 3 ? fn = setCss : null;
+    len == 2 && (second instanceof Object) ? fn = setGroupCss : null;
+    return fn(...arg);
+  }; // css操作汇总
+  // offset : 获取当前元素距离body的偏移量（左、上偏移）
+  let offset = function (el) {
+    // 1.先获取当前元素本身的左、上偏移
+    let curTop = ele.offsetTop,
+        curLeft = ele.offsetLeft,
+        p = ele.offsetParent;
+    // 2.累加父参照物的边框和偏移（一直向上找，找到body位置，每当找到一个父参照物，都把它的边框的偏移累加）
+    //tag-name 获取当前元素的标签名（大写的）
+    while ((p.tagName !== 'BODY') ){
+      curLeft += p.offsetLeft;
+      curLeft += p.clientLeft;
+      curTop += p.offsetTop;
+      curTop += p.clientTop;
+      p = p.offsetParent;
+    }
+    return {
+      top : curTop,
+      left : curLeft
+    };
+  };
+  //操作浏览器盒子模型属性的方法
+  let winHandle = function (attr, value) {
+    if (value !== 'undefined') {
+      document.documentElement[attr] = value;
+      document.body[attr] = value;
+      return;
+    }
+    return document.documentElement[attr] || document.body[attr];
+  };
+  return {
+    css : css, // ES6中可直接写css
+    offset : offset,
+    winHandle : winHandle
+  };
+})();
+
+
+
+
+/**
+ * offsetParent
+ * 
+ * offsetTop / offsetLeft : 获取当前盒子距离其父级参照物的偏移量（上偏移 / 左偏移）,当前盒子的外边框开始，
+ * 到父级的内边框
+ * 
+ *  "参照物"：同一平面中，元素的父级参照物和结构没有必然联系，默认他们的父级参照物都是body（当前平面
+ * 最外层的盒子）body的父级参照物是null。
+ *  "参照物"可以改变： 构建出不同的平面即可（使用zIndex，但是这个属性只对定位有作用），所以改变元素的
+ * 定位（position: relative / absolute / fixed）可以改变其父级参照物。
+ */
+
+// utils.css(outer, {position : 'relative'});
+// // 把outer脱离原有的平面，独立出一个新的平面，后代元素的父级参照物都会以它为参考
+// console.log(center.offsetParent); // outer
+// console.log(inner.offsetParent); // outer
+// console.log(outer.offsetParent); // body
+
+// utils.css(inner, {position: 'absolute'});
+// console.log(center.offsetParent); // inner
+// console.log(inner.offsetParent); // outer
+// console.log(outer.offsetParent); // body
+// console.log(document.body.offsetParent); // null
+
+
+
+
+/**
+ * scrollTop / scrollLeft : 滚动条卷去的宽度、高度
+ *  最小卷去值： 0
+ *  最大卷去值： 真实页面的高度 减去 屏幕的高度（document.documentElement.scrollHeight - document.documentElement.clientHeight）
+ * 
+ * 在JS盒子模型13个属性中，只有scrollTop / Left是”可读写“属性，其余都是”只读“属性
+ * 
+ *  操作浏览器的盒子模型属性，我们一般都要写两套，用来兼容各种模式下的浏览器
+ */
+
+//  console.log(utils.winHandle('scrollTop'));

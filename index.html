@@ -8,35 +8,15 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <div id="outer">
-    <!-- <div id="inner">
+    <div id="inner">
       <div id="center"></div>
-    </div> -->
+    </div>
 
-//  // 简单处理
-//  let str = "2018/4/30 17:50:23",
-//      ary = str.split(/(?:\/| |:)/g);
-//  let [, month, day, hours, minutes] = ary,
-//      result = `${month}-${day} ${hours}:${minutes}`;
-//   console.log(result);
 
-// let str = "2018/4/30 17:50:23";
-// // 1.获取时间字符串中的所有数字
-// let ary = str.match(/\d+/g).map(function (item) {
-//   return item < 10 ? '0' + item : item;
-// });
-// /**
-//  * map相对于forEach多了返回值，函数中return是啥，就把当前数组中迭代的这一项替换成啥
-//  */
-// console.log(ary);
-// // 2.指定最后想要的时间格式，基于数组中的内容，拼接好
-// let template = '{0}年{1}月{2}日 {3}时{4}分{5}秒';
-// template = template.replace(/\{(\d)\}/g, function (...arg) {
-//   let [, index] = arg;
-//   return ary[index];
-// });
-// console.log(template);
   </div>
+
   <script src = "script.js"></script>
 </body>
 </html>
