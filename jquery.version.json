@@ -1,0 +1,24 @@
+
+[4m[1m[32mjquery[39m@[32m3.4.1[39m[22m[24m | [32mMIT[39m | deps: [32mnone[39m | versions: [33m50[39m
+JavaScript library for DOM operations
+[36mhttps://jquery.com[39m
+
+keywords: [33mjquery[39m, [33mjavascript[39m, [33mbrowser[39m, [33mlibrary[39m
+
+dist
+.tarball: [36mhttps://registry.npmjs.org/jquery/-/jquery-3.4.1.tgz[39m
+.shasum: [33m714f1f8d9dde4bdfa55764ba37ef214630d80ef2[39m
+.integrity: [33msha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==[39m
+.unpackedSize: [33m1.3[39m MB
+
+maintainers:
+- [33mdmethvin[39m <[36mdave.methvin@gmail.com[39m>
+- [33mmgol[39m <[36mm.goleb@gmail.com[39m>
+- [33mscott.gonzalez[39m <[36mscott.gonzalez@gmail.com[39m>
+- [33mtimmywil[39m <[36m4timmywil@gmail.com[39m>
+
+dist-tags:
+[1m[32mbeta[39m[22m: 3.4.1
+[1m[32mlatest[39m[22m: 3.4.1
+
+published [33m4 months ago[39m by [33mtimmywil[39m <[36m4timmywil@gmail.com[39m>

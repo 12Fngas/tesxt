@@ -2022,96 +2022,96 @@
 // };
 
 // 公共方法库： 项目常用方法，都可封装到这里
-let utils = (function () {
-  let getCss = function (ele, attr) {
-    if ('getComputedStyle' in window) {
-      let val = window.getComputedStyle(ele, null)[attr];
-      let reg = /^-?\d+(.\d+)?(px|rem|em|pt)$/i;
-      reg.test(val) ? val = parseFloat(val) : null;
+// let utils = (function () {
+//   let getCss = function (ele, attr) {
+//     if ('getComputedStyle' in window) {
+//       let val = window.getComputedStyle(ele, null)[attr];
+//       let reg = /^-?\d+(.\d+)?(px|rem|em|pt)$/i;
+//       reg.test(val) ? val = parseFloat(val) : null;
 
-      return val;
+//       return val;
 
-    }
-    throw new SyntaxError('浏览器版本过低，请更新！');
+//     }
+//     throw new SyntaxError('浏览器版本过低，请更新！');
      
-  }; // 获取元素样式
-  let setCss = function (ele, attr, val) {
-    /**
-     * 细节处理：
-     *  1.如果需要考虑IE 6-8兼容，透明度这个样式在低版本浏览器中不是opacity，而是filter（两套都设置）
-     *  2.如果val值没有带单位，我们就根据情况设置px单位
-     * （加单位的样式属性：width，height，padding/margin的上下左右，font-size，top，left，right，left...）
-     *  用户传递的val值是没有单位的
-     */
-    if (attr == 'opacity') { 
-      ele.style.opacity = val;
-      ele.style.filter = `alpha(opacity=${value * 100})`;
-      return;
-    }
+//   }; // 获取元素样式
+//   let setCss = function (ele, attr, val) {
+//     /**
+//      * 细节处理：
+//      *  1.如果需要考虑IE 6-8兼容，透明度这个样式在低版本浏览器中不是opacity，而是filter（两套都设置）
+//      *  2.如果val值没有带单位，我们就根据情况设置px单位
+//      * （加单位的样式属性：width，height，padding/margin的上下左右，font-size，top，left，right，left...）
+//      *  用户传递的val值是没有单位的
+//      */
+//     if (attr == 'opacity') { 
+//       ele.style.opacity = val;
+//       ele.style.filter = `alpha(opacity=${value * 100})`;
+//       return;
+//     }
   
-    if (!isNaN(val)) {
-      // 如果结果是false，说明val是纯数字，没单位
-      let reg = /^(width|height|fontSize|((margin|padding)?(top|left|right|bottom)?))$/i;
-      reg.test(attr) ? val += 'px' : null;
-    }
+//     if (!isNaN(val)) {
+//       // 如果结果是false，说明val是纯数字，没单位
+//       let reg = /^(width|height|fontSize|((margin|padding)?(top|left|right|bottom)?))$/i;
+//       reg.test(attr) ? val += 'px' : null;
+//     }
   
-    ele['style'][attr] = val;
-  }; // 设置元素样式
-  let setGroupCss = function (ele, options = {}) {
-    //便利传递的options，有多少键值对，就循环多少次，每一次都调取setCss方法注意设置即可
-    for (let attr in options) {
-      if (!options.hasOwnProperty(attr)) { break; }
-      /**
-       * options : 传递进来的需要修改的样式对象（集合）
-       * attr : 每一次便利到的集合中的某一项（要操作的样式属性名）
-       * options[attr] : 传递的要操作的样式属性值
-       */
-      setCss(ele, attr, options[attr]);
-    }
-  };
-  let css = function (...arg) {
-    let len = arg.length,
-        second = arg[1],
-        fn = getCss;
-    len >= 3 ? fn = setCss : null;
-    len == 2 && (second instanceof Object) ? fn = setGroupCss : null;
-    return fn(...arg);
-  }; // css操作汇总
-  // offset : 获取当前元素距离body的偏移量（左、上偏移）
-  let offset = function (el) {
-    // 1.先获取当前元素本身的左、上偏移
-    let curTop = ele.offsetTop,
-        curLeft = ele.offsetLeft,
-        p = ele.offsetParent;
-    // 2.累加父参照物的边框和偏移（一直向上找，找到body位置，每当找到一个父参照物，都把它的边框的偏移累加）
-    //tag-name 获取当前元素的标签名（大写的）
-    while ((p.tagName !== 'BODY') ){
-      curLeft += p.offsetLeft;
-      curLeft += p.clientLeft;
-      curTop += p.offsetTop;
-      curTop += p.clientTop;
-      p = p.offsetParent;
-    }
-    return {
-      top : curTop,
-      left : curLeft
-    };
-  };
-  //操作浏览器盒子模型属性的方法
-  let winHandle = function (attr, value) {
-    if (value !== 'undefined') {
-      document.documentElement[attr] = value;
-      document.body[attr] = value;
-      return;
-    }
-    return document.documentElement[attr] || document.body[attr];
-  };
-  return {
-    css : css, // ES6中可直接写css
-    offset : offset,
-    winHandle : winHandle
-  };
-})();
+//     ele['style'][attr] = val;
+//   }; // 设置元素样式
+//   let setGroupCss = function (ele, options = {}) {
+//     //便利传递的options，有多少键值对，就循环多少次，每一次都调取setCss方法注意设置即可
+//     for (let attr in options) {
+//       if (!options.hasOwnProperty(attr)) { break; }
+//       /**
+//        * options : 传递进来的需要修改的样式对象（集合）
+//        * attr : 每一次便利到的集合中的某一项（要操作的样式属性名）
+//        * options[attr] : 传递的要操作的样式属性值
+//        */
+//       setCss(ele, attr, options[attr]);
+//     }
+//   };
+//   let css = function (...arg) {
+//     let len = arg.length,
+//         second = arg[1],
+//         fn = getCss;
+//     len >= 3 ? fn = setCss : null;
+//     len == 2 && (second instanceof Object) ? fn = setGroupCss : null;
+//     return fn(...arg);
+//   }; // css操作汇总
+//   // offset : 获取当前元素距离body的偏移量（左、上偏移）
+//   let offset = function (el) {
+//     // 1.先获取当前元素本身的左、上偏移
+//     let curTop = ele.offsetTop,
+//         curLeft = ele.offsetLeft,
+//         p = ele.offsetParent;
+//     // 2.累加父参照物的边框和偏移（一直向上找，找到body位置，每当找到一个父参照物，都把它的边框的偏移累加）
+//     //tag-name 获取当前元素的标签名（大写的）
+//     while ((p.tagName !== 'BODY') ){
+//       curLeft += p.offsetLeft;
+//       curLeft += p.clientLeft;
+//       curTop += p.offsetTop;
+//       curTop += p.clientTop;
+//       p = p.offsetParent;
+//     }
+//     return {
+//       top : curTop,
+//       left : curLeft
+//     };
+//   };
+//   //操作浏览器盒子模型属性的方法
+//   let winHandle = function (attr, value) {
+//     if (value !== 'undefined') {
+//       document.documentElement[attr] = value;
+//       document.body[attr] = value;
+//       return;
+//     }
+//     return document.documentElement[attr] || document.body[attr];
+//   };
+//   return {
+//     css : css, // ES6中可直接写css
+//     offset : offset,
+//     winHandle : winHandle
+//   };
+// })();
 
 
 
@@ -2154,3 +2154,697 @@ let utils = (function () {
  */
 
 //  console.log(utils.winHandle('scrollTop'));
+
+
+
+
+
+// let wrapper = document.querySelector('.wrapper');
+// // 1.把wrapper中原有的li克隆一份放到容器末尾
+
+// /** 方法1：
+// let wrapperList = wrapper.querySelectorAll('li');
+// let frag = document.createDocumentFragment();
+// [].forEach.call(wrapperList, function (item) {
+//     frag.appendChild(item.cloneNode(true));
+// })
+// wrapper.appendChild(frag);
+// frag = null;
+// */
+
+// // 方法2 ：
+// wrapper.innerHTML += wrapper.innerHTML;
+
+// //克隆完成后修改wrapper的宽度（内容变多了）
+// utils.css(wrapper, 'width', utils.css(wrapper, 'width') * 2);
+
+// /**
+//  * 实现JS动画
+//  *  让wrapper每间隔一段时间（最有动画时间是13-17ms）在原有的left值基础上
+//  * 减去步长（想动画快点，步长就大点）
+//  */
+
+
+//  // JS中的定时器：间隔1000毫秒执行一次这个方法，直到手动清除为止
+//  setInterval(function () {
+//     // 获取当前wrapper的left值,再减去步长，把最新的left赋值给元素
+//     let curL = utils.css(wrapper, 'left');
+//     utils.css(wrapper, {
+//         left : curL -= 2
+//     });
+    
+//     //实现无缝：当ul距离marqueeBox的左偏移是整个wrapper一半宽度，就让wrapper立即运动到left为0的位置
+//     if (Math.abs(wrapper.offsetLeft) >= utils.css(wrapper, 'width') / 2) {
+//         utils.css(wrapper, 'left', 0);
+//     }
+// }, 17);
+
+
+
+
+/**
+ * 类库、插件、UI组件、框架
+ *  1.类库： JQ / Zepto 。。。 提供一些真实项目中常用的方法，任何项目都可以把类库导入
+ * 进来，调取里面的方法实现自己需要的业务逻辑。
+ * 
+ *  2.插件： 具备一定业务功能，例如，封装轮播图插件、选项卡插件、模态框插件等（插件规定
+ * 了当前这个功能的样式结构，把实现功能的JS进行封装，以后想实现这个功能直接导入插件即可）
+ * 例如 swiper / iscroll / jquery-dialog / jquery-drag / jquery-datepicker / 
+ * Echarts ... 
+ * 
+ *  3.UI组件： 把结构、CSS、JS全部封装好，想实现功能直接导入进来即可（偶尔需要自行修改）
+ * 例如： bootsrap ... 
+ * 
+ *  4.框架：具备一定的编程思想，要求我们按照框架的思想开发，一般框架中提供了常用的类库方法，
+ * 提供了强大的插件功能，有的也提供了强大的UI组件...
+ * React(React native) / Vue / Angular / Backbone / Sea.js / Require.js
+ * 
+ * 
+ * JQuery是一个非常优秀的JS“类库”
+ *  基于原生JS封装的一个类库，提供了很多的方法，而且这些方法是兼容所有浏览器的
+ * 
+ * JQ版本：
+ *  v1（常用）1.8.3  1.9.3  1.11.3
+ *  v2 
+ *  v3
+ * 
+ */
+
+
+
+
+//  (function () {
+//   var version = '1.11.3';
+//     jQuery = function (selector, context) {
+//       return new jQuery.fn.init(selector, context);
+//       /**
+//        *  创建了init这个类的实例，也相当于创建了jQuery这个类的实例（因为
+//        * 在后面，让init.prototype = jQuery.prototype）
+//        */
+//     };
+
+//   /**
+//    * jQuery是一个类，在它的原型上提供了很多的属性和方法，供JQ的实例调用
+//    */
+//   jQuery.fn = jQuery.prototype = {
+//     jquery : version,
+//     constructor : jQuery,
+//     // ...
+//   };
+
+  // 给JQ原型上增加extend方法，同时把JQ当做一个普通对象，给这个对象设置了一个私有方法
+  /**
+   *  JQ是一个类（也是一个普通对象）：函数的两种角色，JQ是一个类库，提供了很多方法，这些方法
+   * 有两部分：
+   *    1.放到JQ原型上（jQuery.fn / jQuery.prototype），这里面的方法是供JQ实例调取使用的
+   *    2.把JQ当做一个普通对象，在对象上设置一些私有属性和方法，这类方法以后要调用，直接jQuery.xxx()即可
+   */
+
+//   jQuery.extend = jQuery.fn.extend = function () {
+//     //extend是把一个对象中的属性和方法扩展到指定的对象上
+//   };
+
+//   jQuery.extend({
+//     isFunction : function (obj) {},
+//     isArray : function () {},
+//     //...
+//   });
+//   //jQuery:{extend:..., isFunction:..., isArray:...}
+
+//   jQuery.fn.extend({
+//     //find: ...
+//   });
+//   //jQuery.prototype: {..., find:...}
+
+//   var init = jQuery.fn.init = function (selector, context) {
+//   }
+
+//   init.prototype = jQuery.fn;
+//     /**
+//      * 把init当做一个类，但是让这个类的原型指向了jQuery.prototype(init这个类的实例最后找到的也是jQuery
+//      * 这个类的原型上的方法 ： init的实例也是jQuery的实例 )
+//      */
+  
+//      window.jQuery = window.$ = jQuery;
+//  })();
+
+//  $().filter(); // 创建一个jQuery实例，可以调用JQ.fn中的方法
+//  $.isFunction(); // 把JQ当做一个普通对象，直接使用对象上扩展的私有属性和方法（这些方法和实例没关系）
+
+ 
+//  let Fn = function () {
+//    return  new Fn.prototype.init();
+//  };
+// Fn.prototype.init = function () {
+//   // ...
+// }
+// Fn.prototype.init.prototype = Fn.prototype;
+// let f = Fn(); // 不加new创建Fn实例
+
+
+
+
+/** JQ选择器： 基于各种选择器创建一个JQ实例（JQ对象）
+ *  1.selector 选择器的类型（一般都是字符串，但是支持函数或者元素对象）
+ *  2.context 基于选择器获取原色时指定的上下文（默认document）
+ * 
+ * JQ对象 ：一个类数组结构（JQ实例），这个类数组集合中包含了获取到的元素
+ */
+
+// console.log($('.tabBox'));
+// /**
+//  * JQ对象（类数组） -> JQ实例
+//  *  0： div.tabBox
+//  *  length: 1
+//  *  context: document
+//  *  selector: '.tabBox'
+//  *  __proto__: jQuery.prototype
+//  *    add
+//  *    ...
+//  *    __proto__: Object.prototype
+//  *      hasOwnProperty
+//  *      ...
+//  */
+
+// console.log($('.tabBox li'));
+// /**
+//  * JQ对象（类数组） -> JQ实例
+//  *  0： li
+//  *  1： li
+//  *  2： li
+//  *  length: 3
+//  *  context: document
+//  *  selector: '.tabBox li'
+//  *  __proto__: jQuery.prototype
+//  *    add
+//  *    ...
+//  *    __proto__: Object.prototype
+//  *      hasOwnProperty
+//  *      ...
+//  */
+
+/**
+ * 获取页面中的元素对象
+ *  1.基于原生JS提供的属性和方法获取 -> 原生JS对象
+ *    可以调用内置的JS属性和方法
+ *      className
+ *      onclick
+ *      ...
+ *  2.基于JQ选择器获取 -> JQ对象
+ *    可以调取JQ原型上提供的属性和方法
+ *      add
+ *      find
+ *      ...
+ * 
+ *  把JQ对象和原生JS对象之间相互的转换
+ *    [JQ -> 原生JS]
+ *      JQ对象是一个类数组集合，集合中每个下标对应的都是原生JS对象，我们基于下标获取即可
+ *        let $tbBox = $('tabBox'); 变量名以$开头，代表基于JQ选择器获取的结果
+ * 
+ *      let tabBox = $tabBox[0];  // JS对象
+ *      let tabBox = $tabBox.get(0);  // JS对象
+ *      let tabBox = $tabBox.eq(0);  // JQ对象
+ * 
+ *    [原生JS -> JQ]
+ *      let tabBox = document.querySelector('.tab');
+ * 
+ *    $(tabBox); // 直接使用选择器把原生JS对象包裹起来，就会把JS转换为JQ对象
+ */
+
+ /**
+  * 分析选择器源码，我们发现selector传递的值支持三种类型
+  *   1.string  基于选择器获取元素
+  *   2.元素对象  selector.nodeType 把JS对象转换为JQ对象
+  *   3.函数  把传递的函数执行，把JQ当做实参传给函数: selector(jQuery)
+  */
+
+//  $(function ($) {
+//   // $ : 传递进来的jQuery
+//  });
+
+// $ = '哈哈'; // $(); // Uncaught TypeError : $ is not a function
+// jQuery(function ($) {
+//   //  $是私有变量，外部无法改变
+// });
+
+// jQuery(function () {
+//   // 函数肯定会执行，但会在页面的HTML结构加载完成后再执行，并形成闭包
+//   // 写自己的代码
+// });
+
+
+
+// /**
+//  * JQ选择器的selector可以是字符串，字符串这种格式也有两种
+//  *  1.选择器
+//  *  2.HTML中关村拼接的结构： 把拼接好的HTML字符串转换为JQ对象，然后可以基于appendTo
+//  * 等方法追加到页面中
+//  */
+// $('<div id="AA"></div>').appendTo(document.body);
+
+// /**
+//  * each : JQ的eahc方法是用来进行遍历的（类似数组的forEach）
+//  *  [可遍历内容]
+//  *    1.数组
+//  *    2.对象
+//  *    3.类数组（JQ对象）
+//  *    ...
+//  *  [三种each]
+//  *    1.给jQuery设置的私有属性 $.each()
+//  *    2.给实例设置的共有属性  $([selector]).each()
+//  *    3.内置的each
+//  */
+// $.each([1, 2, 3], function (index, item) {
+//   //参数顺序和内置forEach相反
+//   console.log(index, item)
+// });
+
+// $.each({
+//   //原理就是 for in 循环
+//   name : 'xxx',
+//   age : 2,
+//   0 : 100
+// }, function (key, value) {
+//   console.log(key, value);
+// });
+
+// $('.tabBox li').each(function (index, item) {
+//   // 非箭头函数： this === item，当前遍历的这一项（原生JS对象）
+//   // $(this)把当前遍历的这一项转换为JQ对象
+//   $(this).on('click', function () {
+//     //给每一个遍历的li都绑定一个点击事件
+//     //this : 当前点击的li（原生JS对象 ）
+//     $(this).css({
+//       color : 'red'
+//     });
+//   });
+// });
+
+// $('.tabBox li').click(function () {
+//   /**
+//    * 获取的JQ集合中有3个，我们此处给3个li都绑定了点击事件（JQ在调取click
+//    * 时，会默认把集合进行each遍历，把每一项都绑定
+//    */
+// });
+
+// $.noConflict(); // $ === undefined
+// // 转让$的使用权
+
+// jQuery.noConflict(true); // jQuery === undefined
+// let abc = jQuery.noConflict(true); // 返回值赋值给一个变量，此时这变量是新的JQ代言人
+// // 深度转让： 把jQuery这名字也转让出去
+
+
+
+
+// $.ajax({
+//   url : 'data.json',
+//   method : 'GET',
+//   dataType : 'json',
+//   async : false,
+//   success : function (result) {
+//     console.log(result);
+//   }
+// });
+
+// var someText = document.createElement('div');
+// var ulBox = document.getElementsByClassName('list-box');
+// var liS = ulBox[0].getElementsByTagName('li');
+
+// for (let i = 0; i < liS.length; i++)
+// {
+//   console.log(liS[i].outerText + '\n');
+// }
+// someText.appendChild('body');
+
+
+
+
+// 当HTML结构都加载完成执行函数
+// $(function ($) {
+//   $('.tabBox>.header>li').on('click', function () {
+//     let index = $(this).index();
+//     $(this).addClass('active')
+//       .siblings().removeClass('active')
+//       .parent().nextAll()
+//       .eq(index).addClass('active')
+//       .siblings('div').removeClass('active');
+//   });
+// });
+
+
+
+
+// $(function () {
+//   //HTML结构加载完后，才执行此闭包内代码
+
+//   //1.获取数据
+//   /**
+//    * 真实项目中，我们第一页加载完成，当用户下拉到底部，开始获取第二页的内容。
+//    * 服务器端会给我们提供一个API获取数据的地址，并要求客户端把获取的是第几页
+//    * 的内容传递给服务器，服务器依照这个原理把对应不同的数据返回（分页技术）
+//    */
+
+//    let page = 0,
+//        imgData = null;
+//        isRun = false;
+//    let queryData = function () {
+//      page ++;
+//      $.ajax({
+//         url : `json/waterFall.json?page=${page}`,
+//         method : 'GET',
+//         async : false,
+//         dataType : 'json',
+//         success : function (result) {
+//           imgData = result;
+//         }
+//      });
+//    };
+//    queryData();
+
+
+
+//    // 2.数据绑定
+
+//    //传递一个对象进来，发挥对应的结构字符串
+//   //  let queryHTML = ({id, pic, link, title} = {}) => {
+//   //    if (typeof id === 'undefined') {
+//   //      return '';
+//   //    }
+//   //   return `<a href="${link}">
+//   //     <div><img src="${pic}"></div>
+//   //     <span>${title}</span>
+//   //   </a>`;
+//   //  };
+//   let bindHTML = function () {
+//     let $boxList = $('.flowBox>li');
+
+//     for (let i = 0; i < imgData.length; i += 3) {
+//      /**
+//       *  分别获取每三个为一组，一组中的三个内容（存在的隐形风险：当前数据
+//       * 长度不是3的倍数，那么最后一次循环的时候，三个钟的某一个会不存在获取
+//       * 的item值是undefined）
+//       */
+//     //  let item1 = imgData[i],
+//     //      item2 = imgData[i + 1],
+//     //      item3 = imgData[i + 2];
+//       /**
+//        * 我们接下来要把获取的item一次插入到每一个li中，但是绝对不是按照顺序插入，
+//        * 我们需要先按照每一个li的现有高度给li进行排序（小到大），按照最新的顺序依次
+//        * 插入即可
+//        */
+//         $boxList.sort(function (a, b) {
+//           return $(a).outerHeight() - $(b).outerHeight();
+//         }).each(function (index, curLi) {
+
+//           let item = imgData[i + index];
+//           if (!item) return;
+//           let {id, pic, link, title} = item;
+//           $(`<a href="${link}">
+//             <div><img src="${pic}"></div>
+//             <span>${title}</span>
+//             </a>`).appendTo($(curLi));
+//         });
+//         // if (item1) { boxList[0].innerHTML += queryHTML(item1); }
+//         // if (item2) { boxList[1].innerHTML += queryHTML(item2); }
+//         // if (item3) { boxList[2].innerHTML += queryHTML(item3); }
+//     }
+
+//     isRun = false;
+//   };
+//   bindHTML();
+
+
+//   // 3.当滚动到页面底部的时候，加载下一页的更多数据
+
+//   $(window).on('scroll', function () {
+//     let winH = $(window).outerHeight(),
+//         pageH = document.documentElement.srollHeight || document.body.scrollHeight,
+//         scrollT = $(window).scrollTop();
+
+//         /**
+//          * 卷去高度 大于 真实高度 - 屏幕高度：距离底下还有100px，我们让其开始加载
+//          */
+//         if ((scrollT + 100) >= (pageH - winH)) {
+//           /**
+//            * 隐性问题：同一个滚动操作会被触发N次，需要做“重复操作限定”
+//            */
+//           if (isRun) return;
+//           isRun = true;
+
+//           if (page > 5) {
+//             alert('没有更多数据');
+//             return;
+//           }
+
+//           queryData();
+//           bindHTML();
+//           console.log(page);
+//         }
+//   });
+// });
+
+
+
+
+/*
+	1.ES6新语法
+    - let / const
+    	和ES5的var区别
+        1.let不存在变量提升机制（不允许在声明前使用）
+        2.let不允许重复声明
+        3.在全局作用域中给予let声明的变量不是window的一个属性，和他没关系
+        4.typeof 未被声明的变量 => 不是undefined而是报错（暂时性死区）
+        5.let会形成块级作用域（类似于私有作用域，大部分大括号都会形成块作用域）
+   		...
+        
+   	- 解构赋值
+    
+    - "..."拓展，剩余，展开运算符
+    
+    - 箭头函数
+    	和普通函数的区别
+        1.没有arguments，但是可以基于...arg获取实参集合（结果是一个数组）
+        2.没有自己的this，箭头函数中的this是上下文中的this
+        
+    - ES6中的模板字符串
+    
+    - Promise （async / await）
+    - class (ES6中创建类)
+    - iterator (for of 循环)
+    - Map / Set
+    
+    
+    2.重排（回流）、重绘
+    	1.什么是重排和重绘、为什么他们耗性能：
+        浏览器渲染一个页面的时候是按照“先创建DOM树 —>加载CSS -> 生成渲染树render tree 
+        -> 将渲染树交给浏览器（GPU）绘制”，如果后期我们修改了元素的样式（没有改变大小和
+        位置），浏览器会把当前元素重生成渲染树，然后重新渲染，这个机制是重绘，但是一旦元素
+        的位置或者大小等发生改变，浏览器就要从DOM树重新计算渲染，这个机制是回流（重排），
+        无论是重排还是重绘，都非常耗性能。
+        
+        2.解决方案
+    	1.需要动态项页面追加元素的时候，基于文档碎片或先把需要增加的所有元素拼接成字符串，
+        最后同意进行增加
+        2.读写分离 -> 把同意修改样式都放到一起执行，新版浏览器都有一个增加检测的机制，如果
+        发现下面紧挨着的操作也是修改元素的样式，会把所有修改的事先存起来，直到遇到非修改
+        样式的操作，会把之前存储的同意执行，只引发一次回流和重绘。
+        当然还有其他办法，这些是最常注意的。
+*/
+
+
+
+
+
+/*
+	对面向对象的理解
+    [JS本身就是面向对象编程的]
+    JS就是基于面向对象（OOP）编程思想开发出来的语言，学习JS就是在学习JS中的类和实例，
+    例如： 数组是Array的实例、对象是Object的实例、函数是Function的实例...在这些内置的
+    原型上有很多公共的属性和方法，这些方法可以被实例调用，学JS就是学这些方法...
+    
+    [面向对象真实项目的应用]
+    平时的业务逻辑开发，我没有可以使用类的方式来做，只有在一些组件或者插件封装的时候才会
+    基于构造函数和原型链使用类和实例完成。例如：我之前封装过一些Tab选项卡、轮播图、模态
+    框、表单验证等插件，就是这样处理的（我之前看了一些类库和插件的原码，也都是基于面向对象
+    封装的）
+    
+    [面向对象中的一些语法和特点]
+    没信心就是基于class或者function创建一个类，执行的时候new执行创建一个实例，这样实例就可以
+    调取类提供的方法，想要基于面向对象进行插件封装，必须掌握关于类的继承、封装和多态，封装
+    就是提供公共的方法、JS中没有严格意义的多态，不能进行方法的重写，常用的继承方式很多，例如：
+    原型继承、call继承、计生组合继承、ES6中的继承等，有些方式会存在一些问题，我项目中后来都是
+    基于class中的extend实现继承的。
+    
+*/
+
+
+
+
+/*
+
+var point = {
+	x : 10,
+    y : 20,
+    moveTo : function (x, y) {
+    	var moveX = function (x) {
+        	this.x = x;
+        }
+    	var moveY = function (y) {
+        	this.y = y;
+        }
+        moveX(x);
+        moveY(y);
+    }
+};
+point.moveTo(100, 200);
+console.log(point.x, point.y);
+
+
+
+JS中的this汇总
+	this:当前方法执行的主体（谁执行这个方法，this就是谁，所以this和当前方法在哪
+创建或者在哪执行都没有必然关系）
+
+	1.给元素的某个时间绑定方法，方法中的this都是当前操作的元素本身
+	document.body.onclick = function () {
+		// this : body
+	}
+
+	2.函数执行，看函数前面是否有点，有的话，点前面是谁this就是谁，若没有，this就是window
+（在JS严格模式下，没有点this就是undefined）
+
+    let fn = function () {
+    	console.log(this.name);
+    };
+    let obj = {
+    	name : 'abc',
+        fn : fn
+    };
+    fn(); // this : widow
+    obj.fn() // this : obj
+
+	3.构造函数执行，方法中的this一般都是当前类的实例
+    let fn = function () {
+    	this.x = 100; // this : f
+    };
+    let f = new fn();
+    
+    4.箭头函数中没有自己的this，this是上下文中this
+    let obj = {
+    	fn : function () {
+        	setTimeout( () => {
+            	// this : obj
+            }, 1000);
+        }
+    };
+	obj.fn();
+    
+    5.在小括号表达式中，会影响this的指向
+    let obj = {
+    	fn : function () {
+        	console.log(this);
+        }
+    };
+    obj.fn(); // this : obj
+    ;(12, obj.fn)(); // this : window
+    
+    6.使用call、apply、bind可以改变this指向
+    fn.call(obj); // this : obj
+    fn.call(12); // this : 12
+    fn.call(); // this : window
+    //非严格模式下call、apply、bind第一个参数不写或者写null和undefined，this都是window
+    //严格模式下写谁this就是谁，不写是undefined
+    
+    
+    
+    
+    
+var n = 2;
+function a() {
+	var n = 3;
+	function b (m) {
+		alert(++n + m);
+	}
+	b(4);
+	return b;
+}
+var c = a(5);
+c(6);
+alert(n);
+
+谈下你对作用域链和原型链的理解
+	作用域链：
+	函数执行会形成一个私有的作用域，形参和当前私有作用域中声明的变都是私有变量，
+当前的私有作用域有自我保护机制，私有变量和外界是没有关系的，但如果私有作用域中
+遇到一个非私有的变量，则向它的上级作用域找，如果还不是上级作用域私有的，则继续
+向上查找一直找到window位置。这种变量一层层向上查找的机制就是“作用域链机制”。
+
+	原型链：
+    也是一种查找机制，实例首先在自己的私有属性中查找，如果不是私有属性，基于__proto__
+    向所属的原型上进行查找，如果再找不到，则继续基于__proto__向上查找，一直找到Objec.prototype
+    
+    
+
+面向对象：类的继承、封装和多态
+	[封装]
+    把实现一个功能的JS代码进行封装。目的：“低耦合高内聚”
+    
+    [多态]
+    重载：
+    方法名相同，参数的个数或者类型不同，此时名字相同的方法叫做方法的重载
+(后台语言的重载)，JS中不存在重载
+	重写：
+    子类重写父类的方法
+    
+    [继承]
+    子类继承父类的属性和方法
+    1.原型继承：让子类的原型指向父类的一个实例
+    function A () {
+    	this.x = 100;
+    }
+    A.prototype = {
+    	constructor : A,
+        getX : function () {
+        	cosole.log(this.x);
+        },
+    };
+    function B () {
+    	this.y = 200;
+    }
+    B.prototype = new A();
+    let f = new B();
+    //存在问题：父类的公、私属性，全变为子类的共有属性；子类原型上的成员会被覆盖
+    
+    2.call继承：把父类A作为普通函数执行，让A中的this变为B的实例，相当于给B的实例
+增加一些属性和方法。(弊端：把父类A当做普通函数执行，和父类原型没啥关系，仅仅是把A中的
+私有属性变为子类B实例的私有属性而已，A原型上的共有属性和B及它的实例没关系)
+	function A () {
+    	this.x = 100;
+    }
+    A.prototype = {'constructor' : A....};
+    function B () {
+    	A.call(this);
+        this.y = 200;
+    }
+    let f = new B();
+    
+    3.寄生组合继承：A的私有变为B的私有，A的共有变为B的共有
+    function A () {
+    	this.x = 100;
+    }
+    A.prototype = {
+    	constructor : a,
+        getX : function () { console.log(this.x); }
+    };
+    function B () {
+    	A.call(this);
+        this.y = 200;
+    }
+    //B.prototype = A.prototype; // 不建议这样处理，因为能修改父类A原型，会导致A的其他实例受影响
+    B.prototype = Object.create(A.prototype);
+    let f = new B();
+    
+    4.ES6中class类实现继承
+    ...
+*/
