@@ -2848,3 +2848,329 @@ alert(n);
     4.ES6中class类实现继承
     ...
 */
+
+
+
+
+/**
+ * ES6中的类和继承
+ *  1.ES6中穿件类是有自己标准语法的
+ * (这种语法创建的类只能new执行，不能作普通函数执行)
+ */
+
+//  class Fn {
+//    // Fn是类名，没有小括号
+//    constructor (n, m) {
+//      // 等价于ES5类的构造体
+//      this.x = n;
+//      this.y = m;
+//    }
+
+//    // 给Fn的原型上设置方法(只能设置方法，不能设置属性)
+//    getX () {
+//     console.log(this.x);
+//    } 
+
+//    // 把Fn当做普通对象设置私有方法（和实例没关系），同样也只能设置方法，不能写属性
+//    // 相当于 Fn.AA = function () {}
+//    static AA () {
+//      // ...
+//    }
+//  }
+
+// class Fn2 extends Fn { // extends类似实现了原型继承
+//   constructor () {
+//     super(); // super类似实现了call继承：super相当于把Fn1的constructor执行，并让方法中的this是Fn2的实例
+//     this.y = 200;
+//   }
+//   getY () {
+//     console.log(this.y);
+//   }
+// }
+
+//  Fn.prototype.BB = 100; // 公有属性在这写
+//  let f = new Fn(10, 20);
+
+
+
+
+
+/**
+ * 有个insertBefore方法，请写一个insertAfter方法
+ */
+
+//  function insertAfter (newEle, originEle) {
+//    // newEle : 新插入的元素
+//    // originEle : 指定的老元素
+//    let next = originEle.nextElementSibling; // 老元素的下一个兄弟
+//    let parent = originEle.parentNode; // 老元素的父级
+//    if (next) { // 如果有下一个兄弟元素则...
+//     parent.insertBefore(newEle, next);
+//    }
+//    else { // 否则直接为父级元素追加新元素
+//     parent.appendChild(newEle);
+//    }
+//  }
+
+//  let link = document.createElement('a');
+//  let p2 = document.getElementsByClassName('p2')[0];
+//  console.log(p2);
+//  insertAfter(link, p2);
+
+
+
+
+/*
+动画
+	1.CSS3动画
+    + transition 过渡动画
+    + animation 帧动画
+    + transform	是变形不是动画（经常依托某种动画让元素在一定时间内实现变形效果）
+	
+    2.JS动画
+    + 定时器
+    + reuestAnimationFrame(JS中的帧动画)
+    + 所谓的canvas动画是JS基于定时器完成（canvas是一个HTML标签，可以理解为一个画布
+我们可以基于JS在画布上绘制出图像和效果）
+
+	3.flash动画（action script）
+*/
+
+// 需求：让box盒子从屏幕最左变运动到最右边（修改box的left值就好）
+// let minL = 0,
+//   maxL = document.documentElement.clientWidth - box.offsetWidth,
+//   box = document.getElementById("box");
+
+// 固定步长的匀速运动；
+/*
+let step = 10;
+	autoTimer = setInterval(() => {
+    	//用左偏移临时代替left值得
+        let curL = box.offsetLeft;
+        curl += step
+            
+        //固定步长的情况左边界判断：先加步长再判断，如果超边界，直接运动到末尾
+        if (curL >= maxL) {
+        	box.style.left = maxL + 'px';
+            clearInterval(autoTimer);
+            return;
+        }
+        box.style.left = curL + 'px';
+    }, 17); // 13 / 17ms 的动画执行时间比较好（浏览器不卡）
+*/
+
+//固定时间的匀速运动：
+// let duration = 1000, // 总时间
+// 	interval = 17, // 频率：多长时间迈一步
+// 	begin = 0, // 起始位置
+// 	target = maxL,
+// 	change = target - begin, // 总距离：目标值(target) - 起始值(begin)
+// 	time = 0; //已经运动的时间
+// let autoTimer = setInterval(() => {
+// 	// 根据公式计算出当前盒子应有的位置
+//     time += interval; // time += 17
+//     let curL = time / duration * change + begin;
+//     box.style.left = curL + 'px';
+//     if (time > duration) {
+//     	// 当前运动时间超过总时间： 到达边界
+//         box.style.left = target + 'px';
+//         clearInterval(autoTimer);
+//         return;
+//     }
+    
+// }, setInterval);
+
+// 1.第一种思路：步长 = 总距离 / 总时间*频率，剩下变为固定步长的匀速运动
+// 2.在JS中基于定时器完成动画，不论是固定步长还是固定时间，只要算出当前盒子
+//应该运动的位置即可（新的位置信息）
+
+/*
+
+t: time 当前运动的时间
+d: duration 总时间
+b: begin 起始位置
+c: change 总距离 （target - begin）
+
+t/d: 当前已经运动的时间 / 总时间 = 当前动画完成的百分比
+t/d*c 当前动画完成的百分比*总距离 = 当前已经走的距离
+t/d*c+b 当前走的距离+盒子起始距离 = 当前盒子应该有的位置
+*/
+
+
+
+/*
+规定时间内的多方向匀速运动
+	time 当前运动时间
+    duration 总时间
+    
+    记录每一个方向的起始位置、目标值、总距离
+    begin 起始位置
+    target 目标位置
+    change 总距离
+*/
+// let time = 0,
+// 	duration = 1000;
+// let begin = {
+// 	left : 0,
+//     top : 0
+// };
+// let target = {
+// 	left : documet.documetElement.clientWidth - box.offsetWidth,
+//   top : documet.documetElement.clientHeight - box.offsetHeight
+// };
+// /* 方法1：
+// let change = {
+// 	left : target['left'] - begin['left'];
+//     top : target['top'] - begin['top'];
+// };
+// */
+
+// //方法2：
+// //根据目标值计算出当前元素每一个运动方向的总距离
+// let change = {};
+// for (let attr in target) {
+// 	if (target.hasOwnProperty(attr)) {
+//     	change[attr] = target[attr] - begin[attr];
+//     }
+// }
+
+// let animateTimer = setInterval(() => {
+//   time += 17;
+//   if (time >= duration) {
+//     clearInterval(animateTimer);
+//     for (let key in cur) {
+//       if (cur.hasOwnProperty(key)) {
+//         box.style[key] = cur[key] + 'px';
+//       }
+//     }
+//     return;
+//   }
+//   // 根据目标值中的方向，基于公式计算出每一个方向的当前位置
+//   let cur = {};
+//   for (let attr in target) {
+//     if (target.hasOwnProperty(attr)) {
+//         cur[attr] = time / duration * change[attr] + begin[attr];
+//     }
+//   }
+  
+// });
+
+
+
+ 
+/*
+动画
+	1.CSS3动画
+    + transition 过渡动画
+    + animation 帧动画
+    + transform	是变形不是动画（经常依托某种动画让元素在一定时间内实现变形效果）
+	
+    2.JS动画
+    + 定时器
+    + reuestAnimationFrame(JS中的帧动画)
+    + 所谓的canvas动画是JS基于定时器完成（canvas是一个HTML标签，可以理解为一个画布
+我们可以基于JS在画布上绘制出图像和效果）
+
+	3.flash动画（action script）
+*/
+
+// 需求：让box盒子从屏幕最左变运动到最右边（修改box的left值就好）
+// let minL = 0,
+// 	maxL = document.documentElement.clientWidth - box.offsetWidth;
+
+// 固定步长的匀速运动；
+/*
+let step = 10;
+	autoTimer = setInterval(() => {
+    	//用左偏移临时代替left值得
+        let curL = box.offsetLeft;
+        curl += step
+            
+        //固定步长的情况左边界判断：先加步长再判断，如果超边界，直接运动到末尾
+        if (curL >= maxL) {
+        	box.style.left = maxL + 'px';
+            clearInterval(autoTimer);
+            return;
+        }
+        box.style.left = curL + 'px';
+    }, 17); // 13 / 17ms 的动画执行时间比较好（浏览器不卡）
+*/
+
+//固定时间的匀速运动：
+// let duration = 1000, // 总时间
+// 	interval = 17, // 频率：多长时间迈一步
+// 	begin = 0, // 起始位置
+// 	target = maxL,
+// 	change = target - begin, // 总距离：目标值(target) - 起始值(begin)
+// 	time = 0; //已经运动的时间
+// let autoTimer = setInterval(() => {
+// 	// 根据公式计算出当前盒子应有的位置
+//     time += interval; // time += 17
+//     let curL = time / duration * change + begin;
+//     box.style.left = curL + 'px';
+//     if (time > duration) {
+//     	// 当前运动时间超过总时间： 到达边界
+//         box.style.left = target + 'px';
+//         clearInterval(autoTimer);
+//         return;
+//     }
+    
+// }, setInterval);
+
+// 1.第一种思路：步长 = 总距离 / 总时间*频率，剩下变为固定步长的匀速运动
+// 2.在JS中基于定时器完成动画，不论是固定步长还是固定时间，只要算出当前盒子
+//应该运动的位置即可（新的位置信息）
+
+/*
+
+t: time 当前运动的时间
+d: duration 总时间
+b: begin 起始位置
+c: change 总距离 （target - begin）
+
+t/d: 当前已经运动的时间 / 总时间 = 当前动画完成的百分比
+t/d*c 当前动画完成的百分比*总距离 = 当前已经走的距离
+t/d*c+b 当前走的距离+盒子起始距离 = 当前盒子应该有的位置
+*/
+
+
+
+/*
+规定时间内的多方向匀速运动
+	time 当前运动时间
+    duration 总时间
+    
+    记录每一个方向的起始位置、目标值、总距离
+    begin 起始位置
+    target 目标位置
+    change 总距离
+*/
+// let time = 0,
+// 	duration = 1000;
+// let begin = {
+// 	left : 0,
+//     top : 0
+// };
+// let target = {
+// 	left : documet.documetElement.clientWidth - box.offsetWidth,
+//     top : documet.documetElement.clientHeight - box.offsetHeight
+// };
+/* 方法1：
+let change = {
+	left : target['left'] - begin['left'];
+    top : target['top'] - begin['top'];
+};
+*/
+
+//方法2：
+//根据目标值计算出当前元素每一个运动方向的总距离
+// let change = {};
+// for (let attr in target) {
+// 	if (target.hasOwnProperty(attr)) {
+//     	change[attr] = target[attr] - begin[attr];
+//     }
+// }
+
+
+
+ 
