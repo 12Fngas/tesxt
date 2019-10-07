@@ -3173,4 +3173,426 @@ let change = {
 
 
 
- 
+//  $(function ($) {
+//   let $container = $(".container"),
+//       $imgList = null;
+
+//   // 1.绑定数据
+//   (function () {
+//     let str = ``;
+//     for (let i = 0; i < 100; i++) {
+//       let ranNum = Math.round(Math.random() * 4 + 1);
+//       str += `<div class="imgBox">
+//                 <img src="" alt="" src="" data-src="img/phoneImg/${ranNum}.jpg"> 
+//               </div>`;
+//     }
+//     $container.html(str);
+//     $imgList = $container.find('img');
+//   })();
+
+//   // 2.加载真实的图片
+//   let lazyImg = function (curImg) {
+//     let $curImg = $(curImg),
+//         trueImg = $curImg.attr('data-src');
+//     let tempImg = new Image();
+//     tempImg.onload = function () {
+//       //结束当前正在运行的动画，执行fade-in，让图片300ms内逐渐显示出来
+//       $curImg.attr('src', trueImg).stop().fadeIn(300);
+
+//       tempImg = null;
+
+//       // 图片加载成功后，设置一个自定义属性存储，当前图片已经加载了，后期不需要重复的加载
+//       curImg.isLoad = true;
+//     };
+//     tempImg.src = trueImg;
+    
+//   }
+
+//   // computedImg : 计算哪张图片可以加载了
+//   let computedImg = function () {
+//     // 观察所有图片中谁能加载了，就执行lazyImg让其加载即可
+//     $imgList.each(function (index, curImg) {
+//       // A : 当前图片所在盒子的底边距离body偏移
+//       // B : 当前浏览器底边距离body偏移
+//       let $curImg = $(curImg),
+//           $imgBox = $curImg.parent(),
+//           A = $imgBox.offset().top + $imgBox.outerHeight(),
+//           B = document.documentElement.scrollTop + document.documentElement.clientHeight;
+//       if (A <= B) {
+//         //代表图片所在盒子呈现在视野中，开始加载真实的图片
+//         if (curImg.isLoad) {
+//           // 当前图片如果已经加载过来，不再重复加载
+//           return;
+//         }
+//         lazyImg(curImg);
+//       }
+//     });
+//   };
+
+//   $(window).on('load scroll', computedImg);;
+//  });
+
+
+
+
+/**
+ * 定时器：设定一个定时器，并且设定了等到的时间，当到达执行的时间，浏览器会把对应的方法执行
+ * 
+ * [常用定时器]
+ *  setTimeout([function], [interval])
+ *  setInterval([function], [interval])
+ *    [function] : 到达时间后执行的方法（设置定时器的时候方法没有执行，到时间浏览器帮我们执行）
+ *    [interval] : 时间因子（需要等待的时间 ： ms）
+ * 
+ *  setTimeout是执行一次的定时器，setInterval是可执行多次的定时器
+ * 
+ *  // 轮循定时器：每间隔interval这么长时间，都会把设定的方法重新执行一次，直到定时器被清除
+ * 
+ *  // 清除定时器
+ *  // clearTimeout / clearInterval ：这两个方法中的任何一个都可以清除用任何方法创建的定时器
+ *    1.设置定时器会有一个返回值，这个值是一个数字，属于定时器的编号，代表当前是第几个定时器
+ * （不管是基于setTimeout还是setInterval创建定时器，这个编号会累加）
+ *    2.clearTimeout（[序号]） / clearInterval（[序号]）
+ * 
+ */
+
+
+
+
+ /**
+  * JS中的同步编程和一部编程
+  *   同步编程：人物是按照顺序一次处理，当前这件事没有彻底做完，下件事是执行不了的
+  *   异步编程：当前这件事没有彻底做完，需要等待一段时间才能继续处理，此时我们不等，继续执行下面的任务
+  * 当后面的任务完成后，再去把没有彻底完成的事情完成
+  * 
+  * JS中的异步编程：
+  *   1.所有的事件绑定都是异步编程
+  *   2.所有的定时器都是异步编程
+  *   3.ajax中一般都使用异步编程处理
+  *   4.回调函数也算是异步编程
+  */
+
+  // 定时器设定一个时间，到达时间后不一定执行（如果当前还有其他的同步任务正在处理，那么到时间了也得等着）
+//  let n = 0;
+//  setTimeout(() => {
+//    console.log(++n);
+//  }, 1000);
+//  console.log(n);
+//  while (1) {
+//   // 死循环
+//  }
+
+/**
+ * 浏览器是如何规划同步异步机制的
+ *  1.浏览器是多线程的，JS是单线程的（浏览器之歌JS执行分配一个线程）单线程的特点：一次只能处理一件事
+ * 进程：每一个应用程序都可以理解为一个进程（浏览器打开一个页面，就相当于开辟一个进程），在一个程序中
+ * （进程中）我们经常会同时干很多事情，此时我们可以分配多个线程去同时完成多项任务
+ * 
+ *  2.JS在单线程中实现异步的机制，主要依赖于浏览器的任务队列完成的。浏览器中有两个任务队列（主任务队列、
+ * 等待任务队列）
+ *    在主任务队列自上而下执行的时候，如果遇到一个异步操作任务，没有立即执行，而是把它放到任务队列中排队；
+ *    当主任务队列完成后才会到等待任务队列中进行查找（主任务队列完不成，不管等待任务队列中是否有到达时间的，
+ * 都不处理，继续等待主任务队列完成，因为JS是单线程的[一次只能处理一件事情]）；
+ *    等待任务队列中谁达到条件了（如果有很多都达到条件了，谁先达到的，就先处理谁），就把这个任务重新放到主任务
+ * 队列中去执行，把这个任务执行完，再去等待中找。。。。
+ */
+
+//  setTimeout(() => {
+//    console.log(1);
+//  }, 20);
+
+//  console.log(2);
+
+//  setTimeout(() => {
+//   console.log(3);
+//  }, 10);
+
+//  setTimeout(() => {
+//   console.log(4);
+//  }, 100);
+
+//  for (let i = 0; i < 9000000; i++) {
+
+//  }
+
+//  console.log(5);
+//  // 2 5 3 1 4
+
+
+// let n = 0;
+// setTimeout(() => {
+//   console.log(++n);
+// }, 0);
+// /**
+//  * 定时器时间因子设置为零也不是立即执行，每个浏览器都有自己最小的等待和反应时间（谷歌：5-6  IE：10-13），
+//  * 所以写0还是异步编程
+//  */
+
+// console.log(n);
+
+
+
+
+/**
+ * Promise : ES6中新增加的类（new Promise），为了管理JS中的异步编程的，所以我们也把它称为“Promise设计模式”
+ */
+
+ // 三个状态： pending（准备：初始化成功，开始执行异步的任务） / fulfilled（成功） / rejected（失败）
+// new Promise(() => {
+//   /**
+//    * 执行一个异步的任务（new Promise的时候，创建Promise的一个实例，立即会把当前函数体中的异步操作执行）；
+//    * Promise是同步的，它可以管理异步操作
+//    */
+//   setTimeout(() => {
+
+//   }, 1000);
+//   console.log(1); // 先输出1
+// }).then();
+
+// console.log(2); // 再输出2
+
+// new Promise((resolve, reject) => {
+//   //resolve : 当异步操作执行成功，我们执行resolve方法
+//   //rejuect : 当异步操作执行失败，我们执行reject方法
+//   setTimeout(() => {
+//     resolve(100);
+//   }, 1000);
+// }).then(() => {
+//   console.log('ok');
+// }, () => {
+//   console.log('no');
+// });
+
+// let val = null;
+// new Promise((resolve, reject) => {
+//   let xhr = new XMLHttpRequest();
+//   xhr.open('get', 'json/data.json', true);
+//   xhr.onreadystatechange = () => {
+//     if (xhr.readyState === 4 && xhr.status === 200) {
+//       val = xhr.responseText;
+//       resolve(val);
+//     }
+//     if (xhr.status !== 200) {
+//       reject();
+//     }
+//   };
+//   xhr.send(null);
+// }).then((res) => {
+//   console.log(res);
+//   return 100;
+// }, () => {
+//   console.log('error');
+// }).then((res) => {
+//   // 当第一个then中的函数执行完，会执行第二个
+//   console.log(res);
+// }).then(() => {
+//   // 当第二个then中的函数执行完，会执行第三个
+// });
+
+
+
+
+
+// Animate动画库
+// ~function () {
+//   // 准备操作css样式的方法 getCss / setCss / setGroupCss / css
+//   let utils = (function () {
+//     // 获取样式
+//     let getCss = function (ele, attr) {
+//       let val = null,
+//           reg = /^-?\d+(\.\d+)?(px|rem|em)?$/;
+//       if ('getComputedStyle' in window) {
+//         val = window.getComputedStyle(ele)[attr];
+        
+//         if (reg.test(val)) {
+//           val = parseFloat(val);
+//         }
+//       }
+//       return val;
+//     };
+
+//     // 设置样式
+//     let setCss = function (ele, attr, value) {
+//       if (!isNaN(value)) {
+//         if (!/^(opacity|zIndex)$/.test(attr)) {
+//           value += 'px';
+//         }
+//       }
+//       ele['style'][attr] = value;
+//     };
+
+//     // 批量设置样式
+//     let setGroupCss = function (ele, options) {
+//       for (let attr in options) {
+//         if (options.hasOwnProperty(attr)) {
+//           setCss(ele, attr, options[attr]);
+//         }
+//       }
+//     };
+
+//     // 合并为一个
+//     let css = function (...arg) {
+//       let len = arg.length,
+//           fn = getCss;
+//       if (len >= 3) {
+//         fn = setCss;
+//       }
+//       if (len === 2 && typeof arg[1] === 'object') {
+//         fn = setGroupCss;
+//       }
+//       return fn(...arg);
+//     };
+//     return {css};
+//   })();
+
+//   // effect : 准备运动的公式
+//   let effect = {
+//     Linear : function (t, b, c, d) {
+//       return t / d * c + b;
+//     },
+//   };
+
+//   // 封装动画库
+//   window.animate = function (ele, target = {}, duration = 1000) {
+//     // 1.基于target计算出begin / change
+//     let begin = {},
+//         change = {},
+//         time = 0;
+//     for (let attr in target) {
+//       if (target.hasOwnProperty(attr)) {
+//         begin[attr] = utils.css(ele, attr);
+//         change[attr] = target[attr] - begin[attr];
+//       }
+//     }
+
+//     // 2.实现动画
+//     let animateTimer = setInterval(function () {
+//       time += 17;
+
+//       // 边界判断
+//       if (time >= duration) {
+//         utils.css(ele, target);
+//         clearInterval(animateTimer);
+//         return;
+//       }
+
+//       // 依托target计算出每个方向的当前位置
+//       let cur = {};
+//       for (let attr in target) {
+//         if (target.hasOwnProperty(attr)) {
+//           cur[attr] = effect.Linear(time, begin[attr], change[attr], duration);
+//         }
+//       }
+//       utils.css(ele, cur);
+//     }, 17);
+//   };
+// }();
+
+// animate(box, {
+//   top : 500,
+//   left : 800,
+//   width : 200,
+//   height : 200,
+//   opacity : 0.2
+// }, 1000);
+
+
+
+
+/**
+ * 回调函数：把一个函数A当做实参传递给另外一个函数B，在B方法执行的时候，把A也执行了，我们把这种机制
+ * 叫做“回调函数机制”
+ * 
+ *  1.根据需求，回调函数可以被执行N次
+ *  2.不仅可以把回调函数执行，还可以给传递的回调函数传递实参，这样在回调函数中设置形参（或arg）接受即可
+ *  3.可以改变回调函数中this的指向
+ *  4.可以在宿主函数中接受回调函数执行的返回结果 
+ */
+
+//  let fn = (callback) => {
+//    // callback : 传递进来的函数
+//    // callback && callback.call(obj, 100, 200);
+//    // typeof callback === 'function' ? callback() : null;
+//    let res = callback(10, 20);
+//    console.log(res);
+//  };
+
+//  fn((n, m) => {
+//   // this : window 回调函数中一般tihs都是window，除非宿主函数执行回调函数的时候把this特殊指向了(箭头函数除外)
+//   // console.log(n, m);
+//   return n + m;
+//  });
+
+//  // JQ中的each和内置forEach类似（但forEach只能遍历数组），用来遍历数组（类数组、对象）中的每一项
+// //  $.each();
+
+//  [12,23,34].forEach(function (item, index) {
+//   console.log(item, index, this);
+//  }, '哈哈');
+//  // forEach第二个参数是用来改变回调函数中this的
+
+//  $.each([12,23,34], function (index, item) {
+//   console.log(item, index, this); // this : 当前遍历的这一项（item）
+//  });
+
+//  let each = function (obj, callback) {
+//   let flag = 'length' in obj; // 先简单验证：有length是数组或类数组，没有是对象
+//   if (flag) {
+//     for (let i = 0; i < obj.length; i++) {
+//       let item = obj[i];
+
+//       // 接受回调函数的返回值，如果返回的是false，我们结束循环
+//       let res = callback && callback.call(item, i, item);
+//       if (res === false) {
+//         break;
+//       }
+//     }
+//   }
+//   else {
+//     for (let key in obj) {
+//       if (obj.hasOwnProperty(key)) {
+//         let value = obj[key];
+//         let res = callback && callback.call(value, key, value);
+//         if (res === false) {
+//           break;
+//         }
+//       }
+//     }
+//   }
+// };
+
+//  each([12, 23, 34], function (index, item) {
+//   console.log(item);
+//   if (index >= 1) {
+//     return false;
+//   }
+//  });
+
+String.prototype.myReplace = function (reg, callback) {
+  // this : str
+  // 默认reg加了g
+  let res = reg.exec(this),
+      _this = this;
+  while (res) {
+    // res : 每一次exec捕获的结果（数组）
+    let returnV = callback(...res);
+    /**
+     * 捕获一次执行一次回调函数，并且把通过exec捕获的数组展开，每一项都依次传递给回调函数（returnV ：
+     * 当前回调函数执行的返回结果，我们要拿这个结果替换字符串中当前大正则匹配的内容）
+     */
+
+    let v = res[0],
+        i = _this.indexOf(v);
+    _this = _this.substring(0, i) + returnV + this.substring(v.length + i);
+    res = reg.exec(this);
+  }
+  return _this;
+};
+
+let str = 'my name is {0}, i am {1} years old',
+    ary = ['don1111', '28'];
+str = str.myReplace(/\{(\d+)\}/g, function (...arg) {
+  let index = arg[1];
+  return ary[index];
+});
+console.log(str);
