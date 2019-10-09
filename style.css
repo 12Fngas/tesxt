@@ -166,12 +166,12 @@ html, body {
 
 
 /* 动画移动盒子 */
-#box {
+/* #box {
   width: 100px;
   height: 100px;
   position: absolute;
   background-color : red;
-}
+} */
 
 
 /* 图片懒加载
@@ -191,3 +191,81 @@ html, body {
   width : 100%;
   height : 100%;
 } */
+
+
+
+
+.container {
+  position : relative;
+  margin : 20px auto;
+  width : 1000px;
+  height : 300px;
+  overflow: hidden;
+}
+
+.container .wrapper {
+  position : absolute;
+  left : 0;
+  right : 0;
+  width : 4000px;
+  height : 100%;
+}
+
+.container .wrapper .slide {
+  float : left;
+  width : 1000px;
+  height : 100%;
+  overflow: hidden;
+}
+
+.container .wrapper .slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.container .focus {
+  position: absolute;
+  z-index: 999;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  height : 12px;
+  padding : 4px;
+  background : rgba(255, 255, 255, .5);
+  border-radius : 10px;
+  font-size: 0;
+}
+
+.container .focus li {
+  margin : 0 4px;
+  display : inline-block;
+  width : 12px;
+  height : 12px;
+  border-radius: 50%;
+  background: #FFF;
+}
+
+.container .arrow {
+  display: none;
+  position: absolute;
+  top: 50%;
+  margin-top: -22.5px;
+  width: 28px;
+  height: 45px;
+  opacity: 0.3;
+}
+
+.container .arrow:hover {
+  opacity: 1;
+}
+
+.container .arrowLeft {
+  background: cyan url("img/arrow/back.png") no-repeat center center;
+  left : 0;
+}
+.container .arrowRight {
+  background: cyan url("img/arrow/next.png") no-repeat center center;
+  right : 0;
+}

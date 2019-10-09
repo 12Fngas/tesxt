@@ -3568,31 +3568,68 @@ let change = {
 //   }
 //  });
 
-String.prototype.myReplace = function (reg, callback) {
-  // this : str
-  // 默认reg加了g
-  let res = reg.exec(this),
-      _this = this;
-  while (res) {
-    // res : 每一次exec捕获的结果（数组）
-    let returnV = callback(...res);
-    /**
-     * 捕获一次执行一次回调函数，并且把通过exec捕获的数组展开，每一项都依次传递给回调函数（returnV ：
-     * 当前回调函数执行的返回结果，我们要拿这个结果替换字符串中当前大正则匹配的内容）
-     */
+// String.prototype.myReplace = function (reg, callback) {
+//   // this : str
+//   // 默认reg加了g
+//   let res = reg.exec(this),
+//       _this = this;
+//   while (res) {
+//     // res : 每一次exec捕获的结果（数组）
+//     let returnV = callback(...res);
+//     /**
+//      * 捕获一次执行一次回调函数，并且把通过exec捕获的数组展开，每一项都依次传递给回调函数（returnV ：
+//      * 当前回调函数执行的返回结果，我们要拿这个结果替换字符串中当前大正则匹配的内容）
+//      */
 
-    let v = res[0],
-        i = _this.indexOf(v);
-    _this = _this.substring(0, i) + returnV + this.substring(v.length + i);
-    res = reg.exec(this);
-  }
-  return _this;
-};
+//     let v = res[0],
+//         i = _this.indexOf(v);
+//     _this = _this.substring(0, i) + returnV + this.substring(v.length + i);
+//     res = reg.exec(this);
+//   }
+//   return _this;
+// };
 
-let str = 'my name is {0}, i am {1} years old',
-    ary = ['don1111', '28'];
-str = str.myReplace(/\{(\d+)\}/g, function (...arg) {
-  let index = arg[1];
-  return ary[index];
-});
-console.log(str);
+// let str = 'my name is {0}, i am {1} years old',
+//     ary = ['don1111', '28'];
+// str = str.myReplace(/\{(\d+)\}/g, function (...arg) {
+//   let index = arg[1];
+//   return ary[index];
+// });
+// console.log(str);
+
+
+
+
+let bannerRender = (function () {
+    // 获取后续需要操作的元素对象或者元素集合
+    let container = document.querySelector('#container'),
+        wrapper = container.querySelector('.wrapper'),
+        focus = container.querySelector('.focus'),
+        arrowLeft = container.querySelector('.arrowLeft');
+        arrowRight = container.querySelector('.arrowRight'),
+        slideList = null,
+        focusList = null;
+
+    // 获取数据
+    let queryData = function quertyData() {
+        return new Promise((resolve, reject) => {
+            let xhr = new XMLHttpRequest;
+            xhr.open('get', 'json/banner.json'); // 第三个参数不写是异步
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    let data = JSON.parse(xhr.responseText);
+                    resolve(data);
+                }
+            };
+            xhr.send(null);
+        });
+    };
+
+    return {
+        init : function () {
+            let promise = new Promise();
+        promise.then();
+        }
+    }
+})();
+bannerRender.init();
