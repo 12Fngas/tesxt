@@ -3627,7 +3627,14 @@ let bannerRender = (function () {
         stepIndex ++;
 
         if (stepIndex >= slideList.length) {
-            stepIndex = 0;
+            // stepIndex = 0;
+            /**
+             *  说明再往后切换没有了（选择展示的是克隆的第一张），
+             * 此时我们让wrapper立即回到真实第一张的位置（left ： 0），
+             * 然后stepIndex - 1（这样可以切换到第二张）
+             */
+            utils.css(wrapper, 'left', 0);
+            stepIndex = 1;
         }
 
         // 基于自主封装animate实现切换动画
@@ -3637,7 +3644,20 @@ let bannerRender = (function () {
         animate(wrapper, {
             left : -stepIndex * 1000
         }, 200); 
-    }
+
+        // 每一次运动完成需要让焦点跟着切换
+        changeFocus();
+    };
+
+    // 焦点对齐
+    let changeFocus = function changeFocus () {
+        // 当轮播图运动到最后一张（克隆的第一张，我们需要让第一个li[索引0]有选中的样式）
+        let tempIndex = stepIndex;
+        tempIndex === slideList.length - 1 ? tempIndex = 0 : null;
+        [].forEach.call(focusList, (item, index) => {
+            item.className = index === tempIndex ? 'active' : '';
+        });
+    };
 
     // 获取数据
     let queryData = function quertyData() {
@@ -3655,13 +3675,11 @@ let bannerRender = (function () {
         });
     };
 
-    
     // 数据绑定
-        let bindHTML = function bindHTML(data) {
+    let bindHTML = function bindHTML(data) {
         let strSlide = ``,
             strFocus = ``;
         data.forEach((item, index) => {
-            console.log(item);
             let {img = 'img/info.png', title = '嘿嘿嘿'} = item;
             strSlide += `<div class="slide">
                             <img src="${img}" alt="${title}">
@@ -3674,9 +3692,17 @@ let bannerRender = (function () {
         wrapper.innerHTML = strSlide;
         focus.innerHTML = strFocus;
 
+
         // 获取所有的slide
         slideList = wrapper.querySelectorAll('.slide');
         focusList = focus.querySelectorAll('li');
+        
+        /**
+         *  把现有的第一张克隆一份放到容器的末尾（由于querySelectorAll无DOM映射，
+         * 新增加一个原有集合中还是之前的slide，故重新获取一遍）
+         */
+        wrapper.appendChild(slideList[0].cloneNode(true));
+        slideList = wrapper.querySelectorAll('.slide');
 
         //根据slide的个数动态计算wrapper的宽度
         utils.css(wrapper, 'width', slideList.length * 1000);

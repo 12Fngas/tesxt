@@ -247,6 +247,10 @@ html, body {
   background: #FFF;
 }
 
+.container .focus .active {
+  background-color : red;
+}
+
 .container .arrow {
   display: none;
   position: absolute;
