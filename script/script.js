@@ -3610,13 +3610,43 @@ let bannerRender = (function () {
         slideList = null,
         focusList = null;
 
+    // 轮播图运动的基础参数
+    let stepIndex = 0, // 步长
+        autoTimer = null, // 自动轮播的定时器
+        interval = 1000; // 切换间隔时间
+
+    // 控制轮播图的运动和切换
+    /**
+     * 下标为1，展示第二章，wrapper的left -1000
+     * 下标为2，展示第三章，wrapper的left -2000
+     * ...
+     * 
+     * wrapper的left值为当前要展示的图片下标对应的结果：-下标 * 1000
+     */
+    let autoMove = function autoMove() {
+        stepIndex ++;
+
+        if (stepIndex >= slideList.length) {
+            stepIndex = 0;
+        }
+
+        // 基于自主封装animate实现切换动画
+        /**
+         * 200是从当前切换到下一张的动画时间 
+         */
+        animate(wrapper, {
+            left : -stepIndex * 1000
+        }, 200); 
+    }
+
     // 获取数据
     let queryData = function quertyData() {
         return new Promise((resolve, reject) => {
-            let xhr = new XMLHttpRequest;
-            xhr.open('get', 'json/banner.json'); // 第三个参数不写是异步
+            let xhr = new XMLHttpRequest();
+            xhr.open('get', 'json/carousel.json');// 第三个参数不写是异步
             xhr.onreadystatechange = () => {
                 if (xhr.readyState === 4 && xhr.status === 200) {
+                    // let data = JSON.parse(xhr.responseText);
                     let data = JSON.parse(xhr.responseText);
                     resolve(data);
                 }
@@ -3625,10 +3655,41 @@ let bannerRender = (function () {
         });
     };
 
+    
+    // 数据绑定
+        let bindHTML = function bindHTML(data) {
+        let strSlide = ``,
+            strFocus = ``;
+        data.forEach((item, index) => {
+            console.log(item);
+            let {img = 'img/info.png', title = '嘿嘿嘿'} = item;
+            strSlide += `<div class="slide">
+                            <img src="${img}" alt="${title}">
+                        </div>`;
+            // ES6模板字符串中${}存放的是JS表达式，但是需要表达式有返回值
+            strFocus += `<li class = "${index === 0 ? 'active' : ''}"></li>`;
+
+        });
+
+        wrapper.innerHTML = strSlide;
+        focus.innerHTML = strFocus;
+
+        // 获取所有的slide
+        slideList = wrapper.querySelectorAll('.slide');
+        focusList = focus.querySelectorAll('li');
+
+        //根据slide的个数动态计算wrapper的宽度
+        utils.css(wrapper, 'width', slideList.length * 1000);
+    }
+
     return {
         init : function () {
-            let promise = new Promise();
-        promise.then();
+            let promise = queryData();
+            promise.then(bindHTML)
+                   .then(() => {
+                        // 开启定时器驱动的自动轮播
+                        autoTimer = setInterval(autoMove, interval);
+                    });
         }
     }
 })();

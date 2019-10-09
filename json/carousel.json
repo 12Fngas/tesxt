@@ -1,0 +1,34 @@
+[
+	{
+		"id" : 1,
+		"title" : "apple xxx",
+		"price" : 111,
+		"time" : "2020-2-31",
+		"hot" : 99,
+		"img" : "img/phoneImg/1.jpg"
+	},
+	{
+		"id" : 1,
+		"title" : "2 xxx",
+		"price" : 222,
+		"time" : "2020-2-31",
+		"hot" : 99,
+		"img" : "img/phoneImg/2.jpg"
+	},
+	{
+		"id" : 1,
+		"title" : "apple xxx",
+		"price" : 333,
+		"time" : "2020-2-31",
+		"hot" : 99,
+		"img" : "img/phoneImg/3.jpg"
+	},
+	{
+		"id" : 1,
+		"title" : "apple xxx",
+		"price" : 444,
+		"time" : "2020-2-31",
+		"hot" : 99,
+		"img" : "img/phoneImg/4.jpg"
+	}
+]
