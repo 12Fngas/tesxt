@@ -3686,12 +3686,10 @@ let bannerRender = (function () {
                         </div>`;
             // ES6模板字符串中${}存放的是JS表达式，但是需要表达式有返回值
             strFocus += `<li class = "${index === 0 ? 'active' : ''}"></li>`;
-
         });
 
         wrapper.innerHTML = strSlide;
         focus.innerHTML = strFocus;
-
 
         // 获取所有的slide
         slideList = wrapper.querySelectorAll('.slide');
@@ -3706,7 +3704,51 @@ let bannerRender = (function () {
 
         //根据slide的个数动态计算wrapper的宽度
         utils.css(wrapper, 'width', slideList.length * 1000);
+    };
+
+    //鼠标进入、离开控制自动轮播的停止和开启
+    let handleContainer = function handleContainer () {
+        container.onmouseenter = function () {
+            clearInterval(autoTimer);
+            arrowLeft.style.display = arrowRight.style.display = 'block';
+        };
+        container.onmouseleave = function () {
+            autoTimer = setInterval(autoMove, interval);
+            arrowLeft.style.display = arrowRight.style.display = 'none';
+        };
+    };
+
+    // 焦点事件切换
+    let handleFocus = function handleFocus() {
+        [].forEach.call(focusList, (item, index) => {
+            item.onclick = function () {
+                stepIndex = index;
+                animate(wrapper, {
+                    left : -stepIndex * 1000
+                }, 200);
+                changeFocus();
+            };
+        });
     }
+
+    //绑定2个箭头点击事件
+    let handleArrow = function handleArrow() {
+        arrowRight.onclick = autoMove; // 点击右箭头和按顺序轮播是一样的
+
+        arrowLeft.onclick = function () {
+            stepIndex --;
+
+            //如果索引已是第一张，则不再向右移动，而是瞬移到最后一张
+            if (stepIndex < 0) {
+                utils.css(wrapper, 'left', -(slideList.length - 1) * 1000);
+                stepIndex = slideList.length - 2;
+            }
+            animate(wrapper, {
+                left : -stepIndex * 1000
+            }, 200);
+            changeFocus();
+        }
+    };
 
     return {
         init : function () {
@@ -3715,6 +3757,12 @@ let bannerRender = (function () {
                    .then(() => {
                         // 开启定时器驱动的自动轮播
                         autoTimer = setInterval(autoMove, interval);
+                    })
+                    .then(() => {
+                        // 左右按钮或者焦点切换
+                        handleContainer();
+                        handleFocus();
+                        handleArrow();
                     });
         }
     }
