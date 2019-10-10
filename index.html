@@ -108,9 +108,14 @@
 
   <script src = "script/utils.js"></script>
   <script src = "script/animate.js"></script>
+  <script src = "script/banner-plugin.js"></script>
   <script src = "node_modules/jquery/dist/jquery.js"></script>
   <script src = "script/script.js"></script>
-  
-  <!-- <script src = "script/marquee.js"></script> -->
+  <script>
+    new Banner({
+       ele : '#container',  //操作哪个容器（选择器）
+       url : 'json/carousel.json',  // 获取数据的api地址（插件内部帮我们获取数据）
+      });
+  </script>
 </body>
 </html>

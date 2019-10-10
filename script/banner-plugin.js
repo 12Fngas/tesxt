@@ -48,18 +48,19 @@
             } = options;
 
             // 把所有的配置项信息都挂在到实例上（以后在原型的任何方法中都能调取这些属性获取值）
-            ['ele', 'url', 'isArrow', 'isAuto', 'isFocus', 'defaultIndex', 'interval', 'Speed', 'moveEnd'].forEach(item => {
+            ['ele', 'url', 'isArrow', 'isAuto', 'isFocus', 'defaultIndex', 'interval', 'speed', 'moveEnd'].forEach(item => {
                 this[item] = eval(item);
             });
 
             // 获取需要的元素，挂载到实例上
             // 获取后续需要操作的元素对象或者元素集合
             this.container = document.querySelector(ele);
-            this.wrapper = container.querySelector('.wrapper');
-            this.focus = container.querySelector('.focus');
-            this.arrowLeft = container.querySelector('.arrowLeft');
-            this.arrowRight = container.querySelector('.arrowRight');
+            this.wrapper = this.container.querySelector('.wrapper');
+            this.focus = this.container.querySelector('.focus');
+            this.arrowLeft = this.container.querySelector('.arrowLeft');
+            this.arrowRight = this.container.querySelector('.arrowRight');
             this.slideList = null;
+            this.stepIndex = defaultIndex;
             this.focusList = null;
 
             // 轮播图运动的基础参数
@@ -72,9 +73,16 @@
 
         // Banner的主入口（在init中规划方法的执行顺序）
         init() {
+            let {isAuto, interval} = this;
             let promise = this.queryData();
             promise.then(() => {
                 this.bindHTML();
+            }).then(() => {
+                if (isAuto) {
+                    this.autoTimer = setInterval(() => {
+                        this.autoMove();
+                    }, interval);
+                }
             });
         }
 
@@ -97,9 +105,10 @@
 
         // 数据绑定
         bindHTML() {
+            let {data, wrapper, focus} = this;
             let strSlide = ``,
                 strFocus = ``;
-            this.data.forEach((item, index) => {
+            data.forEach((item, index) => {
                 let {img = 'img/info.png', title = '嘿嘿嘿'} = item;
                 strSlide += `<div class="slide">
                             <img src="${img}" alt="${title}">
@@ -112,19 +121,57 @@
         focus.innerHTML = strFocus;
 
         // 获取所有的slide
-        slideList = wrapper.querySelectorAll('.slide');
-        focusList = focus.querySelectorAll('li');
+        this.slideList = wrapper.querySelectorAll('.slide');
+        this.focusList = focus.querySelectorAll('li');
         
         /**
          *  把现有的第一张克隆一份放到容器的末尾（由于querySelectorAll无DOM映射，
          * 新增加一个原有集合中还是之前的slide，故重新获取一遍）
          */
-        wrapper.appendChild(slideList[0].cloneNode(true));
-        slideList = wrapper.querySelectorAll('.slide');
+        wrapper.appendChild(this.slideList[0].cloneNode(true));
+        this.slideList = wrapper.querySelectorAll('.slide');
 
         //根据slide的个数动态计算wrapper的宽度
-        utils.css(wrapper, 'width', slideList.length * 1000);
+        utils.css(this.wrapper, 'width', this.slideList.length * 1000);
         }
+
+        // 自动轮播
+        autoMove() {
+            this.stepIndex ++;
+    
+            if (this.stepIndex >= this.slideList.length) {
+                // stepIndex = 0;
+                /**
+                 *  说明再往后切换没有了（选择展示的是克隆的第一张），
+                 * 此时我们让wrapper立即回到真实第一张的位置（left ： 0），
+                 * 然后stepIndex - 1（这样可以切换到第二张）
+                 */
+                utils.css(this.wrapper, 'left', 0);
+                this.stepIndex = 1;
+            }
+    
+            // 基于自主封装animate实现切换动画
+            /**
+             * 200是从当前切换到下一张的动画时间 
+             */
+            animate(this.wrapper, {
+                left : -this.stepIndex * 1000
+            }, this.speed); 
+    
+            // 每一次运动完成需要让焦点跟着切换
+            this.changeFocus();
+        };
+
+        // 焦点对齐
+        changeFocus() {
+            // 当轮播图运动到最后一张（克隆的第一张，我们需要让第一个li[索引0]有选中的样式）
+            let tempIndex = this.stepIndex;
+            tempIndex === this.slideList.length - 1 ? tempIndex = 0 : null;
+            [].forEach.call(this.focusList, (item, index) => {
+                item.className = index === tempIndex ? 'active' : '';
+            });
+        };
+
     }
     window.Banner = Banner;
 }();
