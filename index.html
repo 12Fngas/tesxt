@@ -76,7 +76,7 @@
     <p class="p3">p3</p>
   </div> -->
 
-  <div id="box"></div>
+  <!-- <div id="box"></div> -->
 
 
   <!-- <div class="container">
@@ -87,18 +87,8 @@
 
   <section class="container" id="container">
       <ul class="focus">
-          <!-- <li class="active"></li>
-          <li></li>
-          <li></li>
-          <li></li> -->
-        </ul>
+      </ul>
     <div class="wrapper">
-      <!-- <div class="slide"><img src="img/phoneImg/1.jpg" alt=""></div>
-      <div class="slide"><img src="img/phoneImg/2.jpg" alt=""></div>
-      <div class="slide"><img src="img/phoneImg/3.jpg" alt=""></div>
-      <div class="slide">
-        <img src="img/phoneImg/4.jpg" alt="">
-      </div> -->
     </div>
     
     <a href="javascript:;" class="arrow arrowLeft"></a>
@@ -106,16 +96,19 @@
   </section>
 
 
-  <script src = "script/utils.js"></script>
-  <script src = "script/animate.js"></script>
-  <script src = "script/banner-plugin.js"></script>
+
+
   <script src = "node_modules/jquery/dist/jquery.js"></script>
+  <script src = "script/utils.js"></script>
+  <!-- <script src = "script/animate.js"></script>
+  <script src = "script/banner-plugin.js"></script> -->
+  <script src = "script/banner-fade.js"></script>
   <script src = "script/script.js"></script>
   <script>
-    new Banner({
-       ele : '#container',  //操作哪个容器（选择器）
-       url : 'json/carousel.json',  // 获取数据的api地址（插件内部帮我们获取数据）
-      });
+    // new Banner({
+    //    ele : '#container',  //操作哪个容器（选择器）
+    //    url : 'json/carousel.json',  // 获取数据的api地址（插件内部帮我们获取数据）
+    //   });
   </script>
 </body>
 </html>
