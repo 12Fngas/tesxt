@@ -277,7 +277,7 @@ html, body {
 
 
 
-
+/* 轮播图
 .container {
   position : relative;
   margin : 20px auto;
@@ -368,4 +368,55 @@ html, body {
   background: rgb(86, 87, 87) url("img/arrow/next.png") no-repeat center center;
   right : 0;
   z-index: 11;
+} */
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+
+.tabBox {
+  width: 360px;
+  margin: 20px auto;
+}
+
+.tabBox .option {
+  height: 34px;
+  border: 1px solid #DBDEE1;
+  background: #EEE;
+}
+
+.tabBox .option li {
+  list-style: none;
+  float: left;
+  padding: 0 12px;
+  line-height: 34px;
+}
+
+.tabBox .option li a {
+  text-decoration: none;
+  color: #000;
+  font-size: 14px;
+}
+
+
+.tabBox .option li.active {
+  border-top: 3px solid #FF8400;
+  line-height: 32px;
+  margin-top: -1px;
+  background: white;
+}
+
+.tabBox .con {
+  display: none;
+  height: 230px;
+  padding-top: 10px;
+  font-size: 14px;
+  text-align: center;
+  background: lightcyan;
+}
+
+.tabBox .con.active{
+  display: block;
 }

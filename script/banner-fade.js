@@ -119,6 +119,17 @@ $(function () {
         });
     }
 
+    let handleFocus = function handleFocus() {
+        $focusList.on('click', function anonymous() {
+            let curIndex = $(this).index();
+            if (_index === curIndex) {
+                return;
+            }
+            _index = curIndex;
+            changeSlide();
+        });
+    };
+
     return {
         init : function init() {
             let promise = queryData();
@@ -128,6 +139,7 @@ $(function () {
                 _timer = setInterval(autoMove, _interval);
                 handleMouse();
                 handleArrow();
+                handleFocus();
             });
         }
     };
