@@ -4216,3 +4216,23 @@ let change = {
   *     
   *     
   */
+
+
+
+
+
+  // IE6-8
+  box.onclick = function(ev) {
+    /**
+     * IE低版本浏览器中，并没有把ev传进来，ev === undefined，需要window.event获取（由于是全局属性
+     * ，鼠标每次操作都会把上一次操作的值替换掉）
+     */
+    if (!ev) {
+        ev = window.event;
+        //ev.srcElement 是事件源
+
+        //低版本浏览器无pageX、pageY
+        ev.pageX = ev.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft);
+        ev.pageY = ev.clientY + (document.documentElemeTop || document.body.scrollTop);
+    }
+  }
