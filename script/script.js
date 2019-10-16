@@ -4101,3 +4101,118 @@ let change = {
 //     })();
 //     bannerRender.init();
 // });
+
+
+
+
+
+/**
+ * 1.什么是事件？
+ *  事件就是一个行为（对于元素来说，它的很多事件都是天生自带的），只要我们操作
+ * 元素，就会触发这些行为
+ * 2.事件绑定：给元素天生自带的事件行为绑定方法，当事件触发，会执行对应方法
+ *  oBox.onclick = funtion () {}
+ * 3.元素天生自带的事件
+ * 
+ *  鼠标事件：
+ *  click：点击（pc端是点击，移动端是单击=> 移动端会有300ms延迟问题）
+ *  dblclick：双击
+ *  mouseover：鼠标经过
+ *  mouseout：鼠标移除
+ *  mouseenter：鼠标进入
+ *  mouseleave：鼠标离开
+ *  mousemove：鼠标移动
+ *  mousedown：鼠标按下（鼠标左右键都起作用，按下立即触发，click是按下抬起才会触发，
+ * 而且是先把down和up触发，才会触发click）
+ *  mouseup：鼠标抬起
+ *  mousewheel：鼠标滚轮滚动
+ *  ...
+ * 
+ *  键盘事件：
+ *  keydown：键盘按下
+ *  keyup：键盘抬起
+ *  keypress：和keydown类似，只不过keydown返回的是键盘码，keypress返回的是ascii码
+ *  input：由于pc端有实体物理键盘，可以监听到键盘的按下和抬起，但移动端是虚拟的键盘，
+ * 所有keydown和keyup在大部分手机上都没有，故用input事件统一代替它们（内容改变事件）
+ *  ...
+ *  
+ *  表单元素常用事件
+ *  focus：获取焦点
+ *  blur：失去焦点
+ *  change：内容改变
+ *  ...
+ * 
+ *  其他常用事件：
+ *  load：加载完成
+ *  unload：
+ *  beforeunload：
+ *  scroll：滚动条滚动事件
+ *  resize：大小改变事件
+ *  ...
+ * 
+ *  移动端手指事件：
+ *  touchstart：手指按下
+ *  touchmove：手指移动
+ *  touchend：手指离开
+ *  touchcancel：意外情况（手机断电）导致手指操作取消
+ * 
+ *  多手指操作：
+ *  gesturestart：多手指按下
+ *  gesturechange：手指改变
+ *  gestureend：手指离开
+ * 
+ *  H5中的audio/video音视频事件
+ *  canplay：可以播放（播放过程中可能出现由于资源没有加载完成，导致的卡顿）
+ *  canplaythrough：资源加载完成，可以正常无障碍播放
+ *  ...
+ */
+
+
+
+
+ /**
+  * 事件绑定
+  *     DOM 0级事件绑定
+  *         element.onxxx = function () {}
+  *     DOM 2级事件绑定
+  *         element.addEventListener ('xxx', function () {}, false);
+  *         element.attachEvent('onxxx',function () {}); => IE6-8
+  *     目的：给元素某个事件绑定方法（无论基于DOM0还是DOM2），都是为了触发元素相关
+  * 行为时，能做点事（把绑定方法执行）；“不仅把方法执行了，而且浏览器还给方法传递
+  * 了一个实参信息值 ==> 这个值就是事件对象”
+  * 
+  *     MouseEvent鼠标事件对象、KeyboardEvent键盘事件对象、TouchEvent手指事件对象、Event普通事件对象
+  * 
+  *     目的：事件对象中记录了很多属性名和属性值，这些信息中包含了当前操作的基础信息，
+  * 例如：鼠标点击的位置，鼠标点击的是谁（事件源）等信息
+  * 
+  *     MouseEvent：
+  *     ev.target 事件源
+  *     ev.clientX / ev.clientY 当前鼠标触发点距离当前窗口左上角X、Y轴坐标
+  *     ev.pageX / ev.pageY 当前鼠标出发点距离body（第一屏幕）左上角X、Y轴坐标
+  *     ev.preventDefault() 阻止默认行为
+  *     ev.stopPropagation() 阻止事件的冒泡传播
+  *     ev.type 当前事件类型
+  * 
+  *     KeyboardEvent ：
+  *     ev.code 当前按键'keyE'
+  *     ev.key 当前按键'e'
+  *     ev.which / ev.keyCode 
+  * 
+  *     常用键盘码：
+  *     左、上、右、下： 37，38，39，40
+  *     backspace :　8
+  *     enter : 13
+  *     space : 32
+  *     delete : 46
+  *     shift : 16
+  *     alt : 18
+  *     ctrl : 17
+  *     esc : 27
+  *     F1 - F12 : 112-123
+  *     0 - 9 : 48-57
+  *     小写字母 : 97-122
+  *     大写字母：65-90
+  *     
+  *     
+  */
