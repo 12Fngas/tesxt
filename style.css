@@ -370,6 +370,10 @@ html, body {
   z-index: 11;
 } */
 
+
+
+
+/*选项卡
 * {
   padding: 0;
   margin: 0;
@@ -419,4 +423,22 @@ html, body {
 
 .tabBox .con.active{
   display: block;
+} */
+
+#outer {
+  margin: 20px 0;
+  background: lightsalmon;
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+#inner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: rebeccapurple;
+  width: 100px;
+  height: 100px;
 }

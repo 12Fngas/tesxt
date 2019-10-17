@@ -4221,18 +4221,157 @@ let change = {
 
 
 
-  // IE6-8
-  box.onclick = function(ev) {
-    /**
-     * IE低版本浏览器中，并没有把ev传进来，ev === undefined，需要window.event获取（由于是全局属性
-     * ，鼠标每次操作都会把上一次操作的值替换掉）
-     */
-    if (!ev) {
-        ev = window.event;
-        //ev.srcElement 是事件源
+//   // IE6-8
+//   box.onclick = function(ev) {
+//     /**
+//      * IE低版本浏览器中，并没有把ev传进来，ev === undefined，需要window.event获取（由于是全局属性
+//      * ，鼠标每次操作都会把上一次操作的值替换掉）
+//      */
+//     if (!ev) {
+//         ev = window.event;
+//         //ev.srcElement 是事件源
 
-        //低版本浏览器无pageX、pageY
-        ev.pageX = ev.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft);
-        ev.pageY = ev.clientY + (document.documentElemeTop || document.body.scrollTop);
-    }
-  }
+//         //低版本浏览器无pageX、pageY
+//         ev.pageX = ev.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft);
+//         ev.pageY = ev.clientY + (document.documentElemeTop || document.body.scrollTop);
+//         ev.which = ev.keyCode;
+
+//         //preventDefault / stopPropagation 低版本都没有
+//         ev.preventDefault = function () {
+//             ev.returnValue = false;
+//         }
+//         ev.stopPropagation = function () {
+//             ev.calcelBubble = true;
+//         }
+//     }
+//   }
+
+//   //精简版
+//   box.onclick = function (ev) {
+//       ev = ev || window.event;
+//       var target = ev.target || ev.srcElement;
+//       ev.preventDefault ? ev.preventDefault() : ev.returnValue = false;
+//   }
+
+
+
+
+/**
+ * 事件的默认行为：事件本身就是天生就有的，某些事件触发，即使你没有绑定方法，也会
+ * 存在一些效果，这些默认的效果就是“事件的默认行为”
+ * 
+ *  A标签的点击操作就存在默认行为
+ *      1.页面跳转
+ *      2.锚点定位（hash/哈希定位）
+ *      <a href="#box">XXX</a> 首先会在当前页面url地址栏末尾设置一个hash值，浏览器
+ * 检测到hash值后，会默认定位到当前页面中id和hash相同的盒子位置（基于hash值我们还可以
+ * 实现spa单页面应用）
+ * 
+ *  input标签的默认行为
+ *      1.输入内容可以呈现到文本框中
+ *      2.输入内容的时候会把之前输入的一些信息呈现出来（不是所有浏览器，以及所有情况下都有）
+ *      ...
+ * 
+ *  submit按钮也存在默认行为
+ *      1.点击按钮页面会刷新
+ *      <form action ="http://www.baidu.com/">
+ *          <input type="submit" value="提交">
+ *      </form>
+ *      在form中设置action，点击submit，会默认按照action制定的地址进行页面跳转，并且
+ * 把表单中的信息传递过去（非前后端分离项目中，由服务器进行页面渲染，由其他语言实现数据交互，一般
+ * 都是这样处理）
+ * 
+ * 
+ * 如何阻止默认行为
+ * 1.阻止a标签的默认行为：只想把a标签当做普通按钮，实现一个功能，不页面跳转以及锚点定位
+ *      在结构中阻止：
+ *      <a href="javascript:;">XXX</a>
+ *      javascript:void / 0 / undefined / null....;
+ * 
+ *      JS中阻止：
+ *      给click事件绑定方法，当我们点击a标签的时候，先触发click事件，其次才会执行自己的默认行为
+ *      link.onclick = function (ev) {
+ *          ev = ev || window.event;
+ *          ev.preventDefault ? ev.preventDefault() : ev.returnValue = false;
+ *          //return false;   // 直接返回false也行
+ *      }
+ * 
+ *      // 文本框字数限制
+ *      tempInp.onkeydown = function() {
+ *          ev = ev || window.event;
+ *          let val = this.value.trim(),// 去除首位空格（不兼容）
+ *              len = val.length;
+ *          if (len >= 6) {
+ *              this.value = val.substr(0, 6);
+ *              
+ *              // 阻止默认行为去除特殊按键（delete / backSpace / 方向键）
+ *              let code = ev.which || ev.keyCode;
+ *              if (!/^(8|37|38|39|40|46)$/.test(code)) {
+ *                  ev.preventDefault ? ev.preventDefault() : ev.returnValue = false;
+ *              }
+ *          }
+ *      }
+ */
+
+
+
+
+ /**
+  * 事件的传播机制
+  *     冒泡传播：触发当前元素的某个（点击事件）行为，不仅当前元素事件行为触发，而且其祖先元素的相关事件行为也会依次触发，
+  * 这种机制就是“事件的冒泡传播机制”
+  */
+ document.onclick = function() {console.log('document');}
+ document.documentElement.onclick = function() {console.log('HTML');}
+ document.body.onclick = function() {console.log('body');}
+ outer.onclick = function() {console.log('outer');}
+ inner.onclick = function(ev) {console.log(ev, 'inner');}
+
+ /**
+  * 1.捕获阶段
+  *     点击inner的时候，首先会从最外层（window）开始向内查找（找到操作的事件源），查找的目的是，构建出冒泡传播
+  * 的路线（查找就是按照HTML层级结构找的）
+  * 2.目标阶段
+  *     把事件源的相关操作行为触发（如果绑定了方法，就执行方法）
+  * 3.冒泡传播
+  *     按照捕获阶段规划的路线，自内而外，把当前事件源的祖先元素的相关事件行为依次触发（如果某一个祖先元素事件
+  * 行为绑定了方法，就把方法执行，没绑定方法，行为触发会什么也不做，继续向上传播即可）
+  */
+
+  /**
+   * xxx.onxxx = function() {}
+   * DOM 0级事件绑定，给元素的事件行为绑定方法，这些方法都是在当前元素事件行为的冒泡阶段（或者目标）执行的
+   * 
+   * xxx.addEventListener('xxx', function(){}, false);
+   * 第三个参数false也是控制绑定方法在事件传播的冒泡阶段（或目标阶段）执行；只有第三个参数为true才代表
+   * 当前方法在事件传播的捕获阶段触发执行（没啥意义，项目中不用）
+   */
+
+   /**
+    * 不同浏览器对于最外层祖先元素的定义是不一样的
+    * 谷歌：window->document->html->body...
+    * IE高：window->html->body...
+    * IE低：html->body...
+    */
+
+    // let aa = null;
+    // document.body.onclick = function(ev) {
+    //     console.log(ev === aa); // true
+    // }
+    // outer.onclick = function(ev) {
+    //     console.log(ev === aa); // true
+    // }
+    // inner.onclick = function(ev) {
+    //     aa = ev; 
+    //     //   ev.stopPropagation ? ev.stopPropagation() : ev.cancelBubble = true;
+    // }
+    
+/**
+ * 关于事件对象的一些理解
+ *  1.事件对象是用来存储当前本次操作的相关信息，和操作有关，和元素无必然关联
+ *  2.当我们基于鼠标或者键盘等操作的时候，浏览器会把本次操作的信息存储起来（标
+ * 准浏览器存储到默认的内存中-> 自己找不到IE低版本存储到了window.event中了），
+ * 存储的值是一个对象（堆内存）；操作肯定会触发元素的某个行为，把绑定的方法执行，
+ * 此时标准浏览器会把之前存储的对象（堆内存地址）当错实参传递给每一个执行的方法，
+ * 所以操作一次，即使再多方法中都有ev，但是存储的值都是一个（本次操作信息的对象而已）
+ */
