@@ -425,7 +425,7 @@ html, body {
   display: block;
 } */
 
-#outer {
+/* #outer {
   margin: 20px 0;
   background: lightsalmon;
   width: 200px;
@@ -441,4 +441,58 @@ html, body {
   background: rebeccapurple;
   width: 100px;
   height: 100px;
+} */
+
+
+
+.magnifierBox {
+  position: relative;
+  margin: 20px auto;
+  width: 400px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.magnifierBox .smallBox, .magnifierBox .bigBox {
+  position: relative;
+  float: left;
+  width: 200px;
+  height: 100%;
+  overflow: hidden;
+}
+
+.magnifierBox .smallBox {
+  float: left;
+}
+
+
+.magnifierBox .smallBox img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.magnifierBox .smallBox .mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  width: 100px;
+  height: 100px;
+  background: #E01D20;
+  opacity: 0.3;
+  filter: alpha(opacity=30);
+  cursor: move;
+}
+
+.magnifierBox .bigBox img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400px;
+  height: 400px;
+}
+
+.magnifierBox .smallBox .mark, .magnifierBox .bigBox{
+  display: none;
 }

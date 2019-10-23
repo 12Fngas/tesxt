@@ -4321,11 +4321,11 @@ let change = {
   *     冒泡传播：触发当前元素的某个（点击事件）行为，不仅当前元素事件行为触发，而且其祖先元素的相关事件行为也会依次触发，
   * 这种机制就是“事件的冒泡传播机制”
   */
- document.onclick = function() {console.log('document');}
- document.documentElement.onclick = function() {console.log('HTML');}
- document.body.onclick = function() {console.log('body');}
- outer.onclick = function() {console.log('outer');}
- inner.onclick = function(ev) {console.log(ev, 'inner');}
+//  document.onclick = function() {console.log('document');}
+//  document.documentElement.onclick = function() {console.log('HTML');}
+//  document.body.onclick = function() {console.log('body');}
+//  outer.onclick = function() {console.log('outer');}
+//  inner.onclick = function(ev) {console.log(ev, 'inner');}
 
  /**
   * 1.捕获阶段
@@ -4375,3 +4375,61 @@ let change = {
  * 此时标准浏览器会把之前存储的对象（堆内存地址）当错实参传递给每一个执行的方法，
  * 所以操作一次，即使再多方法中都有ev，但是存储的值都是一个（本次操作信息的对象而已）
  */
+
+
+
+
+ 
+
+ /**
+  * 1.鼠标进入和离开smallBox，控制mark已经bigBox的显示隐藏
+  * 2.控制mark在smallBox中运动，但不能超过边界
+  * 3.当mark在smallBox移动的时候，根据mar移动的距离，计算出bigImg在bigBox中移动的距离（反向2倍：x/y轴
+  * 移动都是2倍，整体4倍）
+  */
+
+$(function() {
+    var $magnifierBox = $('.magnifierBox'),
+        $smallBox = $magnifierBox.find('.smallBox'),
+        $mark = $magnifierBox.find('.mark'),
+        $bigBox = $magnifierBox.find('.bigBox'),
+        $bigImg = $bigBox.find('img');
+
+    // 控制mark和bigBox的显示隐藏
+    $smallBox.on('mouseenter', function () {
+        $mark.css('display', 'block');
+        $bigBox.css('display', 'block');
+        computedMark(ev);
+    }).on('mouseleave', function() {
+        $mark.add($bigBox).css('display', 'none');
+        $mark.css('display', 'none');
+    }).on('mousemove', function(ev) {
+        //JQ中的ev已兼容所有浏览器
+        computedMark(ev);
+    });
+
+    // 鼠标在smallBox中移动的时候控制mark跟着移动（计算出mark位置）
+    function computedMark(ev) {
+        var offsetObj = $smallBox.offset(),
+            curL = ev.pageX - offsetObj.left - $mark.outerWidth() / 2,
+            curT = ev.pageY - offsetObj.top - $mark.outerHeight() / 2;
+        var minL = 0
+            minT = 0,
+            maxL = $smallBox.outerWidth() - $mark.outerWidth(),
+            maxT = $smallBox.outerHeight() - $mark.outerHeight();
+        curL = curL < minL ? minL : (curL > maxL ? maxL : curL);
+        curT = curT < minT ? minT : (curT > maxT ? maxT : curT);
+        
+        $mark.css({
+        top: curT,
+        left: curL,
+        });
+        
+        //mark动，则右侧大图朝反向移动
+        $bigImg.css({
+            top: -curT * 2,
+            left: -curL * 2
+        });
+    }
+
+});
