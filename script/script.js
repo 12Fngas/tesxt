@@ -4388,48 +4388,82 @@ let change = {
   * 移动都是2倍，整体4倍）
   */
 
-$(function() {
-    var $magnifierBox = $('.magnifierBox'),
-        $smallBox = $magnifierBox.find('.smallBox'),
-        $mark = $magnifierBox.find('.mark'),
-        $bigBox = $magnifierBox.find('.bigBox'),
-        $bigImg = $bigBox.find('img');
+// $(function() {
+//     var $magnifierBox = $('.magnifierBox'),
+//         $smallBox = $magnifierBox.find('.smallBox'),
+//         $mark = $magnifierBox.find('.mark'),
+//         $bigBox = $magnifierBox.find('.bigBox'),
+//         $bigImg = $bigBox.find('img');
 
-    // 控制mark和bigBox的显示隐藏
-    $smallBox.on('mouseenter', function () {
-        $mark.css('display', 'block');
-        $bigBox.css('display', 'block');
-        computedMark(ev);
-    }).on('mouseleave', function() {
-        $mark.add($bigBox).css('display', 'none');
-        $mark.css('display', 'none');
-    }).on('mousemove', function(ev) {
-        //JQ中的ev已兼容所有浏览器
-        computedMark(ev);
-    });
+//     // 控制mark和bigBox的显示隐藏
+//     $smallBox.on('mouseenter', function () {
+//         $mark.css('display', 'block');
+//         $bigBox.css('display', 'block');
+//         computedMark(ev);
+//     }).on('mouseleave', function() {
+//         $mark.add($bigBox).css('display', 'none');
+//         $mark.css('display', 'none');
+//     }).on('mousemove', function(ev) {
+//         //JQ中的ev已兼容所有浏览器
+//         computedMark(ev);
+//     });
 
-    // 鼠标在smallBox中移动的时候控制mark跟着移动（计算出mark位置）
-    function computedMark(ev) {
-        var offsetObj = $smallBox.offset(),
-            curL = ev.pageX - offsetObj.left - $mark.outerWidth() / 2,
-            curT = ev.pageY - offsetObj.top - $mark.outerHeight() / 2;
-        var minL = 0
-            minT = 0,
-            maxL = $smallBox.outerWidth() - $mark.outerWidth(),
-            maxT = $smallBox.outerHeight() - $mark.outerHeight();
-        curL = curL < minL ? minL : (curL > maxL ? maxL : curL);
-        curT = curT < minT ? minT : (curT > maxT ? maxT : curT);
+//     // 鼠标在smallBox中移动的时候控制mark跟着移动（计算出mark位置）
+//     function computedMark(ev) {
+//         var offsetObj = $smallBox.offset(),
+//             curL = ev.pageX - offsetObj.left - $mark.outerWidth() / 2,
+//             curT = ev.pageY - offsetObj.top - $mark.outerHeight() / 2;
+//         var minL = 0
+//             minT = 0,
+//             maxL = $smallBox.outerWidth() - $mark.outerWidth(),
+//             maxT = $smallBox.outerHeight() - $mark.outerHeight();
+//         curL = curL < minL ? minL : (curL > maxL ? maxL : curL);
+//         curT = curT < minT ? minT : (curT > maxT ? maxT : curT);
         
-        $mark.css({
-        top: curT,
-        left: curL,
-        });
+//         $mark.css({
+//         top: curT,
+//         left: curL,
+//         });
         
-        //mark动，则右侧大图朝反向移动
-        $bigImg.css({
-            top: -curT * 2,
-            left: -curL * 2
-        });
+//         //mark动，则右侧大图朝反向移动
+//         $bigImg.css({
+//             top: -curT * 2,
+//             left: -curL * 2
+//         });
+//     }
+// });
+
+
+
+
+let $container = $('.container'),
+    $imgList = $('.container>.imgBox>li'),
+    $mark = null;
+$imgList.on('mouseover', function(ev) {
+    // 创建mark：根据经过的li中的小图片，动态创管控mark中的大图片
+    let $srcStr = $(this).children('img').attr('src');
+    $srcStr = $srcStr.replace(/_(\d+)/g, 'big_$1');
+    if (!$mark) {
+        $mark = $(`<div class="mark">
+                    <img src="${$srcStr}" alt="">
+                   </div>`
+        );
+        $container.append($mark);
     }
-
+}).on('mouseout', function(ev) {
+    // 移除mark
+    if ($mark) {
+        $mark.remove();
+        $mark = null;
+    }
+}).on('mousemove',function(ev) {
+    //根据鼠标的位置计算
+    console.log($container.offset());
+    let {top: conTop, left: conLeft} = $container.offset(),
+        curL = ev.pageX - conLeft + 20,
+        curT = ev.pageY - conTop + 20;
+    $mark.css({
+        top: curT,
+        left: curL
+    });
 });

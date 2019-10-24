@@ -444,7 +444,7 @@ html, body {
 } */
 
 
-
+/* 放大镜
 .magnifierBox {
   position: relative;
   margin: 20px auto;
@@ -495,4 +495,58 @@ html, body {
 
 .magnifierBox .smallBox .mark, .magnifierBox .bigBox{
   display: none;
+} */
+
+
+li{
+  list-style: none;
+}
+
+.clearfix:after{
+  display: block;
+  height: 0;
+  content:'';
+  clear:both;
+}
+
+
+.container {
+  position: relative;
+  margin: 20px auto;
+  width: 462px;
+  height: 77px;
+}
+
+.container .imgBox li{
+  float: left;
+  margin-right: 10px;
+  width: 75px;
+  height: 75px;
+  border: 1px solid black;
+}
+
+
+.container .imgBox li img {
+  width: 100%;
+  height: 100%;
+}
+
+.container .imgBox li:nth-last-child(1) {
+  margin-right: 0;
+}
+
+.container .mark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  width: 400px;
+  height: 300px;
+  border: 1px solid #000;
+}
+
+.container .mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
