@@ -1,3 +1,22 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+.clearfix:after{
+  display: block;
+  height: 0;
+  content:'';
+  clear:both;
+}
 /* 盒子属性
 #outer {
   margin : 50px auto;
@@ -498,6 +517,11 @@ html, body {
 } */
 
 
+
+
+
+
+/* 放大镜（二）
 li{
   list-style: none;
 }
@@ -549,4 +573,163 @@ li{
   display: block;
   width: 100%;
   height: 100%;
+} */
+
+
+
+/* 分类导航（方案一：css）
+.shop {
+  width: 200px;
+  margin: 20px auto;
+  height: 50px;
 }
+
+.shop .shopLink {
+  position: relative;
+  display: block;
+  line-height: 50px;
+  background: lightblue;
+  text-align: center;
+}
+
+.shop .shopLink .shopList {
+  display: none;
+  position: absolute;
+  top: 50px;
+  width: 400px;
+  height: 100px;
+  line-height: 100px;
+  text-align: center;
+  background: lightcoral;
+}
+
+.shop .shopLink:hover .shopList{
+  display: block;
+} */
+
+
+
+/* 分类导航（方案二：js）
+html, body {
+  padding-top: 10px;
+  height: 100%;
+}
+
+.menuBox {
+  margin: 0 auto;
+  width: 700px;
+  height: 270px;
+  border: 1px solid #000;
+}
+
+.navBox {
+  float: left;
+  width: 200px;
+  background: lightblue;
+}
+
+.navBox ul li {
+  height: 30px;
+  line-height: 30px;
+}
+
+.navBox ul li a {
+  padding: 0 10px;
+  display: block;
+  height: 100%;
+  font-size: 14px;
+  color: #555;
+}
+
+.navBox ul li a:hover  {
+  background: lightcoral;
+}
+
+.detailBox {
+  display: none;
+  float: left;
+  width: 500px;
+  height: 100%;
+  background: #EEE;
+  font-size: 20px;
+} */
+
+
+
+
+
+/* .container {
+  margin: 20px auto;
+  width: 600px;
+  height: 300px;
+}
+
+.smallBox {
+  position: relative;
+  float: left;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+}
+
+.smallBox img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.smallBox .mark {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100px;
+  height: 100px;
+  background: rgba(255,0,0,.3);
+  cursor: move;
+} */
+
+
+
+/* 拖拽重力
+#box, #box2 {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  width: 50px;
+  height: 50px;
+  background-color: brown;
+  border-radius: 50%;
+  cursor: move;
+}
+
+#box2 {
+  background-color: greenyellow;
+} */
+
+
+
+
+#userEmail {
+  display: inline-block;
+  width: 200px;
+  border: 1px solid #DDD;
+
+  outline: none;
+   /* 当文本框获取焦点后取出浏览器默认的边框选中颜色 */
+}
+
+/* #userEmail:valid {
+  border-color: green;
+}
+
+#userEmail:invalid {
+  border-color: red;
+}
+
+#userEmail:valid+span:after {
+  content: '邮箱格式正确'；
+}
+
+#userEmail:invalid+span:after { 
+  content: '邮箱格式错误'；
+} */

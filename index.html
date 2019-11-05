@@ -123,41 +123,77 @@
     <div class="bigBox"><img src="img/big.jpg" alt=""></div>
   </section> -->
 
+<!-- 分类导航（方案一：css）
+<div class="shop">
+  <a href="javascript:;" class="shopLink">
+    购物车
+    <div class="shopList">
+      购物车列表
+    </div>
+  </a>
+</div> -->
 
-<section class="container">
-  <ul class="imgBox clearfix">
-    <!-- 如果小图和大图在名字上没有固定的规则，我们把大图地址都以自定义属性的方式
-    存储起来，后期需要展示大图的时候，从自定义属性获取即可
-    <li>
-      <img src="img/wow/1.jpg" data-big=""img/wow/big_1.jpg alt="">
-    </li>
+<!-- <section class="menuBox">
+  <nav class="navBox">
+    <ul>
+      <li><a href="#" target="blank">导航1</a></li>
+      <li><a href="#" target="blank">导航2</a></li>
+      <li><a href="#" target="blank">导航3</a></li>
+      <li><a href="#" target="blank">导航4</a></li>
+      <li><a href="#" target="blank">导航5</a></li>
+      <li><a href="#" target="blank">导航6</a></li>
+      <li><a href="#" target="blank">导航7</a></li>
+      <li><a href="#" target="blank">导航8</a></li>
+      <li><a href="#" target="blank">导航9</a></li>
+    </ul>
+  </nav>
+  <div class="detailBox">导航1对应内容</div>
+</section> -->
 
-    如果有固定的规则，我们完全可以不采用自定义属性的方式，而是基于规则自己处理匹配即可
-    -->
-    <li><img src="img/wow/1.jpg" alt=""></li>
-    <li><img src="img/wow/2.jpg" alt=""></li>
-    <li><img src="img/wow/3.jpg" alt=""></li>
-    <li><img src="img/wow/4.jpg" alt=""></li>
-  </ul>
-  <!-- 在js中动态创建与移除
-  <div class="mark">
-    <img src="img/apple/big_1.jpg" alt="">
-  </div> -->
-</section>
- <!-- 
-   方案一：
-    每一个li中都有一个大盒子，大盒子中存放的是大图，开始是隐藏的，鼠标进入到li中
-  让其显示，并且让它的位置跟随鼠标的位置改变即可，鼠标离开li，让自己的大盒子消失。
-   方案二：
-   只有一个大盒子（可以在js中动态创建，也可以事先写好，控制显示隐藏），鼠标进入任意
-  一个li，都让大盒子出来，并且大盒子中存放的图片根据当前进入的li动态改变，同样实现
-  鼠标移动，让大盒子也跟着移动
-  -->
+
+
+
+<!-- <section class="container">
+  <div class="smallBox">
+    <img src="img/small.jpg" alt="">
+    <div class="mark"></div>
+  </div>
+</section> -->
+
+
+
+
+<!-- <div id="box"></div>
+<div id="box2"></div> -->
+
+
+
+
+<input id="ageInp" type="number" step="1" min="10" max="100" value="20" disabled>
+<input id="rangeInp" type="range" step="1" min="10" max="100" value="20">
+<input type="color" id="colorInp">
+<input type="date">
+
+<input type="email" id="userEmail">
+<span id="spanEmail"></span>
+
+
+<select name="" id="selectCity">
+  <option value="">===请选择===</option>
+  <option value="上海">上海</option>
+  <option value="广州">广州</option>
+  <option value="深圳">深圳</option>
+  <option value="杭州">杭州</option>
+  <option value="成都">成都</option>
+  
+</select>
 
 
 
   <script src = "node_modules/jquery/dist/jquery.js"></script>
   <script src = "script/utils.js"></script>
+  <script src = "script/subscribe.js"></script>
+  <script src = "script/dragAnimation_plugin.js"></script>
   <!-- <script src = "script/tab-plugin.js"></script> -->
   <!-- <script src = "script/animate.js"></script>
   <script src = "script/banner-plugin.js"></script> -->
@@ -174,6 +210,175 @@
   //   eventType : 'click',
   //   lastIndex : 2
   // });
+  </script>
+  <!-- <script>
+    let drag1 = new Drag(box),
+        drag2 = new Drag(box2);
+
+    let change = function (curEle) {
+        [].forEach.call(document.querySelectorAll('div'), item => {
+          item.style.zIndex = 0;
+        });
+        curEle.style.zIndex = 1;
+    };
+    drag1.subDown.add(change);
+    drag2.subDown.add(change);
+
+    let computedFly = function (curEle) {
+        if (!curEle.lastFly) {
+          curEle.lastFly = curEle.offsetLeft;
+          curEle.speedFly = 0;
+          return;
+        }
+
+        curEle.speedFly = curEle.offsetLeft - curEle.lastFly;
+        curEle.lastFly = curEle.offsetLeft;
+      };
+      drag1.subMove.add(computedFly);
+      drag2.subMove.add(computedFly);
+
+
+      let stopAnimate = function (curEle) {
+        clearInterval(curEle.flyTimer);
+        curEle.speedFly = undefined;
+        clearInterval(curEle.dropTimer);
+      }
+      drag1.subDown.add(computedFly);
+      drag2.subDown.add(computedFly);
+          
+
+      let animateFly = function (curEle) {
+        let minL = 0,
+            maxL = document.documentElement.clientWidth - curEle.offsetWidth;
+        
+        let speed = curEle.speedFly,
+            dir = 'right';
+        speed < 0 ? dir = 'left' : null;
+        speed = Math.abs(speed)
+        
+        curEle.flyTimer = setInterval(() => {
+
+            if (Math.abs(speed) < 0.5) {
+                clearInterval(curEle.flyTimer);
+                return;
+            }
+
+            speed *= .98;
+
+            let curL = curEle.offsetLeft;
+            if (dir === 'right') {
+                if (curL >= maxL) {
+                    //向右走到达右边界
+                    curEle.style.left = maxL + 'px';
+                    dir = 'left';
+                    return;
+                }
+                curL += speed;
+            }
+            else  {
+                if (curL <= minL) {
+                    //向右走到达右边界
+                    curEle.style.left = minL + 'px';
+                    dir = 'right';
+                    return;
+                }
+                curL -= speed;
+            }
+
+            curEle.style.left = curL + 'px';
+        }, 17);
+      };
+      drag1.add(animateFly);
+      drag2.add(animateFly);
+
+      let animateDrop = function (curEle) {
+        let speed = 9.8,
+            minT = 0,
+            maxT = document.documentElement.clientHeight - curEle.offsetHeight,
+            flag = 0;
+
+
+
+        curEle.dropTimer = setInterval(() => {
+            if (flag > 1) {
+                clearInterval(curEle.dropTimer);
+                return;
+            }
+
+            speed += 9.8;
+            speed *= .98;
+
+            let curT = curEle.offsetTop;
+            curT += speed;
+            if (curT >= maxT) {
+                curEle.style.top = maxT + 'px';
+                speed *= -1;
+                flag++;
+                return;
+            }
+
+            if (curT <= minT) {
+                curEle.style.top = minT + 'px';
+                speed *= -1;
+                return;
+            }
+            curEle.style.top = curT + 'px';
+            flag = 0;
+        }, 17);
+      }
+      drag1.add(animateDrop);
+      drag2.add(animateDrop);
+
+  </script> -->
+  <script>
+    /**
+     * input事件：移动端没有keyDown、keyUp，用input代替，代表正在操作当前表单元素（例如正在输入等）
+     */
+    rangeInp.oninput = function () {
+      let val = this.value;
+      ageInp.value = val;
+    };
+
+    colorInp.onchange = function () {
+      console.log(this.value);
+      //16进制的颜色值
+    };
+
+    /**
+     * 表单元素中新增加的类型作用
+     *  1.功能强大了（很多东西不需要增加导入JS插件完成了，例如：日历）
+     *  2.在移动端根据设置的类型不一样，用户输入过程中调取出来的虚拟键盘也不一样（例如：number类型调出来的是数字键盘）
+     *  3.新增加的类型提供了CSS / JS验证，可以验证用户输入的内容是否符合格式（之前都是用正则，现在H5新类型自带验证机制）
+     * 
+     * 
+     */
+
+    userEmail.onkeydown = userEmail.onkeyup = function () {
+      //checkValidity：H5新提供的表单内容格式验证方法（新表单类型中有内置验证机制，都可以基于这个方法验证）
+      // if (this.checkValidity()) {
+      //   spanEmail.innerHTML = 'OK';
+      // }
+      // else {
+      //   spanEmail.innerHTML = 'NO';
+      // }
+    
+      let val = this.value.trim();
+      if (val.length == 0) {
+        spanEmail.innerHTML = '必填';
+        return;
+      }
+      let reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*[A-Za-z0-9]+$/;
+      if (!reg.test(val)) {
+        spanEmail.innerHTML = 'NO';
+        return;
+      }
+      spanEmail.innerHTML = 'YES';
+    };
+
+
+
+    
+
 
   </script>
 </body>

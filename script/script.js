@@ -4436,34 +4436,344 @@ let change = {
 
 
 
-let $container = $('.container'),
-    $imgList = $('.container>.imgBox>li'),
-    $mark = null;
-$imgList.on('mouseover', function(ev) {
-    // 创建mark：根据经过的li中的小图片，动态创管控mark中的大图片
-    let $srcStr = $(this).children('img').attr('src');
-    $srcStr = $srcStr.replace(/_(\d+)/g, 'big_$1');
-    if (!$mark) {
-        $mark = $(`<div class="mark">
-                    <img src="${$srcStr}" alt="">
-                   </div>`
-        );
-        $container.append($mark);
-    }
-}).on('mouseout', function(ev) {
-    // 移除mark
-    if ($mark) {
-        $mark.remove();
-        $mark = null;
-    }
-}).on('mousemove',function(ev) {
-    //根据鼠标的位置计算
-    console.log($container.offset());
-    let {top: conTop, left: conLeft} = $container.offset(),
-        curL = ev.pageX - conLeft + 20,
-        curT = ev.pageY - conTop + 20;
-    $mark.css({
-        top: curT,
-        left: curL
-    });
-});
+// let $container = $('.container'),
+//     $imgList = $('.container>.imgBox>li'),
+//     $mark = null;
+// $imgList.on('mouseover', function(ev) {
+//     // 创建mark：根据经过的li中的小图片，动态创管控mark中的大图片
+//     let $srcStr = $(this).children('img').attr('src');
+//     $srcStr = $srcStr.replace(/_(\d+)/g, 'big_$1');
+//     if (!$mark) {
+//         $mark = $(`<div class="mark">
+//                     <img src="${$srcStr}" alt="">
+//                    </div>`
+//         );
+//         $container.append($mark);
+//     }
+// }).on('mouseout', function(ev) {
+//     // 移除mark
+//     if ($mark) {
+//         $mark.remove();
+//         $mark = null;
+//     }
+// }).on('mousemove',function(ev) {
+//     //根据鼠标的位置计算
+//     console.log($container.offset());
+//     let {top: conTop, left: conLeft} = $container.offset(),
+//         curL = ev.pageX - conLeft + 20,
+//         curT = ev.pageY - conTop + 20;
+//     $mark.css({
+//         top: curT,
+//         left: curL
+//     });
+// });
+
+
+
+
+/**
+ * 事件委托（事件代理）
+ *  利用事件的冒泡传播机制，如果一个容器的后代元素中，很多元素的点击行为
+ * （其他事件行为也是）都要做一些处理，此时不用像之前一个个获取一个个的绑定，
+ * 我们只需要给容器的click绑定方法即可，这样不管点击的是哪一个后代元素，都会
+ * 根据冒泡传播的机制，把容器的click行为触发，把对应的方法执行，根据事件源，
+ * 我们可以知道点击的是谁，做不同的事情。
+ */
+
+//  a1.onclick = function() {
+//      //...
+//  };
+//  a2.onclick = function() {
+//      //...
+//  };
+
+ //一个个获取元素然后绑定事件方法，又麻烦又耗性能
+
+ /**
+  * 点击a1，不仅触发a1的点击行为，而且其父级元素的click行为也会依次触发
+  *     此过程只需给a1的container绑定方法即可，不管点击后代哪个元素，绑定方法都会
+  * 执行，而且ev中记录的事件源（ev.target）
+  * 
+  * let target = ev.target || ev.srcElement;
+  * if (target.className == 'a1') {
+  *     // ....
+  * }
+  * else {
+  *     // .... 
+  * }
+  * 
+  * 事件委托比一个个事件绑定，性能提高50%左右，且操作元素越多，性能提高越大
+  */
+
+
+
+// $(function() {
+//     /**
+//      * 基于事件委托给最外层的盒子的mouseover绑定方法，这样不管操作后代元素中的谁
+//      * 的mouseover，这个方法都会执行
+//      */
+//     let $detailBox = $('.detailBox');
+//     $(document.body).on('mouseover', function(ev) {
+//         let target = ev.target,
+//             tag = target.tagName,
+//             $target = $(target),
+//             $pars = $target.parents(); // 当前事件源的祖先元素
+
+//         // 如果事件源是navBox中的a或li（让detailBox显示）
+//         // true祖先中包含navBox，false则相反
+//         let flag = $pars.filter('.navBox').length > 0 ? true : false;
+//         if ((tag === 'A' || tag === 'LI') && flag) {
+//             let val = $target.text().match(/\d+/);
+//             $detailBox.css('display', 'block').html(`导航${val}对应的内容`);
+//             return;
+//         }
+
+//         //如果事件源是detailBox或者它的后代元素，不做处理
+//         // if ($target.hasClass('nav-box') || $pars.filter('detailBox').length > 0) {
+//         //     return;
+//         // }
+
+//         $detailBox.css('display', 'none');
+//     });
+
+//     $detailBox.on('mouseover', function(ev) {
+//         ev.stopPropagation();
+//     });
+// });
+
+
+
+
+// let subscribe = new Subscribe();
+
+// let fn1 = function (x, y) {
+//     console.log(1, x, y);
+//     subscribe.remove(fn2);
+// }
+
+// let fn2 = function () {
+//     console.log(2);
+// }
+
+// let fn3 = function () {
+//     console.log(3);
+//     subscribe.remove(fn1);
+//     subscribe.remove(fn2);
+// }
+
+// let fn4 = function () {
+//     console.log(4);
+// }
+
+// subscribe.add(fn1);
+// subscribe.add(fn2);
+// subscribe.add(fn3);
+// subscribe.add(fn4);
+
+// setInterval(() => {
+//     subscribe.fire(100, 200);
+// }, 1000);
+
+
+
+
+// let box = document.querySelector('#box');
+
+// let subscribeDown = new Subscribe(),
+//     subscribeMove = new Subscribe(),
+//     subscribeUp = new Subscribe();
+    
+
+// let down = function down(ev) {
+//     this.strX = ev.clientX;
+//     this.strY = ev.clientY;
+//     this.strL = this.offsetLeft;
+//     this.strT = this.offsetTop;
+
+//     this.MOVE = move.bind(this);
+//     this.UP = up.bind(this);
+//     document.addEventListener('mousemove', this.MOVE);
+//     document.addEventListener('mouseup', this.UP);
+
+//     subscribeDown.fire(this, ev); // 通知计划表中的方法执行，并且把当前操作的元素传递给每一个即将执行的方法
+// };
+
+// let move = function move(ev) {
+//     this.curL = ev.clientX - this.strX + this.strL;
+//     this.curT = ev.clientY - this.strY + this.strT;
+//     this.style.left = this.curL + 'px';
+//     this.style.top = this.curT + 'px';
+
+//     subscribeMove.fire(this, ev);
+// };
+
+// let up = function up (ev) {
+//     document.removeEventListener('mousemove',this.MOVE);
+//     document.removeEventListener('mouseup',this.UP);
+
+//     subscribeUp.fire(this, ev);
+// }
+
+// box.onmousedown = down;
+
+// /**
+//  *  浏览器有最小计算（反应）时间，同样的距离移动，操作快（用的时间段），浏览器能够反应过来的次数就少，触发mouseMove这个行为
+//  * 次数也变少，如移动慢，反应次数多，触发行为的次数也就多了。
+//  * 
+//  * 水平方向的运动只跟即将松手的一瞬间运动的速度有关系：我们需要获取的就是即将松开一瞬间的速度。
+//  */
+
+//  //1. 移动中随时计算速度
+//  subscribeMove.add((curEle, ev) => {
+//      // 第一次开始运动，让lastFly（上一次位置）以及speedFly（最新速度）都为初始当前位置
+//     if (!curEle.lastFly) {
+//         curEle.lastFly = curEle.offsetLeft;
+//         curEle.speedFly = 0;
+//         return;
+//     }
+//     // 第二次移动：用当前的值 - 上一次记录的值，就是最新的差值（速度），当前最新的值很快就会成为下一次的上一次的值，直到拖动结束位置
+//     curEle.speedFly = curEle.offsetLeft - curEle.lastFly;
+//     curEle.lastFly = curEle.offsetLeft;
+//  });
+
+//  // 2.离开的时候做一些事情（根据获取speedFly）让元素运动起来
+//  subscribeUp.add((curEle, ev) => {
+//     // curEle.speedFly: 记录了最后一次运动的速度
+//     let minL = 0,
+//         maxL = document.documentElement.clientWidth - curEle.offsetWidth;
+    
+//     //动画运动之前计算运动的方向
+//     let speed = curEle.speedFly,
+//         dir = 'right';
+//     speed < 0 ? dir = 'left' : null;
+//     speed = Math.abs(speed)
+//     // 开始按照方向运动
+    
+//     curEle.flyTimer = setInterval(() => {
+//         /**
+//          *  offsetLeft获取的值都会四舍五入，所有在当前left基础上+0.5的速度，下次再获取当前left值的时候
+//          * 还是会被省略到，也就是元素不在运动，此时结束定时器
+//          */
+//         if (Math.abs(speed) < 0.5) {
+//             clearInterval(curEle.flyTimer);
+//             return;
+//         }
+
+//         //实现指数衰减的运动，一直到速度为0为止
+//         speed *= .98;
+
+//         let curL = curEle.offsetLeft;
+//         if (dir === 'right') {
+//             if (curL >= maxL) {
+//                 //向右走到达右边界
+//                 curEle.style.left = maxL + 'px';
+//                 dir = 'left';
+//                 return;
+//             }
+//             curL += speed;
+//         }
+//         else  {
+//             if (curL <= minL) {
+//                 //向右走到达右边界
+//                 curEle.style.left = minL + 'px';
+//                 dir = 'right';
+//                 return;
+//             }
+//             curL -= speed;
+//         }
+
+//         curEle.style.left = curL + 'px';
+//     }, 17);
+//  });
+
+//  subscribeDown.add((curEle, ev) => {
+//     clearInterval(curEle.flyTimer);
+//     clearInterval(curEle.dropTimer);
+//  });
+
+//  //4.实现垂直方向的运动
+//  subscribeUp.add((curEle, ev) => {
+//     let speed = 9.8,
+//         minT = 0,
+//         maxT = document.documentElement.clientHeight - curEle.offsetHeight,
+//         flag = 0;
+
+
+
+//     curEle.dropTimer = setInterval(() => {
+//         if (flag > 1) {
+//             clearInterval(curEle.dropTimer);
+//             return;
+//         }
+
+//         // 实现速度衰减和加速
+//         speed += 9.8;
+//         speed *= .98;
+
+//         let curT = curEle.offsetTop;
+//         curT += speed;
+//         if (curT >= maxT) {
+//             curEle.style.top = maxT + 'px';
+//             speed *= -1;
+//             flag++;
+//             return;
+//         }
+
+//         if (curT <= minT) {
+//             curEle.style.top = minT + 'px';
+//             speed *= -1;
+//             return;
+//         }
+//         curEle.style.top = curT + 'px';
+//         flag = 0;
+//     }, 17);
+//  });
+
+/**
+ * 一：HTML5 (H5)
+ *  1.新增加（修改、删除）的语义化标签
+ *  header  footer  main（主体）  section（区域）  article（文章区域）  aside与内容无关的部分（广告）
+ *  nav  figure（配图区域）  figcaption（配图说明）  mark（标记）  time（时间标记） progress（进度条）
+ *  ......
+ * 
+ *  2.关于表单元素的新改革
+ *  [传统表单元素]
+ *      input: text/password/radio/checkbox/file/hidden/button/submit/reset...
+ *      select
+ *      textarea 文本域
+ *      button
+ *      form
+ *      label
+ *      ...
+ *  [新增一些表单元素或者表单类型]
+ *      input:search/email/tel/umber/range/color/data/time/url......
+ *      
+ *  [音视频标签]
+ *   audio
+ *   video
+ *   告别flash时代
+ * 
+ *  [canvas] 图形绘制
+ *   
+ *  [提供新的API]
+ *   本地存储：localStorage、sessionStorage
+ *   获取地理位置： navigator.geolocation.getCurrentPosition
+ *      调取手机内部的GPS定位系统获取当前手机所在地的经纬度、精准度等
+ *   ......
+ *   还提供了一些API，通过浏览器调取手机内部的软件或硬件（但性能不高，兼容性不好）
+ * 
+ *  [websocket]
+ *   socket.io：客户端和服务器端新的传输方式（即时通讯IM系统基本基于它完成）
+ *   
+ * 
+ * 二：CSS3
+ * 
+ * 三：响应式布局开发
+ * 
+ * 四：微信二次开发（小程序） => Hybrid混合app开发
+ * 
+ * 五：移动端事件
+ * 
+ * 六：移动端常用的插件、类库、框架
+ */
+
