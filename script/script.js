@@ -4888,6 +4888,42 @@ let change = {
  *      
  * 
  * 三：响应式布局开发
+ *  响应式布局：在不同尺寸的设备上都能良好的展示
+ *  公司中的产品形态：
+ *      1.PC端（全凭页面需要宽度自适应，但一般都是固定宽度的）
+ *      2.PC+移动端用同一套项目（简单的页面，例如：产品介绍，公司展示类的官网等）
+ *      3.移动端（移动端设备尺寸差异较大，需要做响应式布局开发）
+ *          嵌入到APP中的H5
+ *          微信中分享出来的H5
+ *          微信公众号
+ *          小程序
+ *          靠浏览器访问的H5
+ *          ......
+ *      4.React Native / ionic / cordova ... JS开发APP的框架，使用JS代码开发
+ *  APP，最后框架会把代码转换为安卓IOS需要的代码
+ * 
+ *  如何实现响应式布局开发？
+ *      最常用的方案：rem等比缩放响应式布局
+ *      首先加meta标签
+ *         meta:vp [tap]
+ *         <meta name="viewport" content="width=divice-width,initial-scale=1.0">
+ *         rem和px一样都是样式单位，px是固定单位，rem是相对单位（相对于当前页面根元素HTML的字体设定的单位）
+ *          
+ *         开始给THML字体大小设置为100px（1rem=100px），接下来我们写样式的时候，把所有的尺寸都用rem设定（测量
+ *      出来的px值/100就是应该设置的rem值），如果HTML的font-size不变，用rem和px一样，但是如果字体大小改变，也就
+ *      是改变了rem和px之间的换算比例，那么值钱所有用rem做单位的样式都会自动按照最新的比例进行缩放，实现了改动HTML的
+ *      font-size，整个页面中的元素都跟着缩放了，牵一发动全身。
+ * 
+ *         真实项目中，设计师给一套设计稿（常用尺寸：640*1136  750*1334  640*960  ...），拿到设计稿后，我们严格按照
+ *      设计稿中的尺寸去编写样式
+ *          html {
+ *              font-size: 100px;
+ *          }
+ *          接下来写样式，把测量出来的px都除以100变为rem，所有的单位基于rem来搞
+ *          假设设计稿是750，也就相当于750的设备下，1rem=100px
+ * 
+ *          页面运行在320的设备上，我们需要修改html的字体大小，以此实现页面跟着整体缩放：320 / 750 * 100 => 当前设备上
+ *      HTML的字体大小
  * 
  * 四：微信二次开发（小程序） => Hybrid混合app开发
  * 
@@ -4896,3 +4932,21 @@ let change = {
  * 六：移动端常用的插件、类库、框架
  */
 
+
+
+
+
+ (function (window) {
+     // 根据当前设备的宽度，动态计算粗REM的换算比例，实现页面中元素的等比缩放
+     let computedREM = function () {
+        let winW = document.documentElement.clientWidth,
+            desW = 640;
+        if (winW >= 640) {
+            document.documentElement.style.fontSize = '100px';
+            return;
+        }
+        document.documentElement.style.fontSize = winW / desW * 100 + 'px';
+     };
+     computedREM();
+     window.addEventListener('resize', computedREM);
+ })(window);

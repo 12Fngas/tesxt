@@ -1,0 +1,53 @@
+@import (reference) "style.css";
+
+html {
+    font-size: 100px;
+    font-family: "Microsoft JhengHei";
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+    background: #f4f4f4;
+}
+
+.mainBox {
+    max-width: 640px;
+    height: 100%;
+    margin: 0 auto;
+    background: #FFF;
+}
+
+.loadingBox {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.loadingBox {
+    background: #000;
+
+    .title {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        margin-top: -2.2rem;
+        height: 1.4rem;
+        width: 100%;
+        color: #FFF;
+    }
+
+    h1 {
+        line-height: .75rem;
+        font-size: .5rem;
+        text-align: center;
+    }
+
+    h2 {
+        margin-top: .2rem;
+        line-height: .45rem;
+        text-align: center;
+        letter-spacing: .04rem;
+        font-size: .26rem;
+    }
+}

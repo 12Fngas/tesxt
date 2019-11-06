@@ -709,14 +709,16 @@ html, body {
 
 
 
-#userEmail {
+/* #userEmail {
   display: inline-block;
   width: 200px;
   border: 1px solid #DDD;
 
-  outline: none;
-   /* 当文本框获取焦点后取出浏览器默认的边框选中颜色 */
-}
+  outline: none;  */
+  /** 
+  当文本框获取焦点后取出浏览器默认的边框选中颜色 
+  */
+/* }  */
 
 /* #userEmail:valid {
   border-color: green;
@@ -732,4 +734,37 @@ html, body {
 
 #userEmail:invalid+span:after { 
   content: '邮箱格式错误'；
+} */
+
+
+
+/* html {
+  font-size: 100px;
+} */
+  /**
+    1.最好别写10px；浏览器默认最小字体是12px
+    2.font-size设置为多少，相当于1个rem等于多少像素
+    3.之所以设置为100px就是为了方便计算
+  */
+
+/* 
+.box1 {
+  margin: 20px;
+  width: 100px;  
+  height: 100px;
+  background: lightcoral;
+}
+
+.box2 {
+  margin: 20px;
+  width: 100px;  
+  height: 100px;
+  background: yellowgreen;
+}
+
+.box3 {
+  margin: 20px;
+  width: 100px;  
+  height: 100px;
+  background: burlywood;
 } */
