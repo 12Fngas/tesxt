@@ -1,3 +1,16 @@
+/**
+ 虽然移动端（安卓&IOS）上的浏览器大部分都是webkit内核的，但是由于很多手机操作系统版本过低（
+尤其是安卓手机），导致很多css3新特性不能有效识别，此时我们使用的大部分css3属性都要写2套才能兼
+容。（加web在前，不加的在后）
+    -webkit-animation
+    animation
+
+ 有JS插件能解决
+ （prefixfree.min.js），导入插件后，会把需要的前缀都加上
+*/
+
+
+
 @import (reference) "style.css";
 
 html {
@@ -6,19 +19,24 @@ html {
 }
 
 html, body {
+    position: relative;
+    z-index: -4;
     height: 100%;
     overflow: hidden;
     background: #f4f4f4;
 }
 
 .mainBox {
+    position: relative;
+    z-index: -3;
     max-width: 640px;
     height: 100%;
     margin: 0 auto;
     background: #FFF;
 }
 
-.loadingBox {
+.loadingBox, .phoneBox {
+    display: none;
     height: 100%;
     overflow: hidden;
     position: relative;
@@ -49,5 +67,133 @@ html, body {
         text-align: center;
         letter-spacing: .04rem;
         font-size: .26rem;
+    }
+
+    .progress {
+        top: 50%;
+        left: 50%;
+        margin: .85rem 0 0 -2.3rem;
+        position: absolute;
+        width: 4.6rem;
+        height: .3rem;
+        background: #FFF;
+
+        .current {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: .3rem;
+            height: 100%;
+            background-size: .3rem .3rem;
+            background: -webkit-linear-gradient(45deg, #5cb85c 0%, #5cb85c 25%, #74c274 25%, #74c274 50%, #5cb85c 50%, #5cb85c 75%, #74c274 75%, #74c274 100%);
+            background: linear-gradient(45deg, #5cb85c 0%, #5cb85c 25%, #74c274 25%, #74c274 50%, #5cb85c 50%, #5cb85c 75%, #74c274 75%, #74c274 100%);
+            animation: loadingMove .5s linear 0s infinite both;
+            transition: .3s;
+        }
+    }
+}
+
+@keyframes loadingMove {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 0 -.3rem;
+    }
+}
+
+.phoneBox {
+    z-index: -2;
+    display: block;
+    background: url("/img/phoneUI/resumeBg.jpg") no-repeat;
+    background-size: cover;
+    h2 {
+        margin-top: .5rem;
+        text-align: center;
+        color: rgba(255, 255, 255, .6);
+        img {
+            display: inline-block;
+            width: 2.62rem;
+            height: 1.25rem;
+        }
+
+        span {
+            display: block;
+            margin-top: .1rem;
+            line-height: .3rem;
+            font-size: .3rem;
+            color: #FFF;
+            letter-spacing: .05rem;
+        }
+    }
+
+    .answer {
+        position: absolute;
+        width: 5.2rem;
+        height: 3.6rem;
+        left: 50%;
+        margin-left: -2.6rem;
+        bottom: .3rem;
+        background: url("/img/phoneUI/listen.svg") no-repeat;
+        background-size: 100% 100%;
+
+        .markMove {
+            z-index: -1;
+            width: 1.6rem;
+            height: 1.6rem;
+            position: absolute;
+            right: -.05rem;
+            bottom: 1rem;
+            box-sizing: border-box;
+            border-radius: 50%;
+            border: .03rem solid red;
+            animation: answerMove .5s linear infinite both;
+        }
+    
+        .markLink {
+            .markMove;
+            z-index: 1;
+            animation: none;
+            border: none;
+            border-radius: 0;
+            background: green;
+            display: none;
+        }
+    }
+
+    .hang {
+
+        position: absolute;
+        left: 50%;
+        margin-left: -2.6rem;
+        bottom: 2rem;
+        width: 5.2rem;
+        height: 6.59rem;
+        background: url('/img/phoneUI/detail.svg') no-repeat;
+        background-size: 100% 100%;
+        transform: translateY(7.5rem);
+        // transform开启硬件加速，性能更高
+        transition: .3s;
+
+        .markLink {
+            position: absolute;
+            width: 1.6rem;
+            height: 1.6rem;
+            bottom: -1rem;
+            left: 50%;
+            margin-left: -.8rem;
+            background: red;
+            border-radius: 50%;
+            background-color: rgba(255, 0, 0, .5);
+        }
+    }
+}
+
+@keyframes answerMove {
+    from {
+        transform: scale(1.2);
+    }
+    to {
+        transform: scale(0);
     }
 }

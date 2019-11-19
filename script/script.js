@@ -4950,3 +4950,76 @@ let change = {
      computedREM();
      window.addEventListener('resize', computedREM);
  })(window);
+
+ let loadingRender = (function() {
+     let $loadingBox = $('.loadingBox'),
+         $current = $loadingBox.find('.current');
+
+     let imgData = ["./img/phoneUI/hangUp.svg", "./img/phoneUI/pickUp.svg"];
+
+     let n = 0,
+        len = imgData.length;
+     // 预加载图片
+     let run = function (callback) {
+        imgData.forEach(item => {
+            let tempImg = new Image;
+            tempImg.onload = () => {
+                tempImg = null;
+                $current.css('width', (++n / len) * 100 + '%');
+            
+                //加载完成:执行回调函数（让当前loading页面消失）
+                if (n == len) {
+                    clearTimeout(delayTimer);
+                    callback && callback();
+                }
+            };
+            tempImg.src = item;
+        });
+     };
+
+     // 设置最长等待时间（假设10s，到达10s如加载到达90%，就可以正常访问内容，如果不足，则提示用户稍后重试）
+     let delayTimer = null;
+     let maxDelay = function (callback) {
+         delayTimer = setTimeout(() => {
+             if (n / len >= 0.9) {
+                 callback && callback();
+                 return;
+             }
+             alert('请稍后重试');
+
+             // 此时不继续加载页面，而是关闭页面，或跳转到其他页面
+             //window.location.href = 'http://www.baidu.com';
+         }, 10000);
+     };
+
+     //
+     let done = function() {
+        let timer = setTimeout(() => {
+            $loadingBox.remove();
+        }, 1000);
+     };
+     return {
+         init: function () {
+            run(done);
+            maxDelay(done);
+         }
+     }
+ })();
+ loadingRender.init();
+
+/*
+ 开发中，由于当前项目板块众多（每一个板块都是一个单例），最好规划一种机制：通过办事的判断可以让程序只执行对应板块内容，
+ 这样开发那个板块，我们就把表示改为啥
+ */
+
+ let url = window.location.href; // 获取当前页面的URL地址  location.href='xxx'这种写法是让其跳转到某一个页面
+     well = url.indexOf('#'),
+     hash = well === -1 ? null : url.substr(well + 1);
+ switch (hash) {
+    case 'loading':
+        loadingRender.init();
+        break;
+    case 'phone':
+        phoneRender.init();
+        break;
+ }

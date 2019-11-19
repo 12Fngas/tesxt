@@ -8,6 +8,7 @@
   <title>Document</title>
   <link rel="stylesheet/less" href="resume.less">
   <script src='script/less.js'></script> 
+  <script src="script/prefixfree.js"></script>
   <!-- <link rel="stylesheet" href="style.css"> -->
 </head>
 <body>
@@ -208,14 +209,31 @@
       <div class="current"></div>
     </div>
   </section>
+
+  <section class="phoneBox">
+    <h2>
+      <img src="img/info.svg" alt="">
+      <span>00:00</span>
+    </h2>
+    <div class="answer">
+      <div class="markMove"></div>
+      <a href="javascript:;" class="markLink"></a>
+    </div>
+    <div class="hang">
+      <a href="javascript:;" class="markLink"></a>
+    </div>
+    <audio src="audio/bell.mp3" loop preload="none" id="answerBell"></audio>
+    <audio src="audio/say.mp3" preload="none" id="introduction"></audio>
+  </section>
 </main>
 
 
 
 
-  <script src = "node_modules/jquery/dist/jquery.js"></script>
+  <!-- <script src = "node_modules/jquery/dist/jquery.js"></script> -->
   <script src = "script/utils.js"></script>
-  <script src = "script/subscribe.js"></script>
+  <script src="script/zepto.js"></script>
+  <!-- <script src = "script/subscribe.js"></script> -->
   <!-- <script src = "script/dragAnimation_plugin.js"></script> -->
   <!-- <script src = "script/tab-plugin.js"></script> -->
   <!-- <script src = "script/animate.js"></script>
