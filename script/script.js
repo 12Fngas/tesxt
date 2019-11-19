@@ -5005,7 +5005,106 @@ let change = {
          }
      }
  })();
- loadingRender.init();
+
+ /**
+  * 关于audio的一些常用属性
+  *     [属性]
+  *     duration：播放的总时间（s）
+  *     currentTime：当前已经播放的时间（s）
+  *     ended：是否已经播放完成
+  *     paused：当前是否为暂停状态
+  *     volume：控制音量（0到1）
+  * 
+  *     [方法]
+  *     pause() 暂停
+  *     play() 播放
+  *     
+  * 
+  *     [事件]
+  *     canplay: 可以正常播放（但是播放过程中可能出现卡顿）
+  *     canplaythrough: 资源加载完毕，可以顺畅播放
+  *     ended: 播放完成
+  *     loadedmetadata：资源的基础信息已经加载完成
+  *     loadeddata：整个资源都加载完成
+  *     pause：触发了暂停
+  *     play：触发了播放
+  *     playing：正在播放中
+  */
+
+ let phoneRender = (function () {
+    let $phoneBox = $('.phoneBox'),
+        $time = $phoneBox.find('span'),
+        $answer = $phoneBox.find('.answer'),
+        $answerMarkLink = $answer.find('.markLink'),
+        $hang = $phoneBox.find('.hang'),
+        $hangMarkLink = $hang.find('.markLink'),
+        answerBell = $('#answerBell')[0],
+        introduction = $('#introduction')[0];
+
+
+    let answerMarkTouch = function () {
+        // 1.remove answer
+        $answer.remove();
+        answerBell.pause();
+        $(answerBell).remove(); // 先暂停再移除，否则移除后还会播放声音
+
+        //2.show hang
+        $hang.css('transform', 'translateY(0rem)');
+        $time.css('display', 'block');
+        introduction.play();
+        introduction.volume = 0.1;
+        computedTime();
+    };
+
+    // 计算播放时间
+    let autoTimer = null;
+    let computedTime = function () {
+        /*
+        let duration = 0; // 让audio播放，会先加载资源，部分资源加载完成才会播放，并计算出总时间duration等信息，所以把获取信息放到canplay事件中
+        introduction.oncanplay = function () {
+            duration = introduction.duration;
+        }
+        */
+        autoTimer = setInterval(() => {
+            let val = introduction.currentTime,
+                duration = introduction.duration;
+            // 播放完成
+            if(val >= duration) {
+                clearInterval(autoTimer);
+                closePhone();
+                return;
+            }
+
+            let minute = Math.floor(val / 60),
+                second = Math.floor(val - minute * 60);
+            minute = minute < 10 ? '0' + minute : minute;
+            second = second < 10 ? '0' + second : second;
+            $time.html(`${minute} : ${second}`);
+        }, 1000);
+    };
+
+    //关闭phone
+    let closePhone = function () {
+        clearInterval(autoTimer);
+        introduction.pause(); 
+        $(introduction).remove();
+        $phoneBox.remove();
+    };
+
+    return {
+        init : function () {
+            //播放bell
+            answerBell.play();
+            answerBell.volume = 0.05;
+            
+            //点击answerMark
+            $answerMarkLink.on('click', answerMarkTouch);
+            $hangMarkLink.on('click', closePhone);
+        }
+    }
+ })();
+
+ phoneRender.init();
 
 /*
  开发中，由于当前项目板块众多（每一个板块都是一个单例），最好规划一种机制：通过办事的判断可以让程序只执行对应板块内容，
