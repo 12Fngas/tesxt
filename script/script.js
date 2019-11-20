@@ -4436,34 +4436,251 @@ let change = {
 
 
 
-let $container = $('.container'),
-    $imgList = $('.container>.imgBox>li'),
-    $mark = null;
-$imgList.on('mouseover', function(ev) {
-    // 创建mark：根据经过的li中的小图片，动态创管控mark中的大图片
-    let $srcStr = $(this).children('img').attr('src');
-    $srcStr = $srcStr.replace(/_(\d+)/g, 'big_$1');
-    if (!$mark) {
-        $mark = $(`<div class="mark">
-                    <img src="${$srcStr}" alt="">
-                   </div>`
-        );
-        $container.append($mark);
-    }
-}).on('mouseout', function(ev) {
-    // 移除mark
-    if ($mark) {
-        $mark.remove();
-        $mark = null;
-    }
-}).on('mousemove',function(ev) {
-    //根据鼠标的位置计算
-    console.log($container.offset());
-    let {top: conTop, left: conLeft} = $container.offset(),
-        curL = ev.pageX - conLeft + 20,
-        curT = ev.pageY - conTop + 20;
-    $mark.css({
-        top: curT,
-        left: curL
-    });
-});
+// let $container = $('.container'),
+//     $imgList = $('.container>.imgBox>li'),
+//     $mark = null;
+// $imgList.on('mouseover', function(ev) {
+//     // 创建mark：根据经过的li中的小图片，动态创管控mark中的大图片
+//     let $srcStr = $(this).children('img').attr('src');
+//     $srcStr = $srcStr.replace(/_(\d+)/g, 'big_$1');
+//     if (!$mark) {
+//         $mark = $(`<div class="mark">
+//                     <img src="${$srcStr}" alt="">
+//                    </div>`
+//         );
+//         $container.append($mark);
+//     }
+// }).on('mouseout', function(ev) {
+//     // 移除mark
+//     if ($mark) {
+//         $mark.remove();
+//         $mark = null;
+//     }
+// }).on('mousemove',function(ev) {
+//     //根据鼠标的位置计算
+//     console.log($container.offset());
+//     let {top: conTop, left: conLeft} = $container.offset(),
+//         curL = ev.pageX - conLeft + 20,
+//         curT = ev.pageY - conTop + 20;
+//     $mark.css({
+//         top: curT,
+//         left: curL
+//     });
+// });
+
+
+
+
+/**
+ * 事件委托（事件代理）
+ *  利用事件的冒泡传播机制，如果一个容器的后代元素中，很多元素的点击行为
+ * （其他事件行为也是）都要做一些处理，此时不用像之前一个个获取一个个的绑定，
+ * 我们只需要给容器的click绑定方法即可，这样不管点击的是哪一个后代元素，都会
+ * 根据冒泡传播的机制，把容器的click行为触发，把对应的方法执行，根据事件源，
+ * 我们可以知道点击的是谁，做不同的事情。
+ */
+
+//  a1.onclick = function() {
+//      //...
+//  };
+//  a2.onclick = function() {
+//      //...
+//  };
+
+ //一个个获取元素然后绑定事件方法，又麻烦又耗性能
+
+ /**
+  * 点击a1，不仅触发a1的点击行为，而且其父级元素的click行为也会依次触发
+  *     此过程只需给a1的container绑定方法即可，不管点击后代哪个元素，绑定方法都会
+  * 执行，而且ev中记录的事件源（ev.target）
+  * 
+  * let target = ev.target || ev.srcElement;
+  * if (target.className == 'a1') {
+  *     // ....
+  * }
+  * else {
+  *     // .... 
+  * }
+  * 
+  * 事件委托比一个个事件绑定，性能提高50%左右，且操作元素越多，性能提高越大
+  */
+
+
+
+// $(function() {
+//     /**
+//      * 基于事件委托给最外层的盒子的mouseover绑定方法，这样不管操作后代元素中的谁
+//      * 的mouseover，这个方法都会执行
+//      */
+//     let $detailBox = $('.detailBox');
+//     $(document.body).on('mouseover', function(ev) {
+//         let target = ev.target,
+//             tag = target.tagName,
+//             $target = $(target),
+//             $pars = $target.parents(); // 当前事件源的祖先元素
+
+//         // 如果事件源是navBox中的a或li（让detailBox显示）
+//         // true祖先中包含navBox，false则相反
+//         let flag = $pars.filter('.navBox').length > 0 ? true : false;
+//         if ((tag === 'A' || tag === 'LI') && flag) {
+//             let val = $target.text().match(/\d+/);
+//             $detailBox.css('display', 'block').html(`导航${val}对应的内容`);
+//             return;
+//         }
+
+//         //如果事件源是detailBox或者它的后代元素，不做处理
+//         // if ($target.hasClass('nav-box') || $pars.filter('detailBox').length > 0) {
+//         //     return;
+//         // }
+
+//         $detailBox.css('display', 'none');
+//     });
+
+//     $detailBox.on('mouseover', function(ev) {
+//         ev.stopPropagation();
+//     });
+// });
+
+
+// (function(window) {
+//     class Subscribe {
+//         constructor () {
+//             // 创建一个容器（每个实例都有独立的容器，管理自己的方法）
+//             this.pond = [];
+
+//         }
+
+//         // 向计划表（pond池子）中增加方法：去重
+//         // fn : 要增加的方法
+//         add (fn) {
+//             let pond = this.pond,
+//                 isExist = false;
+//             pond.forEach(item => item === fn ? isExist = true : null);
+//             !isExist ? pond.push(fn) : null;
+//         }
+
+//         // 从计划表（pond池子）中移除方法
+//         remove (fn) {
+//             let pond = this.pond;
+//             pond.forEach((item, index) => {
+//                 if (item === fn) {
+//                     // pond.splice(index, 1);// 用splice删除，会数组塌陷
+//                     pond[index] = null;
+//                 }
+//             });
+//         }
+
+//         // 通知计划表中的方法依次执行
+//         // 如果传递参数信息了，把这些参数一次赋值给执行的每一个方法
+//         fire (...arg) {
+//             let pond = this.pond;
+//             pond.forEach((item, index) => {
+//                 // remove机制处理了，此时item不一定都是函数了，有可能是null
+//                 // 是null不执行，要删掉
+//                 for (let i = 0; i < pond.length; i++) {
+//                     let item = pond[i];
+//                     if (item === null) {
+//                         pond.splice(i, 1);
+//                         i--;
+//                         continue;
+//                     }
+//                     item(...arg);
+//                 }
+//             });
+//         }
+//     }
+//     window.Subscribe = Subscribe;
+// })(window);
+
+// let subscribe = new Subscribe();
+
+// let fn1 = function (x, y) {
+//     console.log(1, x, y);
+//     subscribe.remove(fn2);
+// }
+
+// let fn2 = function () {
+//     console.log(2);
+// }
+
+// let fn3 = function () {
+//     console.log(3);
+//     subscribe.remove(fn1);
+//     subscribe.remove(fn2);
+// }
+
+// let fn4 = function () {
+//     console.log(4);
+// }
+
+// subscribe.add(fn1);
+// subscribe.add(fn2);
+// subscribe.add(fn3);
+// subscribe.add(fn4);
+
+// setInterval(() => {
+//     subscribe.fire(100, 200);
+// }, 1000);
+
+
+
+
+// let box = document.querySelector('#box');
+
+// let down = function down(ev) {
+//     this.strX = ev.clientX;
+//     this.strY = ev.clientY;
+//     this.strL = this.offsetLeft;
+//     this.strT = this.offsetTop;
+
+//     this.MOVE = move.bind(this);
+//     this.UP = up.bind(this);
+//     document.addEventListener('mousemove', this.MOVE);
+//     document.addEventListener('mouseup', this.UP);
+// };
+
+// let move = function move(ev) {
+//     this.curL = ev.clientX - this.strX + this.strL;
+//     this.curT = ev.clientY - this.strY + this.strT;
+//     this.style.left = this.curL + 'px';
+//     this.style.top = this.curT + 'px';
+// };
+
+// let up = function up () {
+//     document.removeEventListener('mousemove',this.MOVE);
+//     document.removeEventListener('mouseup',this.UP);
+// }
+
+
+
+
+/**
+ * 一：HTML5 (H5)
+ *  1.新增加（修改、删除）的语义化标签
+ *  header  footer  main（主体）  section（区域）  article（文章区域）  aside与内容无关的部分（广告）
+ *  nav  figure（配图区域）  figcaption（配图说明）  mark（标记）  time（时间标记） progress（进度条）
+ *  ......
+ * 
+ *  2.关于表单元素的新改革
+ *  [传统表单元素]
+ *      input: text/password/radio/checkbox/file/hidden/button/submit/reset...
+ *      select
+ *      textarea 文本域
+ *      button
+ *      form
+ *      label
+ *      ...
+ *  [新增一些表单元素或者表单类型]
+ *      input:search/email/tel/umber/range/color/data/time/url......
+ *      
+ * 
+ * 二：CSS3
+ * 
+ * 三：响应式布局开发
+ * 
+ * 四：微信二次开发（小程序） => Hybrid混合app开发
+ * 
+ * 五：移动端事件
+ * 
+ * 六：移动端常用的插件、类库、框架
+ */

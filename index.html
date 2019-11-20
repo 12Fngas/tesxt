@@ -123,36 +123,46 @@
     <div class="bigBox"><img src="img/big.jpg" alt=""></div>
   </section> -->
 
+<!-- 分类导航（方案一：css）
+<div class="shop">
+  <a href="javascript:;" class="shopLink">
+    购物车
+    <div class="shopList">
+      购物车列表
+    </div>
+  </a>
+</div> -->
 
-<section class="container">
-  <ul class="imgBox clearfix">
-    <!-- 如果小图和大图在名字上没有固定的规则，我们把大图地址都以自定义属性的方式
-    存储起来，后期需要展示大图的时候，从自定义属性获取即可
-    <li>
-      <img src="img/wow/1.jpg" data-big=""img/wow/big_1.jpg alt="">
-    </li>
+<!-- <section class="menuBox">
+  <nav class="navBox">
+    <ul>
+      <li><a href="#" target="blank">导航1</a></li>
+      <li><a href="#" target="blank">导航2</a></li>
+      <li><a href="#" target="blank">导航3</a></li>
+      <li><a href="#" target="blank">导航4</a></li>
+      <li><a href="#" target="blank">导航5</a></li>
+      <li><a href="#" target="blank">导航6</a></li>
+      <li><a href="#" target="blank">导航7</a></li>
+      <li><a href="#" target="blank">导航8</a></li>
+      <li><a href="#" target="blank">导航9</a></li>
+    </ul>
+  </nav>
+  <div class="detailBox">导航1对应内容</div>
+</section> -->
 
-    如果有固定的规则，我们完全可以不采用自定义属性的方式，而是基于规则自己处理匹配即可
-    -->
-    <li><img src="img/wow/1.jpg" alt=""></li>
-    <li><img src="img/wow/2.jpg" alt=""></li>
-    <li><img src="img/wow/3.jpg" alt=""></li>
-    <li><img src="img/wow/4.jpg" alt=""></li>
-  </ul>
-  <!-- 在js中动态创建与移除
-  <div class="mark">
-    <img src="img/apple/big_1.jpg" alt="">
-  </div> -->
-</section>
- <!-- 
-   方案一：
-    每一个li中都有一个大盒子，大盒子中存放的是大图，开始是隐藏的，鼠标进入到li中
-  让其显示，并且让它的位置跟随鼠标的位置改变即可，鼠标离开li，让自己的大盒子消失。
-   方案二：
-   只有一个大盒子（可以在js中动态创建，也可以事先写好，控制显示隐藏），鼠标进入任意
-  一个li，都让大盒子出来，并且大盒子中存放的图片根据当前进入的li动态改变，同样实现
-  鼠标移动，让大盒子也跟着移动
-  -->
+
+
+
+<!-- <section class="container">
+  <div class="smallBox">
+    <img src="img/small.jpg" alt="">
+    <div class="mark"></div>
+  </div>
+</section> -->
+
+<input type="number" step="1" min="10" max="100" value="20" disabled>
+<input type="range" step="1" min="10" max="100" value="20">
+
 
 
 
