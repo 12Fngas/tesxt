@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet/less" href="resume.less">
+  <script src='script/less.js'></script> 
+  <script src="script/prefixfree.js"></script>
+  <!-- <link rel="stylesheet" href="style.css"> -->
 </head>
 <body>
 
@@ -160,14 +164,77 @@
   </div>
 </section> -->
 
-<input type="number" step="1" min="10" max="100" value="20" disabled>
-<input type="range" step="1" min="10" max="100" value="20">
+
+
+
+<!-- <div id="box"></div>
+<div id="box2"></div> -->
 
 
 
 
-  <script src = "node_modules/jquery/dist/jquery.js"></script>
+<!-- <input id="ageInp" type="number" step="1" min="10" max="100" value="20" disabled>
+<input id="rangeInp" type="range" step="1" min="10" max="100" value="20">
+<input type="color" id="colorInp">
+<input type="date">
+
+<input type="email" id="userEmail">
+<span id="spanEmail"></span>
+
+
+<select name="" id="selectCity">
+  <option value="">===请选择===</option>
+  <option value="上海">上海</option>
+  <option value="广州">广州</option>
+  <option value="深圳">深圳</option>
+  <option value="杭州">杭州</option>
+  <option value="成都">成都</option>
+</select> -->
+
+
+<!-- <div class="box1"></div>
+<div class="box2"></div>
+<div class="box3"></div> -->
+
+
+
+<main class="mainBox">
+  <!-- 外面套一层mainBox：控制当前页面的最大宽度，防止把做好的页面在PC端预览的时候满屏展示，作用字体和盒子大小等被肆意拉伸 -->
+  <section class="loadingBox">
+    <div class="title">
+      <h1>XX培训</h1>
+      <h2>H5场景的交互型简历</h2>
+    </div>
+    <div class="progress">
+      <div class="current"></div>
+    </div>
+  </section>
+
+  <section class="phoneBox">
+    <h2>
+      <img src="img/info.svg" alt="">
+      <span>00:00</span>
+    </h2>
+    <div class="answer">
+      <div class="markMove"></div>
+      <a href="javascript:;" class="markLink"></a>
+    </div>
+    <div class="hang">
+      <a href="javascript:;" class="markLink"></a>
+    </div>
+    <audio src="audio/bell.mp3" loop preload="none" id="answerBell"></audio>
+    <audio src="audio/say.mp3" preload="none" id="introduction"></audio>
+  </section>
+</main>
+
+
+
+
+  <!-- <script src = "node_modules/jquery/dist/jquery.js"></script> -->
   <script src = "script/utils.js"></script>
+  <script src="script/zepto.js"></script>
+  <!-- <script src = "script/subscribe.js"></script> -->
+  <!-- <script src = "script/dragAnimation_plugin.js"></script> -->
   <!-- <script src = "script/tab-plugin.js"></script> -->
   <!-- <script src = "script/animate.js"></script>
   <script src = "script/banner-plugin.js"></script> -->
@@ -184,6 +251,175 @@
   //   eventType : 'click',
   //   lastIndex : 2
   // });
+  </script>
+  <!-- <script>
+    let drag1 = new Drag(box),
+        drag2 = new Drag(box2);
+
+    let change = function (curEle) {
+        [].forEach.call(document.querySelectorAll('div'), item => {
+          item.style.zIndex = 0;
+        });
+        curEle.style.zIndex = 1;
+    };
+    drag1.subDown.add(change);
+    drag2.subDown.add(change);
+
+    let computedFly = function (curEle) {
+        if (!curEle.lastFly) {
+          curEle.lastFly = curEle.offsetLeft;
+          curEle.speedFly = 0;
+          return;
+        }
+
+        curEle.speedFly = curEle.offsetLeft - curEle.lastFly;
+        curEle.lastFly = curEle.offsetLeft;
+      };
+      drag1.subMove.add(computedFly);
+      drag2.subMove.add(computedFly);
+
+
+      let stopAnimate = function (curEle) {
+        clearInterval(curEle.flyTimer);
+        curEle.speedFly = undefined;
+        clearInterval(curEle.dropTimer);
+      }
+      drag1.subDown.add(computedFly);
+      drag2.subDown.add(computedFly);
+          
+
+      let animateFly = function (curEle) {
+        let minL = 0,
+            maxL = document.documentElement.clientWidth - curEle.offsetWidth;
+        
+        let speed = curEle.speedFly,
+            dir = 'right';
+        speed < 0 ? dir = 'left' : null;
+        speed = Math.abs(speed)
+        
+        curEle.flyTimer = setInterval(() => {
+
+            if (Math.abs(speed) < 0.5) {
+                clearInterval(curEle.flyTimer);
+                return;
+            }
+
+            speed *= .98;
+
+            let curL = curEle.offsetLeft;
+            if (dir === 'right') {
+                if (curL >= maxL) {
+                    //向右走到达右边界
+                    curEle.style.left = maxL + 'px';
+                    dir = 'left';
+                    return;
+                }
+                curL += speed;
+            }
+            else  {
+                if (curL <= minL) {
+                    //向右走到达右边界
+                    curEle.style.left = minL + 'px';
+                    dir = 'right';
+                    return;
+                }
+                curL -= speed;
+            }
+
+            curEle.style.left = curL + 'px';
+        }, 17);
+      };
+      drag1.add(animateFly);
+      drag2.add(animateFly);
+
+      let animateDrop = function (curEle) {
+        let speed = 9.8,
+            minT = 0,
+            maxT = document.documentElement.clientHeight - curEle.offsetHeight,
+            flag = 0;
+
+
+
+        curEle.dropTimer = setInterval(() => {
+            if (flag > 1) {
+                clearInterval(curEle.dropTimer);
+                return;
+            }
+
+            speed += 9.8;
+            speed *= .98;
+
+            let curT = curEle.offsetTop;
+            curT += speed;
+            if (curT >= maxT) {
+                curEle.style.top = maxT + 'px';
+                speed *= -1;
+                flag++;
+                return;
+            }
+
+            if (curT <= minT) {
+                curEle.style.top = minT + 'px';
+                speed *= -1;
+                return;
+            }
+            curEle.style.top = curT + 'px';
+            flag = 0;
+        }, 17);
+      }
+      drag1.add(animateDrop);
+      drag2.add(animateDrop);
+
+  </script> -->
+  <script>
+    /**
+     * input事件：移动端没有keyDown、keyUp，用input代替，代表正在操作当前表单元素（例如正在输入等）
+     */
+    // rangeInp.oninput = function () {
+    //   let val = this.value;
+    //   ageInp.value = val;
+    // };
+
+    // colorInp.onchange = function () {
+    //   console.log(this.value);
+    //   //16进制的颜色值
+    // };
+
+    // /**
+    //  * 表单元素中新增加的类型作用
+    //  *  1.功能强大了（很多东西不需要增加导入JS插件完成了，例如：日历）
+    //  *  2.在移动端根据设置的类型不一样，用户输入过程中调取出来的虚拟键盘也不一样（例如：number类型调出来的是数字键盘）
+    //  *  3.新增加的类型提供了CSS / JS验证，可以验证用户输入的内容是否符合格式（之前都是用正则，现在H5新类型自带验证机制）
+    //  * 
+    //  * 
+    //  */
+
+    // userEmail.onkeydown = userEmail.onkeyup = function () {
+    //   //checkValidity：H5新提供的表单内容格式验证方法（新表单类型中有内置验证机制，都可以基于这个方法验证）
+    //   // if (this.checkValidity()) {
+    //   //   spanEmail.innerHTML = 'OK';
+    //   // }
+    //   // else {
+    //   //   spanEmail.innerHTML = 'NO';
+    //   // }
+    
+    //   let val = this.value.trim();
+    //   if (val.length == 0) {
+    //     spanEmail.innerHTML = '必填';
+    //     return;
+    //   }
+    //   let reg = /^\w+((-\w+)|(\.\w+))*@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*[A-Za-z0-9]+$/;
+    //   if (!reg.test(val)) {
+    //     spanEmail.innerHTML = 'NO';
+    //     return;
+    //   }
+    //   spanEmail.innerHTML = 'YES';
+    // };
+
+
+
+    
+
 
   </script>
 </body>

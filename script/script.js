@@ -4542,55 +4542,7 @@ let change = {
 // });
 
 
-// (function(window) {
-//     class Subscribe {
-//         constructor () {
-//             // 创建一个容器（每个实例都有独立的容器，管理自己的方法）
-//             this.pond = [];
 
-//         }
-
-//         // 向计划表（pond池子）中增加方法：去重
-//         // fn : 要增加的方法
-//         add (fn) {
-//             let pond = this.pond,
-//                 isExist = false;
-//             pond.forEach(item => item === fn ? isExist = true : null);
-//             !isExist ? pond.push(fn) : null;
-//         }
-
-//         // 从计划表（pond池子）中移除方法
-//         remove (fn) {
-//             let pond = this.pond;
-//             pond.forEach((item, index) => {
-//                 if (item === fn) {
-//                     // pond.splice(index, 1);// 用splice删除，会数组塌陷
-//                     pond[index] = null;
-//                 }
-//             });
-//         }
-
-//         // 通知计划表中的方法依次执行
-//         // 如果传递参数信息了，把这些参数一次赋值给执行的每一个方法
-//         fire (...arg) {
-//             let pond = this.pond;
-//             pond.forEach((item, index) => {
-//                 // remove机制处理了，此时item不一定都是函数了，有可能是null
-//                 // 是null不执行，要删掉
-//                 for (let i = 0; i < pond.length; i++) {
-//                     let item = pond[i];
-//                     if (item === null) {
-//                         pond.splice(i, 1);
-//                         i--;
-//                         continue;
-//                     }
-//                     item(...arg);
-//                 }
-//             });
-//         }
-//     }
-//     window.Subscribe = Subscribe;
-// })(window);
 
 // let subscribe = new Subscribe();
 
@@ -4627,6 +4579,11 @@ let change = {
 
 // let box = document.querySelector('#box');
 
+// let subscribeDown = new Subscribe(),
+//     subscribeMove = new Subscribe(),
+//     subscribeUp = new Subscribe();
+    
+
 // let down = function down(ev) {
 //     this.strX = ev.clientX;
 //     this.strY = ev.clientY;
@@ -4637,6 +4594,8 @@ let change = {
 //     this.UP = up.bind(this);
 //     document.addEventListener('mousemove', this.MOVE);
 //     document.addEventListener('mouseup', this.UP);
+
+//     subscribeDown.fire(this, ev); // 通知计划表中的方法执行，并且把当前操作的元素传递给每一个即将执行的方法
 // };
 
 // let move = function move(ev) {
@@ -4644,15 +4603,131 @@ let change = {
 //     this.curT = ev.clientY - this.strY + this.strT;
 //     this.style.left = this.curL + 'px';
 //     this.style.top = this.curT + 'px';
+
+//     subscribeMove.fire(this, ev);
 // };
 
-// let up = function up () {
+// let up = function up (ev) {
 //     document.removeEventListener('mousemove',this.MOVE);
 //     document.removeEventListener('mouseup',this.UP);
+
+//     subscribeUp.fire(this, ev);
 // }
 
+// box.onmousedown = down;
+
+// /**
+//  *  浏览器有最小计算（反应）时间，同样的距离移动，操作快（用的时间段），浏览器能够反应过来的次数就少，触发mouseMove这个行为
+//  * 次数也变少，如移动慢，反应次数多，触发行为的次数也就多了。
+//  * 
+//  * 水平方向的运动只跟即将松手的一瞬间运动的速度有关系：我们需要获取的就是即将松开一瞬间的速度。
+//  */
+
+//  //1. 移动中随时计算速度
+//  subscribeMove.add((curEle, ev) => {
+//      // 第一次开始运动，让lastFly（上一次位置）以及speedFly（最新速度）都为初始当前位置
+//     if (!curEle.lastFly) {
+//         curEle.lastFly = curEle.offsetLeft;
+//         curEle.speedFly = 0;
+//         return;
+//     }
+//     // 第二次移动：用当前的值 - 上一次记录的值，就是最新的差值（速度），当前最新的值很快就会成为下一次的上一次的值，直到拖动结束位置
+//     curEle.speedFly = curEle.offsetLeft - curEle.lastFly;
+//     curEle.lastFly = curEle.offsetLeft;
+//  });
+
+//  // 2.离开的时候做一些事情（根据获取speedFly）让元素运动起来
+//  subscribeUp.add((curEle, ev) => {
+//     // curEle.speedFly: 记录了最后一次运动的速度
+//     let minL = 0,
+//         maxL = document.documentElement.clientWidth - curEle.offsetWidth;
+    
+//     //动画运动之前计算运动的方向
+//     let speed = curEle.speedFly,
+//         dir = 'right';
+//     speed < 0 ? dir = 'left' : null;
+//     speed = Math.abs(speed)
+//     // 开始按照方向运动
+    
+//     curEle.flyTimer = setInterval(() => {
+//         /**
+//          *  offsetLeft获取的值都会四舍五入，所有在当前left基础上+0.5的速度，下次再获取当前left值的时候
+//          * 还是会被省略到，也就是元素不在运动，此时结束定时器
+//          */
+//         if (Math.abs(speed) < 0.5) {
+//             clearInterval(curEle.flyTimer);
+//             return;
+//         }
+
+//         //实现指数衰减的运动，一直到速度为0为止
+//         speed *= .98;
+
+//         let curL = curEle.offsetLeft;
+//         if (dir === 'right') {
+//             if (curL >= maxL) {
+//                 //向右走到达右边界
+//                 curEle.style.left = maxL + 'px';
+//                 dir = 'left';
+//                 return;
+//             }
+//             curL += speed;
+//         }
+//         else  {
+//             if (curL <= minL) {
+//                 //向右走到达右边界
+//                 curEle.style.left = minL + 'px';
+//                 dir = 'right';
+//                 return;
+//             }
+//             curL -= speed;
+//         }
+
+//         curEle.style.left = curL + 'px';
+//     }, 17);
+//  });
+
+//  subscribeDown.add((curEle, ev) => {
+//     clearInterval(curEle.flyTimer);
+//     clearInterval(curEle.dropTimer);
+//  });
+
+//  //4.实现垂直方向的运动
+//  subscribeUp.add((curEle, ev) => {
+//     let speed = 9.8,
+//         minT = 0,
+//         maxT = document.documentElement.clientHeight - curEle.offsetHeight,
+//         flag = 0;
 
 
+
+//     curEle.dropTimer = setInterval(() => {
+//         if (flag > 1) {
+//             clearInterval(curEle.dropTimer);
+//             return;
+//         }
+
+//         // 实现速度衰减和加速
+//         speed += 9.8;
+//         speed *= .98;
+
+//         let curT = curEle.offsetTop;
+//         curT += speed;
+//         if (curT >= maxT) {
+//             curEle.style.top = maxT + 'px';
+//             speed *= -1;
+//             flag++;
+//             return;
+//         }
+
+//         if (curT <= minT) {
+//             curEle.style.top = minT + 'px';
+//             speed *= -1;
+//             return;
+//         }
+//         curEle.style.top = curT + 'px';
+//         flag = 0;
+//     }, 17);
+//  });
 
 /**
  * 一：HTML5 (H5)
@@ -4673,10 +4748,182 @@ let change = {
  *  [新增一些表单元素或者表单类型]
  *      input:search/email/tel/umber/range/color/data/time/url......
  *      
+ *  [音视频标签]
+ *   audio
+ *   video
+ *   告别flash时代
+ * 
+ *  [canvas] 图形绘制
+ *   
+ *  [提供新的API]
+ *   本地存储：localStorage、sessionStorage
+ *   获取地理位置： navigator.geolocation.getCurrentPosition
+ *      调取手机内部的GPS定位系统获取当前手机所在地的经纬度、精准度等
+ *   ......
+ *   还提供了一些API，通过浏览器调取手机内部的软件或硬件（但性能不高，兼容性不好）
+ * 
+ *  [websocket]
+ *   socket.io：客户端和服务器端新的传输方式（即时通讯IM系统基本基于它完成）
+ *   
  * 
  * 二：CSS3
+ *  学习一些样式属性和选择器就差不多了
+ * 
+ *  [选择器]
+ *  #ID  .CLASS  TAG  *  SELECTOR1,SELECTOR2(群组选择器)
+ * 
+ *      A B{} 后代
+ *      A>B{} 子代
+ *      A+B{} 下一个弟弟
+ *      A~B{} 兄弟
+ *      A.B{} 既具备A也具备.B的（统计二次筛选）
+ *      
+ *      A[NAME=''] 属性选择器 NAME!='' / NAME^=''  /  NAME$=''  / NAME*=''
+ *      ......
+ * 
+ *      A:HOVER
+ *      A:ACTIVE
+ *      A:VISITED
+ *      A:AFTER
+ *      A:BEFORE
+ * 
+ *      A:NTH-CHILD
+ *      A:NTH-LAST-CHILD
+ *      A:NTH-OF-TYPE
+ *      A:NTH-LAST-OF-TYPE
+ *      A:NOT
+ *      A:FIRST-CHILD
+ *      A:LAST-CHILD
+ *      ......
+ *      
+ *  [样式属性]
+ *   1.基本常用的
+ *    border-radius
+ *    box-shadow
+ *    text-shadow
+ * 
+ *   2.背景的
+ *    background-color / -image  / -position  / -repeat  /  -attachment  /  ...
+ *    background-size:
+ *      100px 100px  宽高具体指
+ *      100% 100%  宽高百分比（相对所在容器）
+ *      cover  以合适比例把图片缩放（不会变形），用来覆盖整个容器
+ *      contain  背景图覆盖整个容器（但是会出现，如果一边碰到容器的边缘，则停止覆盖，导致部分区域无背景图）   
+ *    background-clip: 背景图片裁剪
+ *      border-box
+ *      padding-box
+ *      content-box
+ *    background-origin: 设置背景图起始点
+ *      ...
+ *    filter: 滤镜
+ *      
+ *      
+ *    [CSS3动画和变形] （2D、3D）
+ * 
+ *     变形不是动画
+ *     transform：
+ *       translate(x|y|z) 位移
+ *       scale 缩放
+ *       rotate 旋转
+ *       skew 倾斜
+ *       matrix 矩阵（按照自己设定的矩阵公式实现变形）
+ * 
+ *     transform-style: preserve-3d 实现3D变形
+ *     transform-origin: 变形的起点
+ * 
+ * 
+ *     过渡动画
+ *     transition：
+ *       transition-property: all / width ... 哪些属性样式发生改变执行过渡动画效果，默认all，所有样式
+ *     属性改变都会执行这个过渡效果。
+ *       transition-duration: 过渡动画时间，我们一般都用秒，如 5.s
+ *       transition-timing-function: 动画运动的方式 linear(默认)、ease-in、ease-out、
+ *     ease-in-out、cubic-bezier（执行总监设定的贝塞尔曲线）
+ *       transition-delay: 设置延迟的时间，默认是0s不延迟，立即执行动画
+ *       ......
+ * 
+ *     帧动画
+ *     animation:
+ *       animation-name  运动轨迹的名称
+ *       animation-duration  运动时长
+ *       animation-timing-function  运动的方式（默认ease）
+ *       animation-delay  延迟时间
+ *       animation-iteration-count  运动次数（默认1  infinite无限次运动）
+ *       animation-fill-mode  运动完成后的状态（帧动画完成后，元素会默认回到运动的其实位置，
+ *     如果想让其停留在最后一帧的位置，设置这个属性值为forwards； backwards是当前帧动画如果
+ *     有延迟时间，在延迟等待时间内，元素处于帧动画的第一帧位置； both是让帧动画同时具备forwards
+ *     和backwards）
+ *       ......
+ * 
+ *     设置帧动画的运动轨迹
+ *     @keyframes [运动轨迹名称] {
+ *       from{
+ *         // 开始的样式
+ *       }
+ *       to{
+ *         // 结束的样式 
+ *       }
+ *     }
+ * 
+ * 
+ *    [css3中新盒子模型]
+ *       box-sizing: border-box / padding-box / content-box(默认值)
+ *       改变的就是我们在css中设置的width 或 height到底代表啥，border-box让其代表整个盒子的宽高，
+ *     当我们去修改padding 或者 border，盒子大小不变，只会让内容缩放。
+ * 
+ *       columns：多列布局
+ * 
+ *       flex：弹性盒子模型
+ *       
+ *    [其他css3属性]
+ *      perspective：视距  实现3D动画必用的属性
+ *      @media：媒体查询  实现响应式布局的一种方案
+ *      @font-face：导入字体图标
+ *      ......
+ *     
+ * 
+ *     T1.1 ~ 1.3  p1 ~ p3  初级
+ *     T2.1 ~ 2.3  p4 ~ p6  中高级
+ *     T3.1 ~ 3.3  p7 ~ p9  架构师
+ *      
  * 
  * 三：响应式布局开发
+ *  响应式布局：在不同尺寸的设备上都能良好的展示
+ *  公司中的产品形态：
+ *      1.PC端（全凭页面需要宽度自适应，但一般都是固定宽度的）
+ *      2.PC+移动端用同一套项目（简单的页面，例如：产品介绍，公司展示类的官网等）
+ *      3.移动端（移动端设备尺寸差异较大，需要做响应式布局开发）
+ *          嵌入到APP中的H5
+ *          微信中分享出来的H5
+ *          微信公众号
+ *          小程序
+ *          靠浏览器访问的H5
+ *          ......
+ *      4.React Native / ionic / cordova ... JS开发APP的框架，使用JS代码开发
+ *  APP，最后框架会把代码转换为安卓IOS需要的代码
+ * 
+ *  如何实现响应式布局开发？
+ *      最常用的方案：rem等比缩放响应式布局
+ *      首先加meta标签
+ *         meta:vp [tap]
+ *         <meta name="viewport" content="width=divice-width,initial-scale=1.0">
+ *         rem和px一样都是样式单位，px是固定单位，rem是相对单位（相对于当前页面根元素HTML的字体设定的单位）
+ *          
+ *         开始给THML字体大小设置为100px（1rem=100px），接下来我们写样式的时候，把所有的尺寸都用rem设定（测量
+ *      出来的px值/100就是应该设置的rem值），如果HTML的font-size不变，用rem和px一样，但是如果字体大小改变，也就
+ *      是改变了rem和px之间的换算比例，那么值钱所有用rem做单位的样式都会自动按照最新的比例进行缩放，实现了改动HTML的
+ *      font-size，整个页面中的元素都跟着缩放了，牵一发动全身。
+ * 
+ *         真实项目中，设计师给一套设计稿（常用尺寸：640*1136  750*1334  640*960  ...），拿到设计稿后，我们严格按照
+ *      设计稿中的尺寸去编写样式
+ *          html {
+ *              font-size: 100px;
+ *          }
+ *          接下来写样式，把测量出来的px都除以100变为rem，所有的单位基于rem来搞
+ *          假设设计稿是750，也就相当于750的设备下，1rem=100px
+ * 
+ *          页面运行在320的设备上，我们需要修改html的字体大小，以此实现页面跟着整体缩放：320 / 750 * 100 => 当前设备上
+ *      HTML的字体大小
  * 
  * 四：微信二次开发（小程序） => Hybrid混合app开发
  * 
@@ -4684,3 +4931,194 @@ let change = {
  * 
  * 六：移动端常用的插件、类库、框架
  */
+
+
+
+
+
+ (function (window) {
+     // 根据当前设备的宽度，动态计算粗REM的换算比例，实现页面中元素的等比缩放
+     let computedREM = function () {
+        let winW = document.documentElement.clientWidth,
+            desW = 640;
+        if (winW >= 640) {
+            document.documentElement.style.fontSize = '100px';
+            return;
+        }
+        document.documentElement.style.fontSize = winW / desW * 100 + 'px';
+     };
+     computedREM();
+     window.addEventListener('resize', computedREM);
+ })(window);
+
+ let loadingRender = (function() {
+     let $loadingBox = $('.loadingBox'),
+         $current = $loadingBox.find('.current');
+
+     let imgData = ["./img/phoneUI/hangUp.svg", "./img/phoneUI/pickUp.svg"];
+
+     let n = 0,
+        len = imgData.length;
+     // 预加载图片
+     let run = function (callback) {
+        imgData.forEach(item => {
+            let tempImg = new Image;
+            tempImg.onload = () => {
+                tempImg = null;
+                $current.css('width', (++n / len) * 100 + '%');
+            
+                //加载完成:执行回调函数（让当前loading页面消失）
+                if (n == len) {
+                    clearTimeout(delayTimer);
+                    callback && callback();
+                }
+            };
+            tempImg.src = item;
+        });
+     };
+
+     // 设置最长等待时间（假设10s，到达10s如加载到达90%，就可以正常访问内容，如果不足，则提示用户稍后重试）
+     let delayTimer = null;
+     let maxDelay = function (callback) {
+         delayTimer = setTimeout(() => {
+             if (n / len >= 0.9) {
+                 callback && callback();
+                 return;
+             }
+             alert('请稍后重试');
+
+             // 此时不继续加载页面，而是关闭页面，或跳转到其他页面
+             //window.location.href = 'http://www.baidu.com';
+         }, 10000);
+     };
+
+     //
+     let done = function() {
+        let timer = setTimeout(() => {
+            $loadingBox.remove();
+        }, 1000);
+     };
+     return {
+         init: function () {
+            run(done);
+            maxDelay(done);
+         }
+     }
+ })();
+
+ /**
+  * 关于audio的一些常用属性
+  *     [属性]
+  *     duration：播放的总时间（s）
+  *     currentTime：当前已经播放的时间（s）
+  *     ended：是否已经播放完成
+  *     paused：当前是否为暂停状态
+  *     volume：控制音量（0到1）
+  * 
+  *     [方法]
+  *     pause() 暂停
+  *     play() 播放
+  *     
+  * 
+  *     [事件]
+  *     canplay: 可以正常播放（但是播放过程中可能出现卡顿）
+  *     canplaythrough: 资源加载完毕，可以顺畅播放
+  *     ended: 播放完成
+  *     loadedmetadata：资源的基础信息已经加载完成
+  *     loadeddata：整个资源都加载完成
+  *     pause：触发了暂停
+  *     play：触发了播放
+  *     playing：正在播放中
+  */
+
+ let phoneRender = (function () {
+    let $phoneBox = $('.phoneBox'),
+        $time = $phoneBox.find('span'),
+        $answer = $phoneBox.find('.answer'),
+        $answerMarkLink = $answer.find('.markLink'),
+        $hang = $phoneBox.find('.hang'),
+        $hangMarkLink = $hang.find('.markLink'),
+        answerBell = $('#answerBell')[0],
+        introduction = $('#introduction')[0];
+
+
+    let answerMarkTouch = function () {
+        // 1.remove answer
+        $answer.remove();
+        answerBell.pause();
+        $(answerBell).remove(); // 先暂停再移除，否则移除后还会播放声音
+
+        //2.show hang
+        $hang.css('transform', 'translateY(0rem)');
+        $time.css('display', 'block');
+        introduction.play();
+        introduction.volume = 0.1;
+        computedTime();
+    };
+
+    // 计算播放时间
+    let autoTimer = null;
+    let computedTime = function () {
+        /*
+        let duration = 0; // 让audio播放，会先加载资源，部分资源加载完成才会播放，并计算出总时间duration等信息，所以把获取信息放到canplay事件中
+        introduction.oncanplay = function () {
+            duration = introduction.duration;
+        }
+        */
+        autoTimer = setInterval(() => {
+            let val = introduction.currentTime,
+                duration = introduction.duration;
+            // 播放完成
+            if(val >= duration) {
+                clearInterval(autoTimer);
+                closePhone();
+                return;
+            }
+
+            let minute = Math.floor(val / 60),
+                second = Math.floor(val - minute * 60);
+            minute = minute < 10 ? '0' + minute : minute;
+            second = second < 10 ? '0' + second : second;
+            $time.html(`${minute} : ${second}`);
+        }, 1000);
+    };
+
+    //关闭phone
+    let closePhone = function () {
+        clearInterval(autoTimer);
+        introduction.pause(); 
+        $(introduction).remove();
+        $phoneBox.remove();
+    };
+
+    return {
+        init : function () {
+            //播放bell
+            answerBell.play();
+            answerBell.volume = 0.05;
+            
+            //点击answerMark
+            $answerMarkLink.on('click', answerMarkTouch);
+            $hangMarkLink.on('click', closePhone);
+        }
+    }
+ })();
+
+ phoneRender.init();
+
+/*
+ 开发中，由于当前项目板块众多（每一个板块都是一个单例），最好规划一种机制：通过办事的判断可以让程序只执行对应板块内容，
+ 这样开发那个板块，我们就把表示改为啥
+ */
+
+ let url = window.location.href; // 获取当前页面的URL地址  location.href='xxx'这种写法是让其跳转到某一个页面
+     well = url.indexOf('#'),
+     hash = well === -1 ? null : url.substr(well + 1);
+ switch (hash) {
+    case 'loading':
+        loadingRender.init();
+        break;
+    case 'phone':
+        phoneRender.init();
+        break;
+ }
