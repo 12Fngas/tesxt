@@ -35,7 +35,7 @@ html, body {
     background: #FFF;
 }
 
-.loadingBox, .phoneBox {
+.loadingBox, .phoneBox, .messageBox {
     display: none;
     height: 100%;
     overflow: hidden;
@@ -195,5 +195,104 @@ html, body {
     }
     to {
         transform: scale(0);
+    }
+}
+
+.messageBox {
+    display: block;
+    background: #EAEAEA;
+
+    .wrapper {
+        position: absolute;
+        top: 0.2rem;
+        left: 0;
+        width: 100%;
+        transition: .3s;
+
+        li {
+            position: relative;
+            max-width: 3.6rem;
+            padding: .25rem;
+            margin-bottom: .4rem;
+            border-radius: .1rem;
+            line-height: .4rem;
+            font-size: .26rem;
+            opacity: 0;
+
+            &.active {
+                animation: messageListMove .3s linear both;
+            }
+
+            .pic {
+                position: absolute;
+                top: 0;
+                width: .82rem;
+                height: .82rem;
+                border-radius: 50%;
+            }
+
+            .arrow {
+                position: absolute;
+                top: .2rem;
+                widows: .1rem;
+                height: .2rem;
+                left: -.1rem;
+            }
+
+            &.self {
+                float: left;
+                margin-left: 1.25rem;
+                background: #FFF;
+                border: .02rem solid #CACACA;
+
+                .pic {
+                    left: -1rem;
+                }
+
+                .arrow {
+                    left: -.1rem;
+                    background: url();
+                    background-size: 100% 100%;
+                }
+            }
+
+            &.inter {
+                float: right;
+                margin-right: 1.25rem;
+                background: #A2E45C;
+
+                .pic {
+                    right: -1rem;
+                }
+
+                .arrow {
+                    right: -.1rem;
+                    background: url();
+                    background-size: 100% 100%;
+                }
+            }
+            
+        }
+    }
+
+    .keyBoard {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        box-sizing: border-box;
+        height: 5.16rem;
+        background-size: 100% 100%;
+        background: url('img/phoneUI/keyboard.svg') no-repeat;
+    }
+}
+
+@keyframes messageListMove {
+    from {
+        transform: translateY(1rem);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0rem);
+        opacity: 1;
     }
 }

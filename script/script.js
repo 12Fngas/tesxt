@@ -5095,16 +5095,42 @@ let change = {
         init : function () {
             //播放bell
             answerBell.play();
-            answerBell.volume = 0.05;
+            answerBell.volume = 0.1;
             
             //点击answerMark
-            $answerMarkLink.on('click', answerMarkTouch);
-            $hangMarkLink.on('click', closePhone);
+            $answerMarkLink.on('tap',answerMarkTouch);
+            $hangMarkLink.on('tap', closePhone);
+            
         }
     }
  })();
 
- phoneRender.init();
+ let messageRender = (function () {
+     return {
+         init: function () {
+         
+         }
+     }
+ })();
+
+ /**
+  *  click在移动端是单击事件行为，当触发点击操作，浏览器会等待300ms，验证是否触发了第二次操作，
+  * 没有触发才会执行click对应的方法（click在移动端的300ms延迟问题）
+  * 
+  *  1.不建议大家在移动端使用click（如果非要使用也可以，最好导入一个插件fastclick.min.js，能解决300ms延迟）
+  * 
+  *  2.目前项目中移动端的点击操作等基本上都是基于第三方类库（事件库完成的）
+  *    zepto.js
+  *    touch.js
+  *    hammer.js
+  *    ......
+  * 
+  * 
+  *  zepto VS jquery
+  *  1.zepto没有考虑浏览器的兼容，专门为移动端开发的小型类库，也仅仅是把JQ中一些常规方法实现，很多方法也没实现（没有slideDown / show ...  是为了保证zepto体积够小）
+  *  2.zepto中提供了移动端专门操作的事件方法（例如tap等），这些方法都是基于移动端的touch和gesture事件模型封装好的方法，JQ中并没有提供这些方法 => zepto更适合移动端
+  * 
+  */
 
 /*
  开发中，由于当前项目板块众多（每一个板块都是一个单例），最好规划一种机制：通过办事的判断可以让程序只执行对应板块内容，
@@ -5121,4 +5147,8 @@ let change = {
     case 'phone':
         phoneRender.init();
         break;
+    case 'message':
+        messageRender.init();
+        break;
+            
  }
