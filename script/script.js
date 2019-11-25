@@ -5106,12 +5106,96 @@ let change = {
  })();
 
  let messageRender = (function () {
+     let $messageBox = $('.messageBox'),
+         $wrapper = $messageBox.find('.wrapper'),
+         $messageList = $wrapper.find('li'),
+         $keyBoard = $messageBox.find('.keyBoard'),
+         $textInp = $keyBoard.find('span'),
+         $submit = $keyBoard.find('.submit');
+
+     let step = -1, // 当前展示信息的索引
+         total = $messageList.length + 1, // 记录的是信息总条数
+         autoTimer = null,
+         interval = 2000; // 记录信息相继出现的间隔时间
+
+    let tt = 0;
+    let showMessage = function () {
+         step++;
+         if (step === 2) {
+            clearInterval(autoTimer);
+            handleSend();
+            return;
+        }
+         let $cur = $messageList.eq(step);
+         $cur.addClass('active');
+        if (step >= 3) {
+
+            /**
+             * JS中基于css获取tranform，得到的是一个矩阵
+             */
+            let curH = $cur[0].offsetHeight;
+                tt -= curH;
+            $wrapper.css('transform', `translateY(${tt}px)`);
+            console.log(tt);
+        }
+        if (step >= total - 1) {
+            clearInterval(autoTimer);
+            closeMessage();
+        }
+    };
+
+    let handleSend = function () {
+        $keyBoard.css({
+            transform : 'translateY(0rem)'
+        }).one('transitionend', () => {
+            let str = '好的，马上介绍！！',
+                n = -1,
+                textTimer = null;
+                console.log(1);
+            textTimer = setInterval(() => {
+                let originHTML = $textInp.html();
+                $textInp.html(originHTML + str[++n]);
+                
+                if (n >= str.length - 1) {
+                    clearInterval(textTimer);
+                    $submit.css('display', 'block');
+                }
+            }, 100);
+        });
+    };
+
+    let handleSubmit = function () {
+        $(`<li class="inter">
+           <i class="arrow"></i>
+           <img src="/img/small.jpg" alt="" class="pic">
+           ${$textInp.html()}</li>`)
+           .insertAfter($messageList.eq(1)).addClass('active');
+        $messageList = $wrapper.find('li');
+
+        $textInp.html('');
+        $submit.css('display', 'none');
+        $keyBoard.css('transform', 'translateY(3.7rem)');
+
+        autoTimer = setInterval(showMessage, interval);
+    };
+
+    let closeMessage = function () {
+        let delayTimer = setTimeout(() => {
+            $messageBox.remove();
+        }, interval);
+        
+    };
+
+
      return {
          init: function () {
-         
+            showMessage();
+            autoTimer = setInterval(showMessage, interval);
+            $submit.on('tap',handleSubmit);
          }
      }
  })();
+ messageRender.init();
 
  /**
   *  click在移动端是单击事件行为，当触发点击操作，浏览器会等待300ms，验证是否触发了第二次操作，

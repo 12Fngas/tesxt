@@ -1059,5 +1059,5 @@ var touch = touch || {};
 
 })(document, touch);
 
-module.exports = touch;
+// module.exports = touch;
 // export default touch;
