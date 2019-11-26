@@ -10,7 +10,7 @@
 */
 
 
-
+@import "reset.min.less";
 @import (reference) "style.css";
 
 html {
@@ -35,7 +35,7 @@ html, body {
     background: #FFF;
 }
 
-.loadingBox, .phoneBox, .messageBox {
+.loadingBox, .phoneBox, .messageBox, .cubeBox .detailBox {
     display: none;
     height: 100%;
     overflow: hidden;
@@ -320,80 +320,112 @@ html, body {
 }
 
 .cubeBox {
-    // background: url("./img/phoneUI/cubeBackground.jpg") no-repeat;
-    background: red;
-	background-size: cover
+  display: none;
+  background-size: cover;
+
+  .cube {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: .55rem 0 0 -2.55rem;
+    width: 5.1rem;
+    height: 5.1rem;
+
+    li {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  .tip {
+    position: absolute;
+    bottom: .5rem;
+    left: 50%;
+    margin-left: -1.97rem;
+    width: 3.94rem;
+    height: .44rem;
+  }
 }
 
-.cubeBox .cube {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	margin: .55rem 0 0 -2.55rem;
-	width: 5.1rem;
-	height: 5.1rem
-}
-
-.cubeBox .cube li {
-    font-size: 2.5rem;
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%
-}
-
-.cubeBox .cube li img {
-	display: block;
-	width: 100%;
-	height: 100%
-}
-
-.cubeBox .tip {
-	position: absolute;
-	bottom: .5rem;
-	left: 50%;
-	margin-left: -1.97rem;
-	width: 3.94rem;
-	height: .44rem
-}
-
+//=>在二维平面中实现3D效果
 .cubeBox {
-	perspective: 2000px
+  //1.给需要实现3D变形元素所在的舞台设置“视距”(1000~2000)
+  perspective: 2000px;
+
+  .cube {
+    //2.给需要操作的元素设置3D变形效果
+    transform-style: preserve-3d;
+
+    //3.基于TRASFORM实现3D变形
+    li {
+      &:nth-child(1) {
+        transform: translateZ(2.55rem);
+      }
+
+      &:nth-child(2) {
+        transform: translateZ(-2.55rem) rotateY(180deg);
+      }
+
+      &:nth-child(3) {
+        transform: translateX(2.55rem) rotateY(90deg);
+      }
+
+      &:nth-child(4) {
+        transform: translateX(-2.55rem) rotateY(-90deg);
+      }
+
+      &:nth-child(5) {
+        transform: translateY(-2.55rem) rotateX(90deg);
+      }
+
+      &:nth-child(6) {
+        transform: translateY(2.55rem) rotateX(-90deg);
+      }
+    }
+
+    //4.给魔方一个初始的旋转角度，让其可以看到3D的效果（旋转后太大了，把魔方缩小一点）
+    transform: scale(0.6) rotateX(-35deg) rotateY(35deg);
+    transition: .3s; //=>后期让魔方旋转的时候有一个平稳的过渡动画效果
+  }
 }
 
-.cubeBox .cube {
-	transform-style: preserve-3d;
-	transform: scale(.6) rotateX(-35deg) rotateY(35deg);
-	transition: .3s
-}
+.detailBox {
+    height: 100%;
+    .swiper-container {
+        height: 100%;
+        overflow: hidden;
 
-.cubeBox .cube li:nth-child(1) {
-    background: #5cb85c;
-	transform: translateZ(2.55rem)
-}
+        .swiper-slide {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
 
-.cubeBox .cube li:nth-child(2) {
-    background: #A2E45C;
-	transform: translateZ(-2.55rem) rotateY(180deg)
-}
-
-.cubeBox .cube li:nth-child(3) {
-    background: cyan;
-	transform: translateX(2.55rem) rotateY(90deg)
-}
-
-.cubeBox .cube li:nth-child(4) {
-    background: lightcoral;
-	transform: translateX(-2.55rem) rotateY(-90deg)
-}
-
-.cubeBox .cube li:nth-child(5) {
-    background: darkorange;
-	transform: translateY(-2.55rem) rotateX(90deg)
-}
-
-.cubeBox .cube li:nth-child(6) {
-    background: blanchedalmond;
-	transform: translateY(2.55rem) rotateX(-90deg)
+            &:nth-child(2) {
+                background: #FFF9C1;
+            }
+            &:nth-child(3) {
+                background: #E45454;
+            }
+            &:nth-child(4) {
+                background: #FAC471;
+            }
+            &:nth-child(5) {
+                background: #FBFFE8;
+            }
+            &:nth-child(6) {
+                background: #5975FF;
+            }
+            
+        }
+    }
 }

@@ -5244,18 +5244,55 @@ let change = {
      return {
          init : function () {
             $cubeBox.css('display', 'block');
-
             let cube = $cube[0];
             cube.rotateX = -35;
             cube.rotateY = 35;
             $cube.on('touchstart', (start))
                  .on('touchmove', move)
                  .on('touchend', end);
-
          }
      }
  })();
- cubeRender.init();
+
+ let detailRender = (function() {
+    let $detailBox = $('.detailBox'),
+        swiper = null;
+        
+    let swiperInit = function () {
+        swiper = new Swiper('.swiper-container', {
+            // initialSlide : 1, 
+            // direction: 'horizontal/vertical',
+            effect: 'coverflow',
+            loop: true, // swiper有个bug：3d切换设置loop为true偶尔会无法切换（2d没问题）
+            
+            onInit: (swiper) => {
+                // 初始化成功执行的回调函数（参数是当前初始化的实例）
+            },
+            
+            onTransitionEnd: (swiper) => {
+                // 切换动画完成执行的回调函数
+            },
+        });
+
+        //实例的私有属性：
+        //1.activeIndex: 当前展示slide块的索引
+        //2.slides：获取所有的slide（数组）
+        //....
+
+        //实例的共有方法
+        //1.slideTo：切换到指定索引的slide
+        //...
+    };
+
+
+    return {
+        init : function () {
+            $detailBox.css('display', 'block');
+            swiperInit();
+        }
+    }
+ })();
+ detailRender.init();
 
  /**
   *  click在移动端是单击事件行为，当触发点击操作，浏览器会等待300ms，验证是否触发了第二次操作，
