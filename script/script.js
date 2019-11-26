@@ -4933,7 +4933,30 @@ let change = {
  */
 
 
-
+/**
+  * 关于audio的一些常用属性
+  *     [属性]
+  *     duration：播放的总时间（s）
+  *     currentTime：当前已经播放的时间（s）
+  *     ended：是否已经播放完成
+  *     paused：当前是否为暂停状态
+  *     volume：控制音量（0到1）
+  * 
+  *     [方法]
+  *     pause() 暂停
+  *     play() 播放
+  *     
+  * 
+  *     [事件]
+  *     canplay: 可以正常播放（但是播放过程中可能出现卡顿）
+  *     canplaythrough: 资源加载完毕，可以顺畅播放
+  *     ended: 播放完成
+  *     loadedmetadata：资源的基础信息已经加载完成
+  *     loadeddata：整个资源都加载完成
+  *     pause：触发了暂停
+  *     play：触发了播放
+  *     playing：正在播放中
+  */
 
 
  (function (window) {
@@ -5005,31 +5028,6 @@ let change = {
          }
      }
  })();
-
- /**
-  * 关于audio的一些常用属性
-  *     [属性]
-  *     duration：播放的总时间（s）
-  *     currentTime：当前已经播放的时间（s）
-  *     ended：是否已经播放完成
-  *     paused：当前是否为暂停状态
-  *     volume：控制音量（0到1）
-  * 
-  *     [方法]
-  *     pause() 暂停
-  *     play() 播放
-  *     
-  * 
-  *     [事件]
-  *     canplay: 可以正常播放（但是播放过程中可能出现卡顿）
-  *     canplaythrough: 资源加载完毕，可以顺畅播放
-  *     ended: 播放完成
-  *     loadedmetadata：资源的基础信息已经加载完成
-  *     loadeddata：整个资源都加载完成
-  *     pause：触发了暂停
-  *     play：触发了播放
-  *     playing：正在播放中
-  */
 
  let phoneRender = (function () {
     let $phoneBox = $('.phoneBox'),
@@ -5183,7 +5181,6 @@ let change = {
         let delayTimer = setTimeout(() => {
             $messageBox.remove();
         }, interval);
-        
     };
 
 
@@ -5195,7 +5192,70 @@ let change = {
          }
      }
  })();
- messageRender.init();
+ 
+ let cubeRender = (function (){
+    let $cubeBox = $('.cubeBox'),
+        $cube = $('.cube'),
+        $cubeList = $cube.find('li');
+
+    let start = function (ev) {
+        //记录手指按下位置的其实坐标
+        let point = ev.changedTouches[0];
+        this.strX = point.clientX;
+        this.strY = point.clientY;
+        this.changeX = 0;
+        this.changeY = 0;
+
+    };
+    let move = function (ev) {
+        // 用最新手指的位置-其实的位置，记录x/y轴的偏移
+        let point = ev.changedTouches[0];
+        this.changeX = point.clientX - this.strX;
+        this.changeY = point.clientY - this.strY;
+    };
+    let end = function (ev) {
+        // 获取change/rotate值
+        let {changeX, changeY, rotateX, rotateY} = this,
+            isMove = false;
+
+        // 验证是否发生移动
+        Math.abs(changeX) > 10 || Math.abs(changeY) > 10 ? isMove = true : null;
+
+        // 只有发生移动再处理
+        if (isMove) {
+            // 1.左右滑动 =》 changeX =》 rotateY （正比：change越大rotate越大）
+            // 2.上下滑 =》 changeY =》 rotateX （反比：change越大rotate越小）
+            // 3.为了让每一次操作旋转角度小一点，我们可以把移动距离1/3作为旋转的角度即可
+            rotateX = rotateX - changeY / 3;
+            rotateY = rotateY + changeX / 3;
+            // 赋值给魔方盒子
+            $(this).css('transform', `scale(0.6) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`);
+            //让当前旋转的角度称为下一次起始的角度
+            this.rotateX = rotateX;
+            this.rotateY = rotateY;
+        }
+
+        // 清空其他记录的自定义属性值
+        ['strX', 'strY', 'changeX', 'changeY'].forEach(item => this[item] = null);
+
+    };
+    
+
+     return {
+         init : function () {
+            $cubeBox.css('display', 'block');
+
+            let cube = $cube[0];
+            cube.rotateX = -35;
+            cube.rotateY = 35;
+            $cube.on('touchstart', (start))
+                 .on('touchmove', move)
+                 .on('touchend', end);
+
+         }
+     }
+ })();
+ cubeRender.init();
 
  /**
   *  click在移动端是单击事件行为，当触发点击操作，浏览器会等待300ms，验证是否触发了第二次操作，
@@ -5224,15 +5284,15 @@ let change = {
  let url = window.location.href; // 获取当前页面的URL地址  location.href='xxx'这种写法是让其跳转到某一个页面
      well = url.indexOf('#'),
      hash = well === -1 ? null : url.substr(well + 1);
- switch (hash) {
-    case 'loading':
-        loadingRender.init();
-        break;
-    case 'phone':
-        phoneRender.init();
-        break;
-    case 'message':
-        messageRender.init();
-        break;
+//  switch (hash) {
+//     case 'loading':
+//         loadingRender.init();
+//         break;
+//     case 'phone':
+//         phoneRender.init();
+//         break;
+//     case 'message':
+//         messageRender.init();
+//         break;
             
- }
+//  }
