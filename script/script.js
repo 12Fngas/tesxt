@@ -5319,7 +5319,9 @@ let change = {
         }
     }
  })();
- detailRender.init();
+ detailRender.init(); 
+ 
+
 
  /**
   *  click在移动端是单击事件行为，当触发点击操作，浏览器会等待300ms，验证是否触发了第二次操作，
