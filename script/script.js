@@ -5256,22 +5256,20 @@ let change = {
 
  let detailRender = (function() {
     let $detailBox = $('.detailBox'),
-        swiper = null;
+        swiper = null,
+        $dl = $('.page1>dl');
         
     let swiperInit = function () {
         swiper = new Swiper('.swiper-container', {
             // initialSlide : 1, 
             // direction: 'horizontal/vertical',
             effect: 'coverflow',
-            loop: true, // swiper有个bug：3d切换设置loop为true偶尔会无法切换（2d没问题）
+            //loop: true, // swiper有个bug：3d切换设置loop为true偶尔会无法切换（2d没问题）
             
-            onInit: (swiper) => {
+            onInit: move,
                 // 初始化成功执行的回调函数（参数是当前初始化的实例）
-            },
             
-            onTransitionEnd: (swiper) => {
-                // 切换动画完成执行的回调函数
-            },
+            onTransitionEnd: move,
         });
 
         //实例的私有属性：
@@ -5284,11 +5282,40 @@ let change = {
         //...
     };
 
+    let move = function (swiper) {
+        /** swiper当前创建的实例
+            1.判断当前是否为第一个slide：如果是让3d菜单展开，不是则收起
+        */
+       let activeIn = swiper.activeIndex,
+           slideArr = swiper.slides;
+        if (activeIn === 0) {
+            $dl.makisu({
+                selector: 'dd',
+                overlap: 0.1,
+                speed: 0.1
+            });
+            $dl.makisu('open');
+        }
+        else {
+            $dl.makisu({
+                selector: 'dd',
+                speed: 0
+            });
+            $dl.makisu('close');
+        }
+    };
 
     return {
         init : function () {
             $detailBox.css('display', 'block');
             swiperInit();
+            console.log($dl);
+            $dl.makisu({
+                selector: 'dd',
+                overlap: 0.6,
+                speed: 0.8
+            });
+            $dl.makisu('open');
         }
     }
  })();

@@ -425,7 +425,67 @@ html, body {
             &:nth-child(6) {
                 background: #5975FF;
             }
-            
         }
+    }
+
+    .page1 {
+        dl {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            height: 7.2rem;
+            width: 5.4rem;
+            margin: -3.6rem 0 0 -2.7rem;
+        }
+
+        dt, dd {
+            box-sizing: border-box;
+            height: .6rem;
+            line-height: .6rem;
+            background: #8fbb4c;
+        }
+
+        dt {
+            text-align: center;
+            font-size: .4rem;
+            color: yellow;
+        }
+
+        dd {
+            position: relative;
+            border-top: .02rem dashed rgba(255, 255, 255, .3);
+        }
+
+        em {
+            position: absolute;
+            left: 0.15rem;
+            top: 50%;
+            margin-top: -.21rem;
+            width: 0.36rem;
+            line-height: 0.42rem;
+            text-align: center;
+            font-size: .2rem;
+            font-style: normal;
+            color: #FFF;
+            border-radius: 50%;
+            background-color: sandybrown;
+        }
+
+        a {
+            list-style: none;
+            text-decoration: none;
+            display: block;
+            margin-left: .66rem;
+            color: #555;
+            text-overflow: ellipsis;
+            overflow: hidden; 
+            white-space: nowrap;
+        }
+
+        em, a {
+            z-index: 1000; // makisu有层级bug，要避免
+        }
+
+
     }
 }
