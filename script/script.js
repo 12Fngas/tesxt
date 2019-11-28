@@ -5303,13 +5303,21 @@ let change = {
             });
             $dl.makisu('close');
         }
+
+        //2.滑动到哪一个页面，把当前页面设置对应的ID，其余页面移除ID即可
+        slideArr.forEach((item, index) => {
+            if (activeIn === index) {
+                item.id = `page${index + 1}`;
+                return;
+            }
+            item.id = null;
+        });
     };
 
     return {
         init : function () {
             $detailBox.css('display', 'block');
             swiperInit();
-            console.log($dl);
             $dl.makisu({
                 selector: 'dd',
                 overlap: 0.6,
@@ -5320,6 +5328,7 @@ let change = {
     }
  })();
  detailRender.init(); 
+ 
  
 
 
