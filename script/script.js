@@ -4959,378 +4959,378 @@ let change = {
   */
 
 
- (function (window) {
-     // 根据当前设备的宽度，动态计算粗REM的换算比例，实现页面中元素的等比缩放
-     let computedREM = function () {
-        let winW = document.documentElement.clientWidth,
-            desW = 640;
-        if (winW >= 640) {
-            document.documentElement.style.fontSize = '100px';
-            return;
-        }
-        document.documentElement.style.fontSize = winW / desW * 100 + 'px';
-     };
-     computedREM();
-     window.addEventListener('resize', computedREM);
- })(window);
+//  (function (window) {
+//      // 根据当前设备的宽度，动态计算粗REM的换算比例，实现页面中元素的等比缩放
+//      let computedREM = function () {
+//         let winW = document.documentElement.clientWidth,
+//             desW = 640;
+//         if (winW >= 640) {
+//             document.documentElement.style.fontSize = '100px';
+//             return;
+//         }
+//         document.documentElement.style.fontSize = winW / desW * 100 + 'px';
+//      };
+//      computedREM();
+//      window.addEventListener('resize', computedREM);
+//  })(window);
 
- let loadingRender = (function() {
-     let $loadingBox = $('.loadingBox'),
-         $current = $loadingBox.find('.current');
+//  $(document).on('touchstart touchmove touchend', (ev) => {
+//     ev.preventDefault();
+//  });
 
-     let imgData = ["./img/phoneUI/hangUp.svg", "./img/phoneUI/pickUp.svg"];
+//  let loadingRender = (function() {
+//      let $loadingBox = $('.loadingBox'),
+//          $current = $loadingBox.find('.current');
 
-     let n = 0,
-        len = imgData.length;
-     // 预加载图片
-     let run = function (callback) {
-        imgData.forEach(item => {
-            let tempImg = new Image;
-            tempImg.onload = () => {
-                tempImg = null;
-                $current.css('width', (++n / len) * 100 + '%');
+//      let imgData = ["./img/phoneUI/hangUp.svg", "./img/phoneUI/pickUp.svg"];
+
+//      let n = 0,
+//         len = imgData.length;
+//      // 预加载图片
+//      let run = function (callback) {
+//         imgData.forEach(item => {
+//             let tempImg = new Image;
+//             tempImg.onload = () => {
+//                 tempImg = null;
+//                 $current.css('width', (++n / len) * 100 + '%');
             
-                //加载完成:执行回调函数（让当前loading页面消失）
-                if (n == len) {
-                    clearTimeout(delayTimer);
-                    callback && callback();
-                }
-            };
-            tempImg.src = item;
-        });
-     };
+//                 //加载完成:执行回调函数（让当前loading页面消失）
+//                 if (n == len) {
+//                     clearTimeout(delayTimer);
+//                     callback && callback();
+//                 }
+//             };
+//             tempImg.src = item;
+//         });
+//      };
 
-     // 设置最长等待时间（假设10s，到达10s如加载到达90%，就可以正常访问内容，如果不足，则提示用户稍后重试）
-     let delayTimer = null;
-     let maxDelay = function (callback) {
-         delayTimer = setTimeout(() => {
-             if (n / len >= 0.9) {
-                 callback && callback();
-                 return;
-             }
-             alert('请稍后重试');
+//      // 设置最长等待时间（假设10s，到达10s如加载到达90%，就可以正常访问内容，如果不足，则提示用户稍后重试）
+//      let delayTimer = null;
+//      let maxDelay = function (callback) {
+//          delayTimer = setTimeout(() => {
+//              if (n / len >= 0.9) {
+//                  callback && callback();
+//                  return;
+//              }
+//              alert('请稍后重试');
 
-             // 此时不继续加载页面，而是关闭页面，或跳转到其他页面
-             //window.location.href = 'http://www.baidu.com';
-         }, 10000);
-     };
+//              // 此时不继续加载页面，而是关闭页面，或跳转到其他页面
+//              //window.location.href = 'http://www.baidu.com';
+//          }, 10000);
+//      };
 
-     //
-     let done = function() {
-        let timer = setTimeout(() => {
-            $loadingBox.remove();
-        }, 1000);
-     };
-     return {
-         init: function () {
-            run(done);
-            maxDelay(done);
-         }
-     }
- })();
+//      //
+//      let done = function() {
+//         let timer = setTimeout(() => {
+//             $loadingBox.remove();
+//         }, 1000);
+//      };
+//      return {
+//          init: function () {
+//             run(done);
+//             maxDelay(done);
+//          }
+//      }
+//  })();
 
- let phoneRender = (function () {
-    let $phoneBox = $('.phoneBox'),
-        $time = $phoneBox.find('span'),
-        $answer = $phoneBox.find('.answer'),
-        $answerMarkLink = $answer.find('.markLink'),
-        $hang = $phoneBox.find('.hang'),
-        $hangMarkLink = $hang.find('.markLink'),
-        answerBell = $('#answerBell')[0],
-        introduction = $('#introduction')[0];
+//  let phoneRender = (function () {
+//     let $phoneBox = $('.phoneBox'),
+//         $time = $phoneBox.find('span'),
+//         $answer = $phoneBox.find('.answer'),
+//         $answerMarkLink = $answer.find('.markLink'),
+//         $hang = $phoneBox.find('.hang'),
+//         $hangMarkLink = $hang.find('.markLink'),
+//         answerBell = $('#answerBell')[0],
+//         introduction = $('#introduction')[0];
 
 
-    let answerMarkTouch = function () {
-        // 1.remove answer
-        $answer.remove();
-        answerBell.pause();
-        $(answerBell).remove(); // 先暂停再移除，否则移除后还会播放声音
+//     let answerMarkTouch = function () {
+//         // 1.remove answer
+//         $answer.remove();
+//         answerBell.pause();
+//         $(answerBell).remove(); // 先暂停再移除，否则移除后还会播放声音
 
-        //2.show hang
-        $hang.css('transform', 'translateY(0rem)');
-        $time.css('display', 'block');
-        introduction.play();
-        introduction.volume = 0.1;
-        computedTime();
-    };
+//         //2.show hang
+//         $hang.css('transform', 'translateY(0rem)');
+//         $time.css('display', 'block');
+//         introduction.play();
+//         introduction.volume = 0.1;
+//         computedTime();
+//     };
 
-    // 计算播放时间
-    let autoTimer = null;
-    let computedTime = function () {
-        /*
-        let duration = 0; // 让audio播放，会先加载资源，部分资源加载完成才会播放，并计算出总时间duration等信息，所以把获取信息放到canplay事件中
-        introduction.oncanplay = function () {
-            duration = introduction.duration;
-        }
-        */
-        autoTimer = setInterval(() => {
-            let val = introduction.currentTime,
-                duration = introduction.duration;
-            // 播放完成
-            if(val >= duration) {
-                clearInterval(autoTimer);
-                closePhone();
-                return;
-            }
+//     // 计算播放时间
+//     let autoTimer = null;
+//     let computedTime = function () {
+//         /*
+//         let duration = 0; // 让audio播放，会先加载资源，部分资源加载完成才会播放，并计算出总时间duration等信息，所以把获取信息放到canplay事件中
+//         introduction.oncanplay = function () {
+//             duration = introduction.duration;
+//         }
+//         */
+//         autoTimer = setInterval(() => {
+//             let val = introduction.currentTime,
+//                 duration = introduction.duration;
+//             // 播放完成
+//             if(val >= duration) {
+//                 clearInterval(autoTimer);
+//                 closePhone();
+//                 return;
+//             }
 
-            let minute = Math.floor(val / 60),
-                second = Math.floor(val - minute * 60);
-            minute = minute < 10 ? '0' + minute : minute;
-            second = second < 10 ? '0' + second : second;
-            $time.html(`${minute} : ${second}`);
-        }, 1000);
-    };
+//             let minute = Math.floor(val / 60),
+//                 second = Math.floor(val - minute * 60);
+//             minute = minute < 10 ? '0' + minute : minute;
+//             second = second < 10 ? '0' + second : second;
+//             $time.html(`${minute} : ${second}`);
+//         }, 1000);
+//     };
 
-    //关闭phone
-    let closePhone = function () {
-        clearInterval(autoTimer);
-        introduction.pause(); 
-        $(introduction).remove();
-        $phoneBox.remove();
-    };
+//     //关闭phone
+//     let closePhone = function () {
+//         clearInterval(autoTimer);
+//         introduction.pause(); 
+//         $(introduction).remove();
+//         $phoneBox.remove();
+//     };
 
-    return {
-        init : function () {
-            //播放bell
-            answerBell.play();
-            answerBell.volume = 0.1;
+//     return {
+//         init : function () {
+//             //播放bell
+//             answerBell.play();
+//             answerBell.volume = 0.1;
             
-            //点击answerMark
-            $answerMarkLink.on('tap',answerMarkTouch);
-            $hangMarkLink.on('tap', closePhone);
+//             //点击answerMark
+//             $answerMarkLink.on('tap',answerMarkTouch);
+//             $hangMarkLink.on('tap', closePhone);
             
-        }
-    }
- })();
+//         }
+//     }
+//  })();
 
- let messageRender = (function () {
-     let $messageBox = $('.messageBox'),
-         $wrapper = $messageBox.find('.wrapper'),
-         $messageList = $wrapper.find('li'),
-         $keyBoard = $messageBox.find('.keyBoard'),
-         $textInp = $keyBoard.find('span'),
-         $submit = $keyBoard.find('.submit');
+//  let messageRender = (function () {
+//      let $messageBox = $('.messageBox'),
+//          $wrapper = $messageBox.find('.wrapper'),
+//          $messageList = $wrapper.find('li'),
+//          $keyBoard = $messageBox.find('.keyBoard'),
+//          $textInp = $keyBoard.find('span'),
+//          $submit = $keyBoard.find('.submit');
 
-     let step = -1, // 当前展示信息的索引
-         total = $messageList.length + 1, // 记录的是信息总条数
-         autoTimer = null,
-         interval = 2000; // 记录信息相继出现的间隔时间
+//      let step = -1, // 当前展示信息的索引
+//          total = $messageList.length + 1, // 记录的是信息总条数
+//          autoTimer = null,
+//          interval = 2000; // 记录信息相继出现的间隔时间
 
-    let tt = 0;
-    let showMessage = function () {
-         step++;
-         if (step === 2) {
-            clearInterval(autoTimer);
-            handleSend();
-            return;
-        }
-         let $cur = $messageList.eq(step);
-         $cur.addClass('active');
-        if (step >= 3) {
+//     let tt = 0;
+//     let showMessage = function () {
+//          step++;
+//          if (step === 2) {
+//             clearInterval(autoTimer);
+//             handleSend();
+//             return;
+//         }
+//          let $cur = $messageList.eq(step);
+//          $cur.addClass('active');
+//         if (step >= 3) {
 
-            /**
-             * JS中基于css获取tranform，得到的是一个矩阵
-             */
-            let curH = $cur[0].offsetHeight;
-                tt -= curH;
-            $wrapper.css('transform', `translateY(${tt}px)`);
-            console.log(tt);
-        }
-        if (step >= total - 1) {
-            clearInterval(autoTimer);
-            closeMessage();
-        }
-    };
+//             /**
+//              * JS中基于css获取tranform，得到的是一个矩阵
+//              */
+//             let curH = $cur[0].offsetHeight;
+//                 tt -= curH;
+//             $wrapper.css('transform', `translateY(${tt}px)`);
+//             console.log(tt);
+//         }
+//         if (step >= total - 1) {
+//             clearInterval(autoTimer);
+//             closeMessage();
+//         }
+//     };
 
-    let handleSend = function () {
-        $keyBoard.css({
-            transform : 'translateY(0rem)'
-        }).one('transitionend', () => {
-            let str = '好的，马上介绍！！',
-                n = -1,
-                textTimer = null;
-                console.log(1);
-            textTimer = setInterval(() => {
-                let originHTML = $textInp.html();
-                $textInp.html(originHTML + str[++n]);
+//     let handleSend = function () {
+//         $keyBoard.css({
+//             transform : 'translateY(0rem)'
+//         }).one('transitionend', () => {
+//             let str = '好的，马上介绍！！',
+//                 n = -1,
+//                 textTimer = null;
+//                 console.log(1);
+//             textTimer = setInterval(() => {
+//                 let originHTML = $textInp.html();
+//                 $textInp.html(originHTML + str[++n]);
                 
-                if (n >= str.length - 1) {
-                    clearInterval(textTimer);
-                    $submit.css('display', 'block');
-                }
-            }, 100);
-        });
-    };
+//                 if (n >= str.length - 1) {
+//                     clearInterval(textTimer);
+//                     $submit.css('display', 'block');
+//                 }
+//             }, 100);
+//         });
+//     };
 
-    let handleSubmit = function () {
-        $(`<li class="inter">
-           <i class="arrow"></i>
-           <img src="/img/small.jpg" alt="" class="pic">
-           ${$textInp.html()}</li>`)
-           .insertAfter($messageList.eq(1)).addClass('active');
-        $messageList = $wrapper.find('li');
+//     let handleSubmit = function () {
+//         $(`<li class="inter">
+//            <i class="arrow"></i>
+//            <img src="/img/small.jpg" alt="" class="pic">
+//            ${$textInp.html()}</li>`)
+//            .insertAfter($messageList.eq(1)).addClass('active');
+//         $messageList = $wrapper.find('li');
 
-        $textInp.html('');
-        $submit.css('display', 'none');
-        $keyBoard.css('transform', 'translateY(3.7rem)');
+//         $textInp.html('');
+//         $submit.css('display', 'none');
+//         $keyBoard.css('transform', 'translateY(3.7rem)');
 
-        autoTimer = setInterval(showMessage, interval);
-    };
+//         autoTimer = setInterval(showMessage, interval);
+//     };
 
-    let closeMessage = function () {
-        let delayTimer = setTimeout(() => {
-            $messageBox.remove();
-        }, interval);
-    };
+//     let closeMessage = function () {
+//         let delayTimer = setTimeout(() => {
+//             $messageBox.remove();
+//         }, interval);
+//     };
 
 
-     return {
-         init: function () {
-            showMessage();
-            autoTimer = setInterval(showMessage, interval);
-            $submit.on('tap',handleSubmit);
-         }
-     }
- })();
+//      return {
+//          init: function () {
+//             showMessage();
+//             autoTimer = setInterval(showMessage, interval);
+//             $submit.on('tap',handleSubmit);
+//          }
+//      }
+//  })();
  
- let cubeRender = (function (){
-    let $cubeBox = $('.cubeBox'),
-        $cube = $('.cube'),
-        $cubeList = $cube.find('li');
+//  let cubeRender = (function (){
+//     let $cubeBox = $('.cubeBox'),
+//         $cube = $('.cube'),
+//         $cubeList = $cube.find('li');
 
-    let start = function (ev) {
-        //记录手指按下位置的其实坐标
-        let point = ev.changedTouches[0];
-        this.strX = point.clientX;
-        this.strY = point.clientY;
-        this.changeX = 0;
-        this.changeY = 0;
+//     let start = function (ev) {
+//         //记录手指按下位置的其实坐标
+//         let point = ev.changedTouches[0];
+//         this.strX = point.clientX;
+//         this.strY = point.clientY;
+//         this.changeX = 0;
+//         this.changeY = 0;
 
-    };
-    let move = function (ev) {
-        // 用最新手指的位置-其实的位置，记录x/y轴的偏移
-        let point = ev.changedTouches[0];
-        this.changeX = point.clientX - this.strX;
-        this.changeY = point.clientY - this.strY;
-    };
-    let end = function (ev) {
-        // 获取change/rotate值
-        let {changeX, changeY, rotateX, rotateY} = this,
-            isMove = false;
+//     };
+//     let move = function (ev) {
+//         // 用最新手指的位置-其实的位置，记录x/y轴的偏移
+//         let point = ev.changedTouches[0];
+//         this.changeX = point.clientX - this.strX;
+//         this.changeY = point.clientY - this.strY;
+//     };
+//     let end = function (ev) {
+//         // 获取change/rotate值
+//         let {changeX, changeY, rotateX, rotateY} = this,
+//             isMove = false;
 
-        // 验证是否发生移动
-        Math.abs(changeX) > 10 || Math.abs(changeY) > 10 ? isMove = true : null;
+//         // 验证是否发生移动
+//         Math.abs(changeX) > 10 || Math.abs(changeY) > 10 ? isMove = true : null;
 
-        // 只有发生移动再处理
-        if (isMove) {
-            // 1.左右滑动 =》 changeX =》 rotateY （正比：change越大rotate越大）
-            // 2.上下滑 =》 changeY =》 rotateX （反比：change越大rotate越小）
-            // 3.为了让每一次操作旋转角度小一点，我们可以把移动距离1/3作为旋转的角度即可
-            rotateX = rotateX - changeY / 3;
-            rotateY = rotateY + changeX / 3;
-            // 赋值给魔方盒子
-            $(this).css('transform', `scale(0.6) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`);
-            //让当前旋转的角度称为下一次起始的角度
-            this.rotateX = rotateX;
-            this.rotateY = rotateY;
-        }
+//         // 只有发生移动再处理
+//         if (isMove) {
+//             // 1.左右滑动 =》 changeX =》 rotateY （正比：change越大rotate越大）
+//             // 2.上下滑 =》 changeY =》 rotateX （反比：change越大rotate越小）
+//             // 3.为了让每一次操作旋转角度小一点，我们可以把移动距离1/3作为旋转的角度即可
+//             rotateX = rotateX - changeY / 3;
+//             rotateY = rotateY + changeX / 3;
+//             // 赋值给魔方盒子
+//             $(this).css('transform', `scale(0.6) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`);
+//             //让当前旋转的角度称为下一次起始的角度
+//             this.rotateX = rotateX;
+//             this.rotateY = rotateY;
+//         }
 
-        // 清空其他记录的自定义属性值
-        ['strX', 'strY', 'changeX', 'changeY'].forEach(item => this[item] = null);
+//         // 清空其他记录的自定义属性值
+//         ['strX', 'strY', 'changeX', 'changeY'].forEach(item => this[item] = null);
 
-    };
+//     };
     
 
-     return {
-         init : function () {
-            $cubeBox.css('display', 'block');
-            let cube = $cube[0];
-            cube.rotateX = -35;
-            cube.rotateY = 35;
-            $cube.on('touchstart', (start))
-                 .on('touchmove', move)
-                 .on('touchend', end);
-         }
-     }
- })();
+//      return {
+//          init : function () {
+//             $cubeBox.css('display', 'block');
+//             let cube = $cube[0];
+//             cube.rotateX = -35;
+//             cube.rotateY = 35;
+//             $cube.on('touchstart', (start))
+//                  .on('touchmove', move)
+//                  .on('touchend', end);
+//          }
+//      }
+//  })();
 
- let detailRender = (function() {
-    let $detailBox = $('.detailBox'),
-        swiper = null,
-        $dl = $('.page1>dl');
+//  let detailRender = (function() {
+//     let $detailBox = $('.detailBox'),
+//         swiper = null,
+//         $dl = $('.page1>dl');
         
-    let swiperInit = function () {
-        swiper = new Swiper('.swiper-container', {
-            // initialSlide : 1, 
-            // direction: 'horizontal/vertical',
-            effect: 'coverflow',
-            //loop: true, // swiper有个bug：3d切换设置loop为true偶尔会无法切换（2d没问题）
+//     let swiperInit = function () {
+//         swiper = new Swiper('.swiper-container', {
+//             // initialSlide : 1, 
+//             // direction: 'horizontal/vertical',
+//             effect: 'coverflow',
+//             //loop: true, // swiper有个bug：3d切换设置loop为true偶尔会无法切换（2d没问题）
             
-            onInit: move,
-                // 初始化成功执行的回调函数（参数是当前初始化的实例）
+//             onInit: move,
+//                 // 初始化成功执行的回调函数（参数是当前初始化的实例）
             
-            onTransitionEnd: move,
-        });
+//             onTransitionEnd: move,
+//         });
 
-        //实例的私有属性：
-        //1.activeIndex: 当前展示slide块的索引
-        //2.slides：获取所有的slide（数组）
-        //....
+//         //实例的私有属性：
+//         //1.activeIndex: 当前展示slide块的索引
+//         //2.slides：获取所有的slide（数组）
+//         //....
 
-        //实例的共有方法
-        //1.slideTo：切换到指定索引的slide
-        //...
-    };
+//         //实例的共有方法
+//         //1.slideTo：切换到指定索引的slide
+//         //...
+//     };
 
-    let move = function (swiper) {
-        /** swiper当前创建的实例
-            1.判断当前是否为第一个slide：如果是让3d菜单展开，不是则收起
-        */
-       let activeIn = swiper.activeIndex,
-           slideArr = swiper.slides;
-        if (activeIn === 0) {
-            $dl.makisu({
-                selector: 'dd',
-                overlap: 0.1,
-                speed: 0.1
-            });
-            $dl.makisu('open');
-        }
-        else {
-            $dl.makisu({
-                selector: 'dd',
-                speed: 0
-            });
-            $dl.makisu('close');
-        }
+//     let move = function (swiper) {
+//         /** swiper当前创建的实例
+//             1.判断当前是否为第一个slide：如果是让3d菜单展开，不是则收起
+//         */
+//        let activeIn = swiper.activeIndex,
+//            slideArr = swiper.slides;
+//         if (activeIn === 0) {
+//             $dl.makisu({
+//                 selector: 'dd',
+//                 overlap: 0.1,
+//                 speed: 0.1
+//             });
+//             $dl.makisu('open');
+//         }
+//         else {
+//             $dl.makisu({
+//                 selector: 'dd',
+//                 speed: 0
+//             });
+//             $dl.makisu('close');
+//         }
 
-        //2.滑动到哪一个页面，把当前页面设置对应的ID，其余页面移除ID即可
-        slideArr.forEach((item, index) => {
-            if (activeIn === index) {
-                item.id = `page${index + 1}`;
-                return;
-            }
-            item.id = null;
-        });
-    };
+//         //2.滑动到哪一个页面，把当前页面设置对应的ID，其余页面移除ID即可
+//         slideArr.forEach((item, index) => {
+//             if (activeIn === index) {
+//                 item.id = `page${index + 1}`;
+//                 return;
+//             }
+//             item.id = null;
+//         });
+//     };
 
-    return {
-        init : function () {
-            $detailBox.css('display', 'block');
-            swiperInit();
-            $dl.makisu({
-                selector: 'dd',
-                overlap: 0.6,
-                speed: 0.8
-            });
-            $dl.makisu('open');
-        }
-    }
- })();
- detailRender.init(); 
- 
- 
-
+//     return {
+//         init : function () {
+//             $detailBox.css('display', 'block');
+//             swiperInit();
+//             $dl.makisu({
+//                 selector: 'dd',
+//                 overlap: 0.6,
+//                 speed: 0.8
+//             });
+//             $dl.makisu('open');
+//         }
+//     }
+//  })();
 
  /**
   *  click在移动端是单击事件行为，当触发点击操作，浏览器会等待300ms，验证是否触发了第二次操作，
@@ -5356,9 +5356,9 @@ let change = {
  这样开发那个板块，我们就把表示改为啥
  */
 
- let url = window.location.href; // 获取当前页面的URL地址  location.href='xxx'这种写法是让其跳转到某一个页面
-     well = url.indexOf('#'),
-     hash = well === -1 ? null : url.substr(well + 1);
+//  let url = window.location.href; // 获取当前页面的URL地址  location.href='xxx'这种写法是让其跳转到某一个页面
+//      well = url.indexOf('#'),
+//      hash = well === -1 ? null : url.substr(well + 1);
 //  switch (hash) {
 //     case 'loading':
 //         loadingRender.init();
@@ -5371,3 +5371,25 @@ let change = {
 //         break;
             
 //  }
+
+let headerRender = (function () {
+    let $headerBox = $('.headerBox'),
+        $navMenu = $headerBox.find('.navMenu'),
+        $navBox = $('.navBox');
+
+    let handleTap = function () {
+        let block = $navBox.css('display');
+        if (block === 'none') {
+            $navBox.css('display', 'block');
+            return;
+        }
+        $navBox.css('display', 'none');
+    };
+
+    return {
+        init: function () {
+            $navMenu.on('click', handleTap);
+        }
+    }
+})();
+headerRender.init();

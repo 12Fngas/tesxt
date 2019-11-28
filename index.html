@@ -1,16 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-sacalable=no,maximum-scale=1.0,minimum-scale=1.0">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <link rel="stylesheet" href="swiper-3.4.2.min.css">
-  <link rel="stylesheet/less" href="resume.less">
+  <!-- <link rel="stylesheet/less" href="resume.less"> -->
+  <link rel="stylesheet/less" href="webapp.less">
   <script src='script/less.js'></script> 
   <script src="script/prefixfree.js"></script>
   <!-- <link rel="stylesheet" href="style.css"> -->
+  <script>
+    ;(function () {
+      let computedREM = function () {
+        let HTML = document.documentElement,
+            winW = HTML.clientWidth;
+            desW = 640;
+        if (winW >= desW) {
+          HTML.style.fontSize = '100px';
+          return;
+        }
+        HTML.style.fontSize = winW / desW * 100 + 'px';
+      };
+      computedREM();
+      window.addEventListener('resize', computedREM);
+    })();
+  </script>
 </head>
 <body>
 
@@ -189,8 +206,7 @@
 
 
 
-<main class="mainBox">
-  <!-- 外面套一层mainBox：控制当前页面的最大宽度，防止把做好的页面在PC端预览的时候满屏展示，作用字体和盒子大小等被肆意拉伸 -->
+<!-- <main class="mainBox">
   <section class="loadingBox">
     <div class="title">
       <h1>XX培训</h1>
@@ -314,9 +330,71 @@
     </div>
   </section>
 
+</main> -->
+
+<main class="mainBox">
+  <header class="headerBox">
+    <h1>我是APP</h1>
+    <a href="javascript:;" class="weather"></a>
+    <a href="javascript:;" class="person"></a>
+    <a href="javascript:;" class="navMenu">aaa</a>
+  </header>
+
+  <nav class="navBox clearfix">
+    <a href="#">新闻</a>
+    <a href="#">财经</a>
+    <a href="#">体育</a>
+    <a href="#">娱乐</a>
+    <a href="#">军事</a>
+    <a href="#">汽车</a>
+    <a href="#">科技</a>
+    <a href="#">视频</a>
+    <a href="#">美图</a>
+    <a href="#">NBA</a>
+    <a href="#">博客</a>
+  </nav>
+
+  <section class="swiper-container bannerBox">
+    <div class="swiper-wrapper">
+      <div class="swiper-slide">
+        <img src="" alt="">
+        <p>xxxx</p>
+      </div>
+    </div>
+
+    <div class="swiper-pagination"></div>
+  </section>
+
+  <section class="messageBox">
+    <div class="liveFlag">直播</div>
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">xxxxxx</div>
+        </div>
+      </div>
+  </section>
+
+  <section class="newsBox">
+    <ul class="container">
+      <li class="newsItem">
+        <img src="/img/waterfallImg/phone_1.jpg" alt="">
+        <h3>我只是一段字而已</h3>
+        <span>20亿</span>
+      </li>
+      <li class="newsItem imgBox">
+          <img src="/img/waterfallImg/phone_1.jpg" alt="">
+          <div>
+            <img src="/img/waterfallImg/phone_4.jpg" alt="">
+            <img src="/img/waterfallImg/phone_4.jpg" alt="">
+            <img src="/img/waterfallImg/phone_4.jpg" alt="">
+          </div>
+          <span>20亿</span>
+        </li>
+        
+    </ul>
+  </section>
+  
 </main>
-
-
 
 
   <!-- <script src = "node_modules/jquery/dist/jquery.js"></script> -->
