@@ -79,3 +79,106 @@ html, body {
         color: #555;
     }
 }
+
+.bannerBox {
+    position: relative;
+    display: none;
+    height: 3.4rem;
+    overflow: hidden;
+
+    .swiper-slide {
+        height: 100%;
+        width: 100%;
+        position: relative;
+
+        p {
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 0.6rem;
+            line-height: .6rem;
+            font-size: .28px;
+            color: #FFF;
+            text-indent: .2rem;
+            background: rgba(0, 0, 0, .5);
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+    }
+
+    .swiper-pagination {
+        left: auto;
+        right: 0;
+        bottom: 0;
+        width: 1rem;
+        height: 0.6rem;
+        line-height: .6rem;
+        text-align: center;
+        font-size: .28rem;
+        color: rgba(255, 255, 255, .5);
+        z-index: 10;
+
+        .swiper-pagination-current {
+            color: #FFF;
+            font-weight: bold;
+        }
+    }
+
+}
+
+.messageBox {
+    display: none;
+    margin: .16rem 0;
+    background: #FFF;
+    height: .8rem;
+    position: relative;
+
+    .liveFlag {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 1rem;
+        height: 100%;
+        line-height: .8rem;
+        text-align: center;
+
+        &:after {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0.74rem;
+            height: 0.4rem;
+            line-height: .4rem;
+            margin: -.2rem 0 0 -.37rem;
+            font-size: .3rem;
+            color: #FFF;
+            background: #FA4E46;
+            content: '直播';
+        }
+
+        .messageCon {
+            margin-left: 1rem;
+            height: 0.8rem;
+            overflow: hidden;
+
+            .swiper-slide {
+                height: 0.8rem;
+                line-height: .8rem;    
+
+                .an {
+                    font-size: .28rem;
+                    
+                    display: block;
+                    color: black;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                }  
+            }
+        }       
+    }
+}
+
+  

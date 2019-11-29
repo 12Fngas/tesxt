@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "img": "/img/waterfallImg/phone_1.jpg",
+        "desc": "别上班了，烤红薯月入30万！！！",
+        "link": "http://www.baidu.com/"
+    },
+    {
+        "id": 2,
+        "img": "/img/waterfallImg/phone_2.jpg",
+        "desc": "别上班了，烤红薯月入30万！！！",
+        "link": "http://www.baidu.com/"
+    },
+    {
+        "id": 3,
+        "img": "/img/waterfallImg/phone_3.jpg",
+        "desc": "别上班了，烤红薯月入30万！！！",
+        "link": "http://www.baidu.com/"
+    }    
+]

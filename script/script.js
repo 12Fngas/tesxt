@@ -5393,3 +5393,95 @@ let headerRender = (function () {
     }
 })();
 headerRender.init();
+
+let bannerRender = (function() {
+    let $bannerBox = $('.bannerBox'),
+        $wrapper = $bannerBox.find('.swiper-wrapper');
+    
+    let queryData = function () {
+        
+        return new Promise(resolve => {
+            $.ajax({
+                url: 'banner.json',
+                dataType: 'json',
+                success: resolve
+            });
+        });
+    };
+
+    let bindHTML = function(result) {
+        let str = ``;
+        result.forEach(item => {
+            let {img, desc} = item;
+            str += `<div class="swiper-slide">
+            <img src="${img}" alt="">
+            <p>${desc}</p>
+          </div>`;
+        });
+        $wrapper.html(str);
+        $bannerBox.css('display', 'block');
+    };
+
+    let swiperInit = function() {
+        let swiper = new Swiper('.bannerBox', {
+            loop: true,
+            autoplay: 3000,
+            autoplayDisableOnInteraction: false,
+            pagination: '.swiper-pagination',
+            paginationType: 'fraction'
+        })
+    };
+
+    return {
+        init: function () {
+            let promise = queryData();
+            promise.then(bindHTML)
+                    .then(swiperInit);
+        }
+    }
+})();
+bannerRender.init();
+
+let messageRender = (function() {
+    let $messageBox = $('.messageBox'),
+        $wrapper = $messageBox.find('.swiper-wrapper');
+    
+    let queryData = function () {
+        console.log(123);
+        return new Promise(resolve => {
+            $.ajax({
+                url: 'aside.json',
+                dataType: 'json',
+                success: resolve
+            });
+        });
+    };
+
+    let bindHTML = function(result) {
+        let str = ``;
+        console.log(result);
+        result.forEach(item => {
+            let {title, link} = item;
+            str += `<div class="swiper-slide"><a class="an" href="${link}">${title}</a></div>`;
+        });
+        $wrapper.html(str);
+        $messageBox.css('display', 'block');
+    };
+
+    let swiperInit = function() {
+        let swiper = new Swiper('.messageCon', {
+            loop: true,
+            autoplay: 3000,
+            direction: 'vertical'
+        });
+    };
+
+    return {
+        init: function () {
+            let promise = queryData();
+            promise.then(bindHTML)
+                    .then(swiperInit);
+        }
+    }
+})();
+messageRender.init();
