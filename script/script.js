@@ -5372,116 +5372,191 @@ let change = {
             
 //  }
 
-let headerRender = (function () {
-    let $headerBox = $('.headerBox'),
-        $navMenu = $headerBox.find('.navMenu'),
-        $navBox = $('.navBox');
 
-    let handleTap = function () {
-        let block = $navBox.css('display');
-        if (block === 'none') {
-            $navBox.css('display', 'block');
-            return;
-        }
-        $navBox.css('display', 'none');
-    };
+// let headerRender = (function () {
+//     let $headerBox = $('.headerBox'),
+//         $navMenu = $headerBox.find('.navMenu'),
+//         $navBox = $('.navBox');
 
-    return {
-        init: function () {
-            $navMenu.on('click', handleTap);
-        }
-    }
-})();
-headerRender.init();
+//     let handleTap = function () {
+//         let block = $navBox.css('display');
+//         if (block === 'none') {
+//             $navBox.css('display', 'block');
+//             return;
+//         }
+//         $navBox.css('display', 'none');
+//     };
 
-let bannerRender = (function() {
-    let $bannerBox = $('.bannerBox'),
-        $wrapper = $bannerBox.find('.swiper-wrapper');
+//     return {
+//         init: function () {
+//             $navMenu.on('click', handleTap);
+//         }
+//     }
+// })();
+// headerRender.init();
+
+// let bannerRender = (function() {
+//     let $bannerBox = $('.bannerBox'),
+//         $wrapper = $bannerBox.find('.swiper-wrapper');
     
-    let queryData = function () {
+//     let queryData = function () {
         
-        return new Promise(resolve => {
-            $.ajax({
-                url: 'banner.json',
-                dataType: 'json',
-                success: resolve
-            });
-        });
-    };
+//         return new Promise(resolve => {
+//             $.ajax({
+//                 url: 'banner.json',
+//                 dataType: 'json',
+//                 success: resolve
+//             });
+//         });
+//     };
 
-    let bindHTML = function(result) {
-        let str = ``;
-        result.forEach(item => {
-            let {img, desc} = item;
-            str += `<div class="swiper-slide">
-            <img src="${img}" alt="">
-            <p>${desc}</p>
-          </div>`;
-        });
-        $wrapper.html(str);
-        $bannerBox.css('display', 'block');
-    };
+//     let bindHTML = function(result) {
+//         let str = ``;
+//         result.forEach(item => {
+//             let {img, desc} = item;
+//             str += `<div class="swiper-slide">
+//             <img src="${img}" alt="">
+//             <p>${desc}</p>
+//           </div>`;
+//         });
+//         $wrapper.html(str);
+//         $bannerBox.css('display', 'block');
+//     };
 
-    let swiperInit = function() {
-        let swiper = new Swiper('.bannerBox', {
-            loop: true,
-            autoplay: 3000,
-            autoplayDisableOnInteraction: false,
-            pagination: '.swiper-pagination',
-            paginationType: 'fraction'
-        })
-    };
+//     let swiperInit = function() {
+//         let swiper = new Swiper('.bannerBox', {
+//             loop: true,
+//             autoplay: 3000,
+//             autoplayDisableOnInteraction: false,
+//             pagination: '.swiper-pagination',
+//             paginationType: 'fraction'
+//         })
+//     };
 
-    return {
-        init: function () {
-            let promise = queryData();
-            promise.then(bindHTML)
-                    .then(swiperInit);
-        }
-    }
-})();
-bannerRender.init();
+//     return {
+//         init: function () {
+//             let promise = queryData();
+//             promise.then(bindHTML)
+//                     .then(swiperInit);
+//         }
+//     }
+// })();
+// bannerRender.init();
 
-let messageRender = (function() {
-    let $messageBox = $('.messageBox'),
-        $wrapper = $messageBox.find('.swiper-wrapper');
+// let messageRender = (function() {
+//     let $messageBox = $('.messageBox'),
+//         $wrapper = $messageBox.find('.swiper-wrapper');
     
-    let queryData = function () {
-        console.log(123);
-        return new Promise(resolve => {
-            $.ajax({
-                url: 'aside.json',
-                dataType: 'json',
-                success: resolve
-            });
-        });
-    };
+//     let queryData = function () {
+//         console.log(123);
+//         return new Promise(resolve => {
+//             $.ajax({
+//                 url: 'aside.json',
+//                 dataType: 'json',
+//                 success: resolve
+//             });
+//         });
+//     };
 
-    let bindHTML = function(result) {
-        let str = ``;
-        console.log(result);
-        result.forEach(item => {
-            let {title, link} = item;
-            str += `<div class="swiper-slide"><a class="an" href="${link}">${title}</a></div>`;
-        });
-        $wrapper.html(str);
-        $messageBox.css('display', 'block');
-    };
+//     let bindHTML = function(result) {
+//         let str = ``;
+//         console.log(result);
+//         result.forEach(item => {
+//             let {title, link} = item;
+//             str += `<div class="swiper-slide"><a class="an" href="${link}">${title}</a></div>`;
+//         });
+//         $wrapper.html(str);
+//         $messageBox.css('display', 'block');
+//     };
 
-    let swiperInit = function() {
-        let swiper = new Swiper('.messageCon', {
-            loop: true,
-            autoplay: 3000,
-            direction: 'vertical'
-        });
-    };
+//     let swiperInit = function() {
+//         let swiper = new Swiper('.messageCon', {
+//             loop: true,
+//             autoplay: 3000,
+//             direction: 'vertical'
+//         });
+//     };
 
-    return {
-        init: function () {
-            let promise = queryData();
-            promise.then(bindHTML)
-                    .then(swiperInit);
+//     return {
+//         init: function () {
+//             let promise = queryData();
+//             promise.then(bindHTML)
+//                     .then(swiperInit);
+//         }
+//     }
+// })();
+// messageRender.init();
+
+
+
+/**
+ * Promise是ES6中新增加的内置类：目的是管理异步操作
+ *  1.new Promise() 创建类的一个实例，每一个实例都可以管理一个异步操作
+ *      必须传递一个回调函数进去，不传会报错
+ *      回调函数中有2个参数
+ *          resolve: 异步操作成功做的事情（代指成功后的事件队列 => 成功后要做的所有事情都放到这个队列中）
+ *          reject: 异步操作失败做的事情（代指失败后的事件队列）
+ *      new Promise的时候立即把回调函数执行了（Promise是同步的）
+ * 
+ *  2.基于Promise.prototype.then方法（还有catch/finally两个方法
+ * ）向成功队列和失败队列中依次加入需要处理的事情
+ * 
+ *  3.如果是多个then调用，不是像我们想像的依次把增加的方法执行
+ *      异步操作成功或者失败，先把第一个then中的方法执行，每当执行一个then会返回一个新
+ * 的Promise实例，这个实例管控的是第一个then中方法执行是成功还是失败
+ * 
+ */
+
+ console.log($);
+
+ let promise1 = new Promise(function(resolve, reject) {
+    $.ajax({
+        url: "https://www.easy-mock.com/mock/5df09a0fd0843e1ef18f6e50/example/mmm",
+        success : function (result) {
+            resolve(result);
+        },
+        error : function (msg) {
+            reject(msg);
         }
-    }
-})();
-messageRender.init();
+    });
+ });
+
+ promise1.then(function (result) {
+     console.log(result);
+ }).catch(function(msg) {
+     /**
+      * 第一个catch
+      * 1.异步请求失败会执行
+      * 2.第一个then失败也会执行
+      */
+    console.log(msg);
+ }).then(function (result) {
+     console.log(result)
+}).catch(function(msg) {
+    console.log(msg);
+ });
+ 
+
+ /**
+  * JS中的异常捕获（把抛出异常的错误捕获到，不让其阻断浏览器的继续执行）
+  * 
+  */
+
+  try {
+    //正常执行的JS代码（可能会报错）
+  }
+  catch(e) {
+    //try中的代码报错了会执行catch
+  }
+  finally {
+    //不管try中的代码是否成功，都会执行
+  }
+
+// let xhr = new XMLHttpRequest();
+// xhr.open('GET', 'https://www.easy-mock.com/mock/5df09a0fd0843e1ef18f6e50/example/mmm');
+// xhr.onreadystatechange = function () {
+//     if (xhr.readyState === 4 && xhr.status === 200) {
+//         console.log(JSON.parse(xhr.responseText));
+//     }
+// };
+// xhr.send(null);
